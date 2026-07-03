@@ -16,7 +16,9 @@ ID so the owner can decide to add them.
 
 Commands:  /start /help — welcome + coin picker
            /coins       — choose which coins alert this chat (✅/☐ toggles)
+           /mode        — receive alerts by Telegram, email, or both
            /status      — pick a coin for an immediate update
+           /guide       — glossary of every alert type and trading term
 """
 
 import json
@@ -36,11 +38,61 @@ HELP_TEXT = (
     "• \"btc?\" or \"how's eth doing\" → live update\n"
     "• \"predict sol\" → my full read: trend, levels, example setup\n\n"
     "/coins — choose which coins alert you (Telegram AND email)\n"
+    "/mode — get alerts by Telegram, email, or both\n"
     "/status — pick a coin for an immediate update\n"
     "/email you@example.com — link your email so /coins controls it too\n"
+    "/guide — glossary of every alert type and trading term\n"
     "/accuracy — how often my alerts have been right\n"
     "/help — this message"
 )
+
+# Plain-language glossary shown by /guide and the 📖 Guide button. Kept well
+# under Telegram's 4096-char message limit.
+GUIDE_TEXT = (
+    "📖 Trading Guide & Glossary\n\n"
+    "── Alert types (strongest → weakest) ──\n\n"
+    "🟢 CONFIRMED BUY — EMA9 crossed ABOVE EMA21 on a closed candle, and "
+    "every filter agreed: RSI > 55, above-average volume, price above the "
+    "EMA200 trend line. The highest-confidence bullish signal.\n\n"
+    "🔴 CONFIRMED SELL — EMA9 crossed BELOW EMA21 on a closed candle with "
+    "RSI < 45, above-average volume, and price below EMA200. Highest-"
+    "confidence bearish signal.\n\n"
+    "⚠️ WEAK BUY / WEAK SELL — The cross happened on a closed candle, but one "
+    "or more filters (RSI, volume, or trend) failed — the alert body lists "
+    "which. A heads-up, not a green light.\n\n"
+    "⏱️ INTRABAR BUY / SELL — The cross is showing on the candle still forming "
+    "right now. It's what the chart draws live, but it can still fade before "
+    "the candle closes. Unconfirmed by nature.\n\n"
+    "🟡 NEAR-BUY / NEAR-SELL — EMA9 is closing in on EMA21 (gap tiny and "
+    "shrinking) but hasn't crossed yet. An early warning that a cross may be "
+    "coming.\n\n"
+    "── Market direction ──\n\n"
+    "🐂 Bullish — Upward bias; buyers in control; price tending to rise.\n"
+    "🐻 Bearish — Downward bias; sellers in control; price tending to fall.\n"
+    "📈 Long — A position that profits if price goes UP (you buy). "
+    "\"Going long BTC\" = betting BTC rises.\n"
+    "📉 Short — A position that profits if price goes DOWN (sell first, buy "
+    "back lower). \"Shorting BTC\" = betting BTC falls.\n\n"
+    "── Indicators the alerts use ──\n\n"
+    "• EMA (Exponential Moving Average) — a smoothed average price. EMA9 is "
+    "fast, EMA21 slower. Fast crossing above slow = bullish momentum; below "
+    "= bearish.\n"
+    "• EMA200 — the long-term trend line. Price above = uptrend, below = "
+    "downtrend. Confirmed signals must agree with it.\n"
+    "• RSI (Relative Strength Index, 0–100) — momentum gauge. >55 supports "
+    "buys, <45 supports sells; >70 \"overbought\", <30 \"oversold\".\n"
+    "• Volume — how much traded in the candle. Above-average volume means a "
+    "move has conviction behind it.\n"
+    "• Support — a price level where buyers stepped in before (a floor).\n"
+    "• Resistance — a price level where sellers stepped in before (a ceiling).\n"
+    "• ATR (Average True Range) — a candle's typical size; used to size the "
+    "example stop/target distances.\n\n"
+    "These are rule-based signals from public price data — not financial "
+    "advice. Always manage your own risk."
+)
+
+# How a chat receives alerts. Absent = "both" (backward-compatible default).
+ALERT_MODES = ("both", "telegram", "email")
 
 # Common names people type for the bases we track (extend freely).
 COIN_NAMES = {
@@ -136,9 +188,24 @@ class TelegramBot:
             rows.append([{"text": f"{mark} {pair}", "callback_data": f"t|{pair}"}])
         rows.append([{"text": "✅ All on", "callback_data": "t|ALL_ON"},
                      {"text": "🚫 All off", "callback_data": "t|ALL_OFF"}])
+        rows.append([{"text": "🔔 Alert mode", "callback_data": "m|mode"},
+                     {"text": "📖 Guide", "callback_data": "m|guide"}])
         rows.append([{"text": "📊 Status", "callback_data": "m|status"},
                      {"text": "👍 Done", "callback_data": "m|done"}])
         return rows
+
+    def _mode_keyboard(self, mode: str) -> list:
+        """Pick how alerts are delivered — Telegram, email, or both."""
+        def label(m: str, text: str) -> str:
+            return f"{'✅ ' if mode == m else ''}{text}"
+        return [
+            [{"text": label("both", "🔔 Both (Telegram + Email)"),
+              "callback_data": "md|both"}],
+            [{"text": label("telegram", "📱 Telegram only"),
+              "callback_data": "md|telegram"}],
+            [{"text": label("email", "📧 Email only"),
+              "callback_data": "md|email"}],
+        ]
 
     def _status_keyboard(self) -> list:
         rows = [[{"text": pair, "callback_data": f"s|{pair}"}] for pair in self.symbols]
@@ -164,11 +231,37 @@ class TelegramBot:
         entry["subs"] = [p for p in self.symbols if p in entry["subs"]]
         return entry["subs"]
 
+    def _chat_mode(self, state: dict, chat_id) -> str:
+        """Delivery mode for a chat: 'both' | 'telegram' | 'email'.
+
+        Absent = 'both' so pre-existing chats keep getting Telegram alerts.
+        """
+        mode = state.get("chats", {}).get(str(chat_id), {}).get("mode", "both")
+        return mode if mode in ALERT_MODES else "both"
+
+    def _channels_desc(self, state: dict, chat_id) -> str:
+        """Human-readable summary of where this chat's alerts go."""
+        entry = state.get("chats", {}).get(str(chat_id), {})
+        mode = self._chat_mode(state, chat_id)
+        email = entry.get("email")
+        if mode == "telegram":
+            return "Telegram only"
+        if mode == "email":
+            return f"Email only ({email})" if email else \
+                "Email only — but no address is linked yet! Use /email to link one"
+        return f"Telegram + Email ({email})" if email else \
+            "Telegram (link an email with /email to add email alerts)"
+
     def chats_for(self, state: dict, pair: str) -> List[str]:
-        """Chat IDs subscribed to `pair` (allowlisted chats only)."""
+        """Chat IDs that should get a Telegram alert for `pair`.
+
+        Allowlisted, subscribed to the pair, and in a mode that includes
+        Telegram ('both' or 'telegram' — not email-only).
+        """
         out = []
         for chat_id, entry in state.get("chats", {}).items():
-            if chat_id in self.allowed and pair in entry.get("subs", []):
+            if chat_id in self.allowed and pair in entry.get("subs", []) \
+                    and self._chat_mode(state, chat_id) in ("both", "telegram"):
                 out.append(chat_id)
         return out
 
@@ -222,6 +315,13 @@ class TelegramBot:
         if lower.startswith("/coins"):
             self.send(chat_id, "Choose which coins alert this chat:",
                       self._coin_keyboard(subs))
+        elif lower.startswith("/mode"):
+            self.send(chat_id,
+                      "How do you want to receive alerts? "
+                      "(you can change this anytime)",
+                      self._mode_keyboard(self._chat_mode(state, chat_id)))
+        elif lower.startswith("/guide"):
+            self.send(chat_id, GUIDE_TEXT)
         elif lower.startswith("/status"):
             self.send(chat_id, "Which coin do you want an update on?",
                       self._status_keyboard())
@@ -271,9 +371,13 @@ class TelegramBot:
         elif arg in {a.lower() for a in allowed_addresses()}:
             entry["email"] = arg
             on = ", ".join(entry.get("subs", [])) or "none"
+            note = ("\n\n⚠️ Heads-up: your alert mode is currently "
+                    "Telegram only, so this email won't get alerts until you "
+                    "switch it with /mode.") \
+                if self._chat_mode(state, chat_id) == "telegram" else ""
             self.send(chat_id,
                       f"📧 Linked {arg} to this chat. Your /coins choices now "
-                      f"control email alerts too.\nCurrently: {on}")
+                      f"control email alerts too.\nCurrently: {on}{note}")
         else:
             self.send(chat_id,
                       f"🔒 {arg} isn't on the alert recipient list. Ask the "
@@ -307,6 +411,20 @@ class TelegramBot:
                     toast = f"{arg} alerts ON"
             self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
                       reply_markup={"inline_keyboard": self._coin_keyboard(subs)})
+        elif action == "md" and arg in ALERT_MODES:
+            entry = state.setdefault("chats", {}).setdefault(
+                str(chat_id), {"subs": list(self.symbols)})
+            entry["mode"] = arg
+            toast = {"both": "Alerts: Telegram + Email",
+                     "telegram": "Alerts: Telegram only",
+                     "email": "Alerts: Email only"}[arg]
+            self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
+                      reply_markup={"inline_keyboard": self._mode_keyboard(arg)})
+            if arg in ("email", "both") and not entry.get("email"):
+                self.send(chat_id,
+                          "⚠️ You chose email alerts but haven't linked an "
+                          "email address yet.\nLink one with:  "
+                          "/email you@example.com")
         elif action == "s" and arg in self.symbols:
             toast = "Fetching…"
             self.send(chat_id, self._insight(arg, "status"),
@@ -319,15 +437,21 @@ class TelegramBot:
             if arg == "coins":
                 self.send(chat_id, "Choose which coins alert this chat:",
                           self._coin_keyboard(subs))
+            elif arg == "mode":
+                self.send(chat_id,
+                          "How do you want to receive alerts? "
+                          "(you can change this anytime)",
+                          self._mode_keyboard(self._chat_mode(state, chat_id)))
+            elif arg == "guide":
+                self.send(chat_id, GUIDE_TEXT)
             elif arg == "status":
                 self.send(chat_id, "Pick a coin:", self._status_keyboard())
             elif arg == "done":
                 on = ", ".join(subs) if subs else "none"
                 toast = "Saved"
-                email = state.get("chats", {}).get(str(chat_id), {}).get("email")
-                channels = f"Telegram + {email}" if email else \
-                    "Telegram (link your email with /email to control it too)"
-                self.send(chat_id, f"👍 Saved. Alerting {channels} for: {on}")
+                self.send(chat_id, f"👍 Saved. Delivery: "
+                                   f"{self._channels_desc(state, chat_id)}.\n"
+                                   f"Coins: {on}")
         self._api("answerCallbackQuery", callback_query_id=cb["id"], text=toast)
 
 
