@@ -51,3 +51,16 @@ def test_removed_config_symbol_is_pruned_from_subs():
     bot = make_bot([])
     state = {"chats": {"111": {"subs": ["BTC/USDT", "DOGE/USDT"]}}}
     assert bot._chat_subs(state, "111") == ["BTC/USDT"]
+
+
+def test_email_link_flow(monkeypatch):
+    monkeypatch.setenv("ALERT_EMAILS", "me@x.com,other@y.com")
+    bot = make_bot([])
+    state = {}
+    msg = lambda t: {"chat": {"id": 111}, "text": t}
+    bot._on_message(state, msg("/email me@x.com"))
+    assert state["chats"]["111"]["email"] == "me@x.com"
+    bot._on_message(state, msg("/email stranger@evil.com"))  # not allowlisted
+    assert state["chats"]["111"]["email"] == "me@x.com"
+    bot._on_message(state, msg("/email off"))
+    assert "email" not in state["chats"]["111"]

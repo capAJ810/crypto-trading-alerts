@@ -284,7 +284,6 @@ def main() -> int:
     with open(args.config) as f:
         config = yaml.safe_load(f)
 
-    notifier = Notifier(config.get("notify", []))
     symbols = [pair for pair, _ in normalize_symbols(config)]
     sig_entries = siglog.load(args.siglog)
     tuned = load_tuned(args.tuned)
@@ -297,6 +296,15 @@ def main() -> int:
         if bot is not None:
             tg_state = telegram_bot.load_state(args.tg_state)
             bot.ensure_default_chats(tg_state)
+
+    def link_filters():
+        """Live email -> coin-set map from the bot's /email + /coins state."""
+        return {entry["email"]: {p.split("/")[0].upper()
+                                 for p in entry.get("subs", [])}
+                for entry in tg_state.get("chats", {}).values()
+                if entry.get("email")}
+
+    notifier = Notifier(config.get("notify", []), link_filters)
 
     def save_tg():
         if bot is not None:

@@ -13,24 +13,29 @@ def test_parse_alert_emails_with_filters():
     assert groups[2] == (["c@z.com"], None)   # no filter given
 
 
-def test_notifier_buckets_route_by_coin(monkeypatch):
+def test_email_recipients_static_linked_and_default(monkeypatch):
     monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
     monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
-    monkeypatch.setenv("ALERT_EMAILS", "a@x.com:BTC;b@y.com:all")
+    monkeypatch.setenv("ALERT_EMAILS", "a@x.com:BTC;b@y.com;c@z.com")
+    links = {"B@Y.com": {"ETH"}}  # self-service link (case-insensitive)
     n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
-                  "?to=${ALERT_EMAILS}"])
-    assert n.active == 2
-    sends = []
-    for i, (filt, app) in enumerate(n.buckets):
-        app.notify = lambda i=i, **kw: sends.append(i) or True
-    n.send("t", "b", pair="HYPE/USDT")   # only the 'all' bucket
-    assert sends == [1]
-    sends.clear()
-    n.send("t", "b", pair="BTC/USDT")    # both buckets
-    assert sends == [0, 1]
-    sends.clear()
-    n.send("t", "b")                     # no pair (test message) -> everyone
-    assert sends == [0, 1]
+                  "?to=${ALERT_EMAILS}"], lambda: links)
+    assert n.active == 1
+    # a = static BTC-only; b = linked ETH-only via bot; c = no filter (all)
+    assert n.email_recipients("BTC/USDT") == ["a@x.com", "c@z.com"]
+    assert n.email_recipients("ETH/USDT") == ["b@y.com", "c@z.com"]
+    assert n.email_recipients("HYPE/USDT") == ["c@z.com"]
+    assert n.email_recipients(None) == ["a@x.com", "b@y.com", "c@z.com"]
+
+
+def test_static_secret_filter_beats_bot_link(monkeypatch):
+    monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
+    monkeypatch.setenv("ALERT_EMAILS", "a@x.com:BTC")
+    n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
+                  "?to=${ALERT_EMAILS}"], lambda: {"a@x.com": {"ETH"}})
+    assert n.email_recipients("ETH/USDT") == []  # owner's static filter wins
+    assert n.email_recipients("BTC/USDT") == ["a@x.com"]
 
 
 def test_tier_mapping():

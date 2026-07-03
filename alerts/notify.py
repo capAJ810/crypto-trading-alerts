@@ -135,64 +135,95 @@ def parse_alert_emails(value: str) -> List[Tuple[List[str], Optional[set]]]:
     return groups
 
 
+def allowed_addresses() -> List[str]:
+    """All addresses the owner has allowlisted in ALERT_EMAILS."""
+    return [addr for emails, _ in
+            parse_alert_emails(os.environ.get("ALERT_EMAILS", ""))
+            for addr in emails]
+
+
 class Notifier:
     """Fan-out with per-recipient coin filtering.
 
-    Each notify URL becomes one or more buckets of (coin_filter, Apprise).
-    A URL containing ${ALERT_EMAILS} is expanded into one bucket per
-    recipient group so different addresses can watch different coins.
+    Coin filters come from two places, checked per address at SEND time:
+      1. a static ':BTC,ETH' suffix in the ALERT_EMAILS secret (owner-set,
+         wins if present), else
+      2. `link_filters_fn()` — a live map of email -> set of coin bases,
+         fed by the Telegram bot's /email + /coins self-service (each
+         user's Telegram coin picks also route their email).
+    No filter anywhere = all coins.
     """
 
-    def __init__(self, urls: List[str]):
-        self.buckets: List[Tuple[Optional[set], apprise.Apprise]] = []
+    def __init__(self, urls: List[str], link_filters_fn=None):
+        self.static_buckets: List[apprise.Apprise] = []
+        self.email_template: Optional[str] = None
+        self.link_filters_fn = link_filters_fn or (lambda: {})
         for raw in urls:
             if "${ALERT_EMAILS}" in raw:
-                for emails, filt in parse_alert_emails(
-                        os.environ.get("ALERT_EMAILS", "")):
-                    url = raw.replace("${ALERT_EMAILS}",
-                                      quote(",".join(emails), safe=","))
-                    self._add(url, raw, filt)
+                if _expand(raw.replace("${ALERT_EMAILS}", "x@x")) is None:
+                    log.warning("Skipping notify URL with unset variables: %s", raw)
+                    continue
+                self.email_template = raw
             else:
-                self._add(raw, raw, None)
-
-    def _add(self, url: str, raw: str, filt: Optional[set]) -> None:
-        expanded = _expand(url)
-        if expanded is None:
-            log.warning("Skipping notify URL with unset variables: %s", raw)
-            return
-        app = apprise.Apprise()
-        if app.add(expanded):
-            self.buckets.append((filt, app))
-        else:
-            log.warning("Apprise rejected notify URL (bad format?): %s", raw)
+                expanded = _expand(raw)
+                if expanded is None:
+                    log.warning("Skipping notify URL with unset variables: %s", raw)
+                    continue
+                app = apprise.Apprise()
+                if app.add(expanded):
+                    self.static_buckets.append(app)
+                else:
+                    log.warning("Apprise rejected notify URL (bad format?): %s", raw)
 
     @property
     def active(self) -> int:
-        return len(self.buckets)
+        return len(self.static_buckets) + (1 if self.email_template else 0)
+
+    def email_recipients(self, pair: Optional[str]) -> List[str]:
+        """Addresses that should receive an alert for `pair`."""
+        base = pair.split("/")[0].upper() if pair else None
+        links = {k.lower(): v for k, v in self.link_filters_fn().items()}
+        out = []
+        for emails, static_filt in parse_alert_emails(
+                os.environ.get("ALERT_EMAILS", "")):
+            for addr in emails:
+                filt = static_filt if static_filt is not None \
+                    else links.get(addr.lower())
+                if base is None or filt is None or base in filt:
+                    out.append(addr)
+        return out
 
     def send(self, title: str, body: str, tier: str = "info",
              pair: Optional[str] = None) -> bool:
-        """Send to every bucket whose coin filter matches `pair`.
-        pair=None (tests, system notices) goes to everyone."""
-        if not self.buckets:
+        if self.active == 0:
             log.error("No active notification channels — alert NOT delivered: %s", title)
             return False
-        base = pair.split("/")[0].upper() if pair else None
         subject, html_body = render_email(title, body, tier)
-        delivered = skipped = 0
-        for filt, app in self.buckets:
-            if base is not None and filt is not None and base not in filt:
-                skipped += 1
-                continue
-            if app.notify(title=subject, body=html_body,
-                          body_format=apprise.NotifyFormat.HTML):
-                delivered += 1
+        delivered = attempted = 0
+
+        for app in self.static_buckets:
+            attempted += 1
+            delivered += int(app.notify(title=subject, body=html_body,
+                                        body_format=apprise.NotifyFormat.HTML))
+
+        if self.email_template:
+            recipients = self.email_recipients(pair)
+            if recipients:
+                attempted += 1
+                url = self.email_template.replace(
+                    "${ALERT_EMAILS}", quote(",".join(recipients), safe=","))
+                app = apprise.Apprise()
+                app.add(_expand(url))
+                delivered += int(app.notify(title=subject, body=html_body,
+                                            body_format=apprise.NotifyFormat.HTML))
+            else:
+                log.info("No email recipients opted in to %s — email skipped", pair)
+
+        if attempted == 0:
+            return True  # everything legitimately filtered out
         if delivered:
-            log.info("Notified %d channel group(s) (%d filtered out): %s",
-                     delivered, skipped, title)
-        elif skipped == len(self.buckets):
-            log.info("All %d channel group(s) filtered out %s — nothing sent",
-                     skipped, pair)
+            log.info("Notified %d/%d channel group(s): %s", delivered,
+                     attempted, title)
         else:
             log.error("Notification delivery failed for: %s", title)
-        return delivered > 0 or skipped == len(self.buckets)
+        return delivered > 0

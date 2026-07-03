@@ -70,7 +70,8 @@ them to the secret — slash-separated).
 | Track another coin | Add one line under `symbols:` in [config.yaml](config.yaml). If it's not on Binance: `{pair: XYZ/USDT, exchange: kucoin}` |
 | Change timeframe | Edit `timeframe:` in config.yaml (`15m`, `4h`, `1d`, …) |
 | Add an email recipient | Append to the `ALERT_EMAILS` secret: groups `;`-separated, each optionally coin-limited — `a@x.com:BTC,ETH;b@y.com` (no `:filter` = all coins) |
-| Limit which coins email me | Add `:BTC,ETH` after your address in `ALERT_EMAILS` |
+| Limit which coins alert me (self-service) | In the bot: `/email you@example.com` once, then `/coins` toggles control both your Telegram AND email alerts. `/email off` unlinks. |
+| Limit a recipient's coins (owner override) | Add `:BTC,ETH` after their address in `ALERT_EMAILS` — a static filter there beats any bot link |
 | Limit which coins ping me on Telegram | Send the bot `/coins`, tap to toggle ✅/☐, then Done — per chat, doesn't affect others |
 | Add a Telegram chat/group | Append its chat ID to `TELEGRAM_CHAT_IDS` (slash-separated, e.g. `111/222`) — the new chat then picks its coins with /coins |
 | Add another channel (Discord, Slack, SMS, push…) | Append an [Apprise URL](https://github.com/caronc/apprise/wiki) to `notify:` in config.yaml |

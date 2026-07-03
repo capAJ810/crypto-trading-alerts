@@ -35,8 +35,9 @@ HELP_TEXT = (
     "Just talk to me:\n"
     "• \"btc?\" or \"how's eth doing\" → live update\n"
     "• \"predict sol\" → my full read: trend, levels, example setup\n\n"
-    "/coins — choose which coins alert you\n"
+    "/coins — choose which coins alert you (Telegram AND email)\n"
     "/status — pick a coin for an immediate update\n"
+    "/email you@example.com — link your email so /coins controls it too\n"
     "/accuracy — how often my alerts have been right\n"
     "/help — this message"
 )
@@ -227,6 +228,8 @@ class TelegramBot:
         elif lower.startswith("/accuracy"):
             self.send(chat_id, self.stats_fn() if self.stats_fn
                       else "Accuracy tracking unavailable.")
+        elif lower.startswith("/email"):
+            self._on_email_command(state, chat_id, text)
         elif lower.startswith("/start") or lower.startswith("/help"):
             self.send(chat_id, HELP_TEXT, self._coin_keyboard(subs))
         else:
@@ -242,6 +245,40 @@ class TelegramBot:
                           f"I watch: {coins}. Try \"btc?\" for a quick update or "
                           f"\"predict sol\" for my full read — or pick one below:",
                           self._status_keyboard())
+
+    def _on_email_command(self, state: dict, chat_id, text: str) -> None:
+        """Self-service email link: '/email me@x.com' ties an allowlisted
+        address to this chat so its /coins picks route email alerts too."""
+        from .notify import allowed_addresses  # avoids import cycle at load
+        entry = state.setdefault("chats", {}).setdefault(
+            str(chat_id), {"subs": list(self.symbols)})
+        parts = text.split(maxsplit=1)
+        arg = parts[1].strip().lower() if len(parts) > 1 else ""
+        current = entry.get("email")
+
+        if not arg:
+            status = f"Linked email: {current}" if current else \
+                "No email linked — you currently receive ALL coins by email."
+            self.send(chat_id,
+                      f"{status}\n\nLink one with:  /email you@example.com\n"
+                      "Unlink with:  /email off\n"
+                      "Once linked, your /coins choices control your email "
+                      "alerts too.")
+        elif arg in ("off", "none", "unlink"):
+            entry.pop("email", None)
+            self.send(chat_id, "📧 Email unlinked — that address gets all "
+                               "coins again.")
+        elif arg in {a.lower() for a in allowed_addresses()}:
+            entry["email"] = arg
+            on = ", ".join(entry.get("subs", [])) or "none"
+            self.send(chat_id,
+                      f"📧 Linked {arg} to this chat. Your /coins choices now "
+                      f"control email alerts too.\nCurrently: {on}")
+        else:
+            self.send(chat_id,
+                      f"🔒 {arg} isn't on the alert recipient list. Ask the "
+                      "owner to add it to the ALERT_EMAILS secret first — "
+                      "then /email it here.")
 
     def _on_callback(self, state: dict, cb: dict) -> None:
         chat_id = cb["message"]["chat"]["id"]
@@ -287,7 +324,10 @@ class TelegramBot:
             elif arg == "done":
                 on = ", ".join(subs) if subs else "none"
                 toast = "Saved"
-                self.send(chat_id, f"👍 Saved. Alerting this chat for: {on}")
+                email = state.get("chats", {}).get(str(chat_id), {}).get("email")
+                channels = f"Telegram + {email}" if email else \
+                    "Telegram (link your email with /email to control it too)"
+                self.send(chat_id, f"👍 Saved. Alerting {channels} for: {on}")
         self._api("answerCallbackQuery", callback_query_id=cb["id"], text=toast)
 
 
