@@ -68,7 +68,7 @@ alerts/
   rules.py             Signal dataclass + 5 rule functions + RULES dict + INTRABAR_RULES set
   analysis.py          Multi-TF (5m/1h/4h) Finora-style coin reads for Telegram bot
   notify.py            Apprise fan-out; tier-based HTML email; per-recipient coin filtering
-  telegram_bot.py      Interactive bot: /coins /status /email /accuracy; conversational NLP
+  telegram_bot.py      Interactive bot: /coins /mode /status /email /guide /accuracy; conversational NLP
   siglog.py            Signal outcome log: append, score_pending, stats_text (/accuracy)
   watcher.py           Main entry point: run_once, run_intrabar, candle-aligned --run-for loop
   tuner.py             Nightly walk-forward self-tuner (autoresearch pattern)
@@ -103,10 +103,9 @@ requirements.txt       ccxt>=4.3, pandas>=2.0, apprise>=1.9, PyYAML>=6.0, python
 | `TELEGRAM_BOT_TOKEN` | Bot token for @AstroTaco_Bot |
 | `TELEGRAM_CHAT_IDS` | `1023807933/6381685292/60354093` — slash-separated |
 
-**⚠️ Action required (not done yet):** `TELEGRAM_CHAT_IDS` needs to be updated
-to include the new chat `60354093`. Go to repo → Settings → Secrets and variables
-→ Actions → edit `TELEGRAM_CHAT_IDS` → set to `1023807933/6381685292/60354093`.
-The `telegram.json` already has this chat with default subs; the secret is the
+`TELEGRAM_CHAT_IDS` is currently `1023807933/6381685292/60354093` (chat
+`60354093` was added to the allowlist secret via `gh secret set` on 2026-07-04).
+`telegram.json` already had this chat with default subs; the secret is the
 allowlist gate.
 
 ---
@@ -124,11 +123,15 @@ State file: `telegram.json` — committed by CI after each run
 
 **Bot commands:**
 - `/coins` — toggle which coins alert this chat (controls both Telegram AND email if linked)
+- `/mode` — choose delivery: 📱 Telegram only · 📧 Email only · 🔔 Both (default). Changeable anytime; stored as `mode` in each chat's telegram.json entry (absent = "both")
 - `/status` — pick a coin for an immediate 3-line snapshot
 - `/email you@example.com` — link your email; `/email` alone shows current link; `/email off` unlinks
+- `/guide` — glossary of every alert type (confirmed/weak/intrabar/near) and trading term (long/short, bullish/bearish, EMA/RSI/volume/ATR, support/resistance)
 - `/accuracy` — hit rate of past alerts (from signals_log.json)
 - `/help` — help text
 - Conversational: "btc?", "how's eth doing", "predict sol" → full multi-TF read
+
+The `/coins` keyboard footer now has 🔔 Alert mode and 📖 Guide buttons alongside 📊 Status / 👍 Done.
 
 ---
 
@@ -139,11 +142,16 @@ Two-tier resolution at send time (per address):
 1. **Static filter** in `ALERT_EMAILS` secret wins if present:
    `manoharabhijat@gmail.com:BTC,ETH` → only BTC and ETH emails
 2. **Bot link** — if no static filter and the address is linked via `/email` in
-   the bot, that chat's `/coins` selections filter email too
+   the bot, that chat's `/coins` selections filter email too. **Delivery mode
+   also gates this:** a chat in `mode: telegram` maps its linked address to an
+   **empty coin set**, so it gets no email even while linked; `mode: email` or
+   `both` route email normally.
 3. **No filter** → all coins
 
-The `link_filters()` closure in `watcher.py:300` feeds the live bot state into
-`Notifier` at construction time.
+The `link_filters()` closure in `watcher.py:300` feeds the live bot state
+(subs + mode) into `Notifier` at construction time. Telegram delivery is gated
+separately by `TelegramBot.chats_for()`, which drops chats whose mode is
+`email`.
 
 ---
 
@@ -326,13 +334,33 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-The last action was adding chat ID `60354093` to the Telegram allowlist:
-- `telegram.json` updated (all 6 coins, no email linked yet)
-- Pushed to main (commit rebased over a concurrent CI commit)
-- **Pending:** `TELEGRAM_CHAT_IDS` secret still needs the new ID added manually
-  (gh CLI unavailable in this session). Value should be: `1023807933/6381685292/60354093`
+Three changes (2026-07-04):
 
-Before that, the session implemented self-serve email coin selection:
+1. **Chat `60354093` fully allowlisted.** `TELEGRAM_CHAT_IDS` secret set to
+   `1023807933/6381685292/60354093` via `gh secret set` (gh was available this
+   session at `~/.local/bin/gh`, authed as `capAJ810`). No longer pending.
+
+2. **Delivery-mode selection (`/mode`).** Each chat can choose 📱 Telegram only /
+   📧 Email only / 🔔 Both (default), changeable anytime. Stored as `mode` in the
+   chat's telegram.json entry (absent = "both", fully backward-compatible).
+   - `telegram_bot.py`: `ALERT_MODES`, `_mode_keyboard`, `_chat_mode`,
+     `_channels_desc`; `chats_for` now drops `email`-mode chats; `/mode` command
+     + `md|<mode>` callback + `m|mode` button; picking email/both with no linked
+     address nudges the user to `/email`.
+   - `watcher.py`: `link_filters()` maps a `telegram`-mode chat's address to an
+     empty coin set so email is suppressed for it.
+
+3. **Glossary (`/guide`).** `GUIDE_TEXT` constant + `/guide` command + 📖 Guide
+   button explains every alert type (confirmed/weak/intrabar/near buy/sell) and
+   trading term (long/short, bullish/bearish, EMA/EMA200/RSI/volume/ATR,
+   support/resistance). ~2.2k chars, under Telegram's 4096 limit.
+
+Tests added: `test_email_only_mode_stops_telegram_alerts`,
+`test_mode_callback_sets_mode_and_warns_without_email`,
+`test_guide_command_sends_glossary` (test_telegram_bot.py),
+`test_empty_link_filter_suppresses_email` (test_notify.py). Suite now 52 tests.
+
+Before that, an earlier session implemented self-serve email coin selection:
 - `alerts/notify.py`: `Notifier.email_recipients(pair)` resolves per-address at
   send time using static secret filter > bot link filter > no filter
 - `alerts/telegram_bot.py`: `/email` command links/unlinks email addresses;
@@ -342,7 +370,7 @@ Before that, the session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (48 tests, all passing)
+## Test suite (52 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

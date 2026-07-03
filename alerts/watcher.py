@@ -298,11 +298,23 @@ def main() -> int:
             bot.ensure_default_chats(tg_state)
 
     def link_filters():
-        """Live email -> coin-set map from the bot's /email + /coins state."""
-        return {entry["email"]: {p.split("/")[0].upper()
-                                 for p in entry.get("subs", [])}
-                for entry in tg_state.get("chats", {}).values()
-                if entry.get("email")}
+        """Live email -> coin-set map from the bot's /email + /coins state.
+
+        A chat's delivery mode (see /mode) also gates email: a 'telegram'-
+        only chat maps its address to an empty coin set, so no email is sent
+        to it even though it stays linked. 'both'/'email' route normally.
+        """
+        out = {}
+        for entry in tg_state.get("chats", {}).values():
+            email = entry.get("email")
+            if not email:
+                continue
+            if entry.get("mode", "both") == "telegram":
+                out[email] = set()  # linked but email delivery turned off
+            else:
+                out[email] = {p.split("/")[0].upper()
+                              for p in entry.get("subs", [])}
+        return out
 
     notifier = Notifier(config.get("notify", []), link_filters)
 

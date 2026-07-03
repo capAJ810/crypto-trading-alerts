@@ -38,6 +38,18 @@ def test_static_secret_filter_beats_bot_link(monkeypatch):
     assert n.email_recipients("BTC/USDT") == ["a@x.com"]
 
 
+def test_empty_link_filter_suppresses_email(monkeypatch):
+    # A 'telegram only' chat maps its linked address to an empty coin set
+    # (see watcher.link_filters); that address then receives no coin's email.
+    monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
+    monkeypatch.setenv("ALERT_EMAILS", "a@x.com;b@y.com")
+    n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
+                  "?to=${ALERT_EMAILS}"], lambda: {"a@x.com": set()})
+    assert n.email_recipients("BTC/USDT") == ["b@y.com"]  # a@x suppressed
+    assert n.email_recipients("ETH/USDT") == ["b@y.com"]
+
+
 def test_tier_mapping():
     assert tier_for_side("BUY") == "confirmed-buy"
     assert tier_for_side("SELL") == "confirmed-sell"
