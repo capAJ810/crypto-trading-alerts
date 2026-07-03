@@ -6,7 +6,7 @@
 # Add a recipient: edit the ALERT_EMAILS / TELEGRAM_CHAT_IDS secrets — no
 #                  code change needed.
 
-timeframe: 1h        # candle size the rules evaluate on (15m, 1h, 4h, 1d, ...)
+timeframe: 5m        # candle size the rules evaluate on (5m, 15m, 1h, 4h, 1d, ...)
 exchange: binance    # default data source (public endpoints, no API key)
 candles: 150         # history fetched per check (enough for EMA21 + RSI14 to settle)
 
@@ -33,9 +33,16 @@ rules:
   #   params: {level: 100000}
 
 notify:
-  # ${VARS} come from GitHub Actions secrets (CI) or .env (local).
-  # ALERT_EMAILS is comma-separated; TELEGRAM_CHAT_IDS is slash-separated.
-  # Any Apprise URL works here — Discord, Slack, SMS, push, 100+ services:
+  # Broadcast channels — every alert goes to all of these.
+  # ${VARS} come from GitHub Actions secrets (CI) or .env (local);
+  # ALERT_EMAILS is comma-separated. Any Apprise URL works here —
+  # Discord, Slack, SMS, push, 100+ services:
   # https://github.com/caronc/apprise/wiki
   - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
-  - "tgram://${TELEGRAM_BOT_TOKEN}/${TELEGRAM_CHAT_IDS}"
+
+# Interactive Telegram bot (alerts/telegram_bot.py): inline buttons let each
+# allowlisted chat (TELEGRAM_CHAT_IDS secret, slash-separated) pick which
+# coins alert it; /status gives live snapshots. Alerts route per-chat by
+# those subscriptions instead of broadcasting.
+telegram:
+  enabled: true

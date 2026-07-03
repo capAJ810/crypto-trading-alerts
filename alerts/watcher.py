@@ -5,12 +5,17 @@ evaluates the configured rules on the latest CLOSED candle, and sends
 email/Telegram alerts via Apprise. Deduplicates across runs with
 state.json so the same candle never alerts twice.
 
+Also processes the interactive Telegram bot's pending button presses and
+commands each cycle (see alerts/telegram_bot.py); Telegram alerts are
+routed per-chat based on each chat's coin subscriptions.
+
 Usage:
     python -m alerts.watcher                 # one check cycle
+    python -m alerts.watcher --repeat 3 --sleep 80   # 3 cycles, 80s apart
     python -m alerts.watcher --test-notify   # send a test alert to all channels
     python -m alerts.watcher --dry-run       # evaluate but don't send
     python -m alerts.watcher --force         # ignore state (re-alert)
-    python -m alerts.watcher --loop 900      # run forever, check every 900s
+    python -m alerts.watcher --loop 180      # run forever, check every 180s
 """
 
 import argparse
@@ -32,6 +37,8 @@ try:
 except ImportError:
     pass
 
+from . import telegram_bot
+from .indicators import ema, rsi
 from .notify import Notifier
 from .rules import RULES
 
@@ -40,6 +47,7 @@ log = logging.getLogger("alerts")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config.yaml")
 DEFAULT_STATE = os.path.join(ROOT, "state.json")
+DEFAULT_TG_STATE = os.path.join(ROOT, "telegram.json")
 
 # Binance's main API geo-blocks US IPs (where GitHub Actions runs);
 # data-api.binance.vision serves the same public market data without the block.
@@ -106,7 +114,36 @@ def normalize_symbols(config: dict):
             yield entry["pair"], entry.get("exchange", default_ex)
 
 
+def make_snapshot_fn(config):
+    """Live price/EMA/RSI snapshot for the Telegram /status buttons."""
+    timeframe = config.get("timeframe", "1h")
+    limit = int(config.get("candles", 150))
+    pair_exchange = dict(normalize_symbols(config))
+
+    def snapshot(pair: str) -> str:
+        try:
+            ex_name = pair_exchange.get(pair, config.get("exchange", "binance"))
+            df = fetch_closed_candles(get_exchange(ex_name), pair, timeframe, limit)
+            close = df["close"]
+            f9, s21 = ema(close, 9), ema(close, 21)
+            r = rsi(close, 14)
+            trend = "EMA9 above EMA21 (bullish)" if f9.iloc[-1] > s21.iloc[-1] \
+                else "EMA9 below EMA21 (bearish)"
+            ts = datetime.fromtimestamp(int(df["timestamp"].iloc[-1]) / 1000,
+                                        tz=timezone.utc).strftime("%H:%M UTC")
+            return (f"📊 {pair} ({ex_name}, {timeframe})\n"
+                    f"Price: {float(close.iloc[-1]):g}\n"
+                    f"EMA9: {float(f9.iloc[-1]):g} | EMA21: {float(s21.iloc[-1]):g}\n"
+                    f"RSI(14): {float(r.iloc[-1]):.1f}\n"
+                    f"{trend}\nLast closed candle: {ts}")
+        except Exception as e:
+            return f"⚠️ Could not fetch {pair}: {e}"
+
+    return snapshot
+
+
 def run_once(config: dict, notifier: Notifier, state_path: str,
+             bot=None, tg_state=None,
              force: bool = False, dry_run: bool = False) -> int:
     timeframe = config.get("timeframe", "1h")
     limit = int(config.get("candles", 150))
@@ -157,7 +194,12 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             log.info("SIGNAL %s", title)
             if dry_run:
                 continue
-            if notifier.send(title, body):
+            delivered = notifier.send(title, body)
+            if bot is not None and tg_state is not None:
+                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
+                log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
+                delivered = delivered or tg_sent > 0
+            if delivered:
                 alerts_sent += 1
                 state[key] = {"last_candle": candle_ts, "side": signal.side,
                               "at": candle_iso}
@@ -171,39 +213,76 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Crypto trading alerts watcher")
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--state", default=DEFAULT_STATE)
+    parser.add_argument("--tg-state", default=DEFAULT_TG_STATE)
     parser.add_argument("--test-notify", action="store_true",
                         help="send a test alert to all channels and exit")
     parser.add_argument("--dry-run", action="store_true",
                         help="evaluate rules but send nothing, don't touch state")
     parser.add_argument("--force", action="store_true",
                         help="alert even if this candle was already alerted")
+    parser.add_argument("--repeat", type=int, default=1, metavar="N",
+                        help="check cycles per invocation (for near-continuous "
+                             "coverage inside a scheduled CI run)")
+    parser.add_argument("--sleep", type=int, default=80, metavar="SECONDS",
+                        help="pause between --repeat cycles")
     parser.add_argument("--loop", type=int, metavar="SECONDS", default=0,
-                        help="run continuously, checking every SECONDS")
+                        help="run forever, checking every SECONDS")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s %(levelname)s %(message)s")
+    # Apprise logs recipient addresses at INFO ("Sent Email to <addr>").
+    # Workflow logs are public on a public repo, so keep it to warnings.
+    logging.getLogger("apprise").setLevel(logging.WARNING)
 
     with open(args.config) as f:
         config = yaml.safe_load(f)
 
     notifier = Notifier(config.get("notify", []))
+    symbols = [pair for pair, _ in normalize_symbols(config)]
+    bot = None
+    tg_state = {}
+    if config.get("telegram", {}).get("enabled", True):
+        bot = telegram_bot.load_bot(symbols, make_snapshot_fn(config))
+        if bot is not None:
+            tg_state = telegram_bot.load_state(args.tg_state)
+            bot.ensure_default_chats(tg_state)
+
+    def save_tg():
+        if bot is not None:
+            telegram_bot.save_state(args.tg_state, tg_state)
 
     if args.test_notify:
-        ok = notifier.send(
-            "✅ Crypto alerts — test notification",
-            "If you can read this, the alert pipeline works.\n"
-            f"Active channels: {notifier.active}\n"
-            f"Sent: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+        title = "✅ Crypto alerts — test notification"
+        body = ("If you can read this, the alert pipeline works.\n"
+                f"Sent: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+        ok = notifier.send(title, body)
+        if bot is not None:
+            sent = sum(bot.send(c, f"{title}\n\n{body}") for c in bot.allowed)
+            log.info("Telegram test: sent to %d chat(s)", sent)
+            ok = ok or sent > 0
+            save_tg()
         return 0 if ok else 1
+
+    def cycle():
+        if bot is not None:
+            bot.process_updates(tg_state)
+        run_once(config, notifier, args.state, bot=bot, tg_state=tg_state,
+                 force=args.force, dry_run=args.dry_run)
+        if not args.dry_run:
+            save_tg()
 
     if args.loop > 0:
         while True:
-            run_once(config, notifier, args.state, force=args.force, dry_run=args.dry_run)
+            cycle()
             log.info("Sleeping %ds ...", args.loop)
             time.sleep(args.loop)
 
-    run_once(config, notifier, args.state, force=args.force, dry_run=args.dry_run)
+    for i in range(max(1, args.repeat)):
+        if i > 0:
+            log.info("Cycle %d/%d in %ds ...", i + 1, args.repeat, args.sleep)
+            time.sleep(args.sleep)
+        cycle()
     return 0
 
 

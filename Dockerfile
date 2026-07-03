@@ -7,5 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY alerts/ alerts/
 COPY config.yaml .
 
-# Check every 15 minutes; state persists via the volume in docker-compose.yml
-CMD ["python", "-m", "alerts.watcher", "--state", "/data/state.json", "--loop", "900"]
+# Check every 3 minutes; state persists via the volume in docker-compose.yml
+CMD ["python", "-m", "alerts.watcher", "--state", "/data/state.json", \
+     "--tg-state", "/data/telegram.json", "--loop", "180"]
