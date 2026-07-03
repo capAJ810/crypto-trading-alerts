@@ -1,0 +1,41 @@
+# ── Crypto alerts configuration ──────────────────────────────────────
+# Add a coin:      one line under `symbols` (use {pair: X/USDT, exchange: kucoin}
+#                  if it isn't on Binance).
+# Add a metric:    new entry under `rules` (see alerts/rules.py for how to
+#                  write new rule types).
+# Add a recipient: edit the ALERT_EMAILS / TELEGRAM_CHAT_IDS secrets — no
+#                  code change needed.
+
+timeframe: 1h        # candle size the rules evaluate on (15m, 1h, 4h, 1d, ...)
+exchange: binance    # default data source (public endpoints, no API key)
+candles: 150         # history fetched per check (enough for EMA21 + RSI14 to settle)
+
+symbols:
+  - BTC/USDT
+  - ETH/USDT
+  - SOL/USDT
+  - BNB/USDT
+  - ASTER/USDT
+  - {pair: HYPE/USDT, exchange: kucoin}   # not listed on Binance spot
+
+rules:
+  # The goal signal: EMA 9 crosses EMA 21, confirmed by RSI > 50 (bullish)
+  # or RSI < 50 (bearish). alert_weak also reports unconfirmed crosses
+  # (possible fakeouts) as ⚠️ WEAK signals.
+  - name: ema_cross_rsi
+    params: {fast: 9, slow: 21, rsi_len: 14, rsi_threshold: 50, alert_weak: true}
+
+  # More ready-made rule types (uncomment to enable):
+  # - name: rsi_extreme
+  #   params: {rsi_len: 14, overbought: 70, oversold: 30}
+  # - name: price_cross_level
+  #   symbols: [BTC/USDT]          # optional: restrict a rule to some pairs
+  #   params: {level: 100000}
+
+notify:
+  # ${VARS} come from GitHub Actions secrets (CI) or .env (local).
+  # ALERT_EMAILS is comma-separated; TELEGRAM_CHAT_IDS is slash-separated.
+  # Any Apprise URL works here — Discord, Slack, SMS, push, 100+ services:
+  # https://github.com/caronc/apprise/wiki
+  - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
+  - "tgram://${TELEGRAM_BOT_TOKEN}/${TELEGRAM_CHAT_IDS}"

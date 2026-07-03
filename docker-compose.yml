@@ -1,0 +1,13 @@
+# Optional always-on local mode (alternative to GitHub Actions):
+#   cp .env.example .env   # fill in credentials
+#   docker compose up -d
+services:
+  alerts:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - alert-state:/data
+
+volumes:
+  alert-state:

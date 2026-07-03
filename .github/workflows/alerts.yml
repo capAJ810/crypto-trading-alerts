@@ -1,0 +1,60 @@
+name: crypto-alerts
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 min ≈ 1,440 Actions minutes/month (private-repo free tier is 2,000)
+  workflow_dispatch:
+    inputs:
+      test_notify:
+        description: "Send a test notification instead of checking signals"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # to commit state.json back
+
+concurrency:
+  group: crypto-alerts
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Run watcher
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ALERT_EMAILS: ${{ secrets.ALERT_EMAILS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: |
+          if [ "${{ inputs.test_notify }}" = "true" ]; then
+            python -m alerts.watcher --test-notify
+          else
+            python -m alerts.watcher
+          fi
+
+      - name: Persist alert state
+        # Committing state.json prevents duplicate alerts across runs and
+        # keeps the repo active (GitHub disables cron workflows after 60
+        # days without commits).
+        run: |
+          git config user.name "alerts-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || {
+            git commit -m "chore: update alert state [skip ci]"
+            git pull --rebase origin ${GITHUB_REF_NAME}
+            git push
+          }

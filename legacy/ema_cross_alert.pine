@@ -1,0 +1,23 @@
+//@version=5
+indicator("EMA 9/21 Cross Alert", overlay=true)
+
+ema9  = ta.ema(close, 9)
+ema21 = ta.ema(close, 21)
+
+bullish_cross = ta.crossover(ema9, ema21)   // EMA 9 crosses ABOVE EMA 21
+bearish_cross = ta.crossunder(ema9, ema21)  // EMA 9 crosses BELOW EMA 21
+
+plot(ema9,  title="EMA 9",  color=color.new(color.green, 0), linewidth=2)
+plot(ema21, title="EMA 21", color=color.new(color.red, 0),   linewidth=2)
+
+plotshape(bullish_cross, title="Bullish Cross", location=location.belowbar,
+     color=color.green, style=shape.triangleup, size=size.small)
+plotshape(bearish_cross, title="Bearish Cross", location=location.abovebar,
+     color=color.red,   style=shape.triangledown, size=size.small)
+
+// Alert conditions — reference these when creating alerts in TradingView
+alertcondition(bullish_cross, title="EMA 9 crossed ABOVE EMA 21",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","message":"BULLISH: EMA 9 crossed ABOVE EMA 21"}')
+
+alertcondition(bearish_cross, title="EMA 9 crossed BELOW EMA 21",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","message":"BEARISH: EMA 9 crossed BELOW EMA 21"}')

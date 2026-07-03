@@ -1,0 +1,52 @@
+//@version=5
+indicator("EMA 9/21 Cross + RSI Confirmation", overlay=true)
+
+// --- Inputs ---
+rsi_length    = input.int(14, title="RSI Length")
+rsi_threshold = input.int(50, title="RSI Threshold", minval=40, maxval=60)
+
+// --- Calculations ---
+ema9  = ta.ema(close, 9)
+ema21 = ta.ema(close, 21)
+rsi   = ta.rsi(close, rsi_length)
+
+// Raw crosses
+bullish_cross = ta.crossover(ema9, ema21)
+bearish_cross = ta.crossunder(ema9, ema21)
+
+// Confirmed crosses (with RSI filter)
+confirmed_bull = bullish_cross and rsi > rsi_threshold
+confirmed_bear = bearish_cross and rsi < rsi_threshold
+
+// Unconfirmed (fakeout warning)
+fakeout_bull = bullish_cross and rsi <= rsi_threshold
+fakeout_bear = bearish_cross and rsi >= rsi_threshold
+
+// --- Plots ---
+plot(ema9,  title="EMA 9",  color=color.new(color.green, 0), linewidth=2)
+plot(ema21, title="EMA 21", color=color.new(color.red, 0),   linewidth=2)
+
+// Confirmed signals
+plotshape(confirmed_bull, title="Confirmed Bullish Cross", location=location.belowbar,
+     color=color.green, style=shape.triangleup, size=size.normal)
+plotshape(confirmed_bear, title="Confirmed Bearish Cross", location=location.abovebar,
+     color=color.red, style=shape.triangledown, size=size.normal)
+
+// Fakeout signals (dimmed)
+plotshape(fakeout_bull, title="Fakeout Bull (weak)", location=location.belowbar,
+     color=color.new(color.green, 70), style=shape.triangleup, size=size.tiny)
+plotshape(fakeout_bear, title="Fakeout Bear (weak)", location=location.abovebar,
+     color=color.new(color.red, 70), style=shape.triangledown, size=size.tiny)
+
+// --- Alert Conditions ---
+alertcondition(confirmed_bull, title="✅ Confirmed BUY — EMA cross + RSI > 50",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","rsi":"{{plot_0}}","message":"BUY SIGNAL: EMA 9 crossed ABOVE EMA 21 with RSI confirmation"}')
+
+alertcondition(confirmed_bear, title="✅ Confirmed SELL — EMA cross + RSI < 50",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","rsi":"{{plot_0}}","message":"SELL SIGNAL: EMA 9 crossed BELOW EMA 21 with RSI confirmation"}')
+
+alertcondition(fakeout_bull, title="⚠️ Weak BUY — EMA cross but RSI not confirmed",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","message":"WEAK SIGNAL: EMA 9 crossed ABOVE EMA 21 but RSI below 50 — possible fakeout"}')
+
+alertcondition(fakeout_bear, title="⚠️ Weak SELL — EMA cross but RSI not confirmed",
+     message='{"ticker":"{{ticker}}","exchange":"{{exchange}}","interval":"{{interval}}","close":"{{close}}","message":"WEAK SIGNAL: EMA 9 crossed BELOW EMA 21 but RSI above 50 — possible fakeout"}')
