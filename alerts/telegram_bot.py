@@ -104,15 +104,19 @@ class TelegramBot:
 
     # ── raw API ──────────────────────────────────────────────────────
     def _api(self, method: str, **params) -> dict:
-        try:
-            resp = requests.post(f"{self.base}/{method}", json=params, timeout=20)
-            data = resp.json()
-            if not data.get("ok"):
-                log.warning("Telegram %s failed: %s", method, data.get("description"))
-            return data
-        except Exception as e:
-            log.error("Telegram %s error: %s", method, e)
-            return {"ok": False}
+        last_err = None
+        for attempt in (1, 2):  # one retry on transient network errors
+            try:
+                resp = requests.post(f"{self.base}/{method}", json=params, timeout=20)
+                data = resp.json()
+                if not data.get("ok"):
+                    log.warning("Telegram %s failed: %s", method,
+                                data.get("description"))
+                return data
+            except Exception as e:
+                last_err = e
+        log.error("Telegram %s error after retry: %s", method, last_err)
+        return {"ok": False}
 
     def send(self, chat_id, text: str, keyboard: Optional[list] = None) -> bool:
         params = {"chat_id": chat_id, "text": text}

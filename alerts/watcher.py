@@ -115,9 +115,16 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
                 log.info("%-28s %s: no signal (candle %s)", key, timeframe, candle_iso)
                 continue
 
-            already = state.get(key, {}).get("last_candle") == candle_ts
+            prev = state.get(key, {})
+            already = prev.get("last_candle") == candle_ts
+            # once_per_side: for "approaching" style rules that stay true on
+            # many consecutive candles — alert once per episode, re-arm when
+            # the signal side changes (or disappears).
+            if rule_cfg.get("once_per_side") and prev.get("side") == signal.side:
+                already = True
             if already and not force:
-                log.info("%-28s already alerted for candle %s — skipping", key, candle_iso)
+                log.info("%-28s already alerted (%s, candle %s) — skipping",
+                         key, signal.side, candle_iso)
                 continue
 
             title = f"{signal.emoji} {signal.side} {pair} {timeframe} — {signal.headline}"

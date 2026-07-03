@@ -32,54 +32,112 @@ def _crossed_under(fast: pd.Series, slow: pd.Series) -> bool:
 
 
 def ema_cross_rsi(df: pd.DataFrame, params: dict) -> Optional[Signal]:
-    """EMA fast/slow cross confirmed by RSI above/below a threshold.
+    """EMA fast/slow cross with confirmation filters (evaluated on the
+    latest CLOSED candle only — the forming candle is never included).
 
-    The goal signal: EMA 9 crosses EMA 21, confirmed by RSI > 50 (bullish)
-    or RSI < 50 (bearish). Unconfirmed crosses are reported as WEAK
-    (possible fakeout) when alert_weak is true.
+    BUY:  EMA9 crosses above EMA21 · RSI > rsi_buy (55)
+          · volume > volume_avg-period average (20) · close > EMA trend_ema (200)
+    SELL: EMA9 crosses below EMA21 · RSI < rsi_sell (45)
+          · volume > average · close < EMA 200
+
+    The volume and trend filters only apply when their params are set.
+    A cross that fails some filters is reported as ⚠️ WEAK (listing the
+    failed checks) when alert_weak is true.
     """
     fast_len = int(params.get("fast", 9))
     slow_len = int(params.get("slow", 21))
     rsi_len = int(params.get("rsi_len", 14))
-    threshold = float(params.get("rsi_threshold", 50))
+    # rsi_threshold kept for backward compatibility with older configs
+    legacy = float(params.get("rsi_threshold", 50))
+    rsi_buy = float(params.get("rsi_buy", legacy))
+    rsi_sell = float(params.get("rsi_sell", legacy))
+    vol_len = params.get("volume_avg")     # e.g. 20; unset disables the filter
+    trend_len = params.get("trend_ema")    # e.g. 200; unset disables the filter
     alert_weak = bool(params.get("alert_weak", True))
 
     close = df["close"]
     fast = ema(close, fast_len)
     slow = ema(close, slow_len)
-    r = rsi(close, rsi_len)
-
-    rsi_now = float(r.iloc[-1])
-    price = float(close.iloc[-1])
-    ctx = (
-        f"Price: {price:g}\n"
-        f"EMA{fast_len}: {float(fast.iloc[-1]):g} | EMA{slow_len}: {float(slow.iloc[-1]):g}\n"
-        f"RSI({rsi_len}): {rsi_now:.1f}"
-    )
 
     if _crossed_over(fast, slow):
-        if rsi_now > threshold:
-            return Signal("BUY", "🟢",
-                          f"EMA{fast_len}↑EMA{slow_len}, RSI {rsi_now:.0f}",
-                          f"BUY SIGNAL: EMA {fast_len} crossed ABOVE EMA {slow_len} "
-                          f"with RSI confirmation (> {threshold:g}).\n{ctx}")
-        if alert_weak:
-            return Signal("WEAK BUY", "⚠️",
-                          f"EMA{fast_len}↑EMA{slow_len} but RSI {rsi_now:.0f}",
-                          f"WEAK SIGNAL: EMA {fast_len} crossed ABOVE EMA {slow_len} but RSI "
-                          f"is below {threshold:g} — possible fakeout.\n{ctx}")
+        side, arrow, word = "BUY", "↑", "ABOVE"
     elif _crossed_under(fast, slow):
-        if rsi_now < threshold:
-            return Signal("SELL", "🔴",
-                          f"EMA{fast_len}↓EMA{slow_len}, RSI {rsi_now:.0f}",
-                          f"SELL SIGNAL: EMA {fast_len} crossed BELOW EMA {slow_len} "
-                          f"with RSI confirmation (< {threshold:g}).\n{ctx}")
-        if alert_weak:
-            return Signal("WEAK SELL", "⚠️",
-                          f"EMA{fast_len}↓EMA{slow_len} but RSI {rsi_now:.0f}",
-                          f"WEAK SIGNAL: EMA {fast_len} crossed BELOW EMA {slow_len} but RSI "
-                          f"is above {threshold:g} — possible fakeout.\n{ctx}")
+        side, arrow, word = "SELL", "↓", "BELOW"
+    else:
+        return None
+
+    rsi_now = float(rsi(close, rsi_len).iloc[-1])
+    price = float(close.iloc[-1])
+
+    checks = []  # (passed, description)
+    if side == "BUY":
+        checks.append((rsi_now > rsi_buy, f"RSI {rsi_now:.1f} > {rsi_buy:g}"))
+    else:
+        checks.append((rsi_now < rsi_sell, f"RSI {rsi_now:.1f} < {rsi_sell:g}"))
+    if vol_len:
+        vol_now = float(df["volume"].iloc[-1])
+        vol_avg = float(df["volume"].rolling(int(vol_len)).mean().iloc[-1])
+        checks.append((vol_now > vol_avg,
+                       f"volume {vol_now:g} > {int(vol_len)}-period avg {vol_avg:g}"))
+    if trend_len:
+        trend = float(ema(close, int(trend_len)).iloc[-1])
+        rel = ">" if side == "BUY" else "<"
+        ok = price > trend if side == "BUY" else price < trend
+        checks.append((ok, f"close {price:g} {rel} EMA{int(trend_len)} {trend:g}"))
+
+    ctx = (f"Price: {price:g}\n"
+           f"EMA{fast_len}: {float(fast.iloc[-1]):g} | "
+           f"EMA{slow_len}: {float(slow.iloc[-1]):g}\n"
+           + "\n".join(("✅ " if ok else "❌ ") + desc for ok, desc in checks))
+
+    if all(ok for ok, _ in checks):
+        emoji = "🟢" if side == "BUY" else "🔴"
+        return Signal(side, emoji,
+                      f"EMA{fast_len}{arrow}EMA{slow_len}, all filters passed",
+                      f"{side} SIGNAL: EMA {fast_len} crossed {word} EMA {slow_len} "
+                      f"on a closed candle with all confirmations.\n{ctx}")
+    if alert_weak:
+        failed = ", ".join(desc for ok, desc in checks if not ok)
+        return Signal(f"WEAK {side}", "⚠️",
+                      f"EMA{fast_len}{arrow}EMA{slow_len} unconfirmed",
+                      f"WEAK SIGNAL: EMA {fast_len} crossed {word} EMA {slow_len} "
+                      f"but failed: {failed} — possible fakeout.\n{ctx}")
     return None
+
+
+def ema_cross_soon(df: pd.DataFrame, params: dict) -> Optional[Signal]:
+    """Early heads-up while EMA fast/slow are CONVERGING toward a cross.
+
+    Fires when the gap between the EMAs is under gap_pct of price and has
+    been shrinking, before the actual cross — the 'get ready' alert.
+    Pair with once_per_side in config so one approach episode alerts once.
+    """
+    fast_len = int(params.get("fast", 9))
+    slow_len = int(params.get("slow", 21))
+    gap_pct = float(params.get("gap_pct", 0.1)) / 100.0
+
+    close = df["close"]
+    gap = (ema(close, fast_len) - ema(close, slow_len)) / close
+    g_now, g_prev = float(gap.iloc[-1]), float(gap.iloc[-3])
+
+    converging = abs(g_now) < abs(g_prev)
+    if not (abs(g_now) < gap_pct and converging and g_now * g_prev > 0):
+        return None
+
+    price = float(close.iloc[-1])
+    if g_now < 0:  # fast below slow, closing in -> potential bullish cross
+        return Signal("NEAR-BUY", "🟡",
+                      f"bullish EMA{fast_len}/{slow_len} cross forming",
+                      f"HEADS-UP: EMA {fast_len} is closing in on EMA {slow_len} "
+                      f"from below (gap {abs(g_now) * 100:.3f}% of price and "
+                      f"shrinking). A bullish cross may be next — watch for the "
+                      f"confirmed BUY alert.\nPrice: {price:g}")
+    return Signal("NEAR-SELL", "🟡",
+                  f"bearish EMA{fast_len}/{slow_len} cross forming",
+                  f"HEADS-UP: EMA {fast_len} is closing in on EMA {slow_len} "
+                  f"from above (gap {g_now * 100:.3f}% of price and shrinking). "
+                  f"A bearish cross may be next — watch for the confirmed SELL "
+                  f"alert.\nPrice: {price:g}")
 
 
 def rsi_extreme(df: pd.DataFrame, params: dict) -> Optional[Signal]:
@@ -120,6 +178,7 @@ def price_cross_level(df: pd.DataFrame, params: dict) -> Optional[Signal]:
 
 RULES: Dict[str, Callable[[pd.DataFrame, dict], Optional[Signal]]] = {
     "ema_cross_rsi": ema_cross_rsi,
+    "ema_cross_soon": ema_cross_soon,
     "rsi_extreme": rsi_extreme,
     "price_cross_level": price_cross_level,
 }

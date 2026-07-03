@@ -146,8 +146,9 @@ def _level_span(near: float, far: float) -> str:
     return f"{fmt(near)} / {fmt(far)}" if _distinct(near, far) else fmt(near)
 
 
-DISCLAIMER = ("🤖 Rule-based read (EMA 9/21 · RSI 14 · ATR · recent swing levels), "
-              "not financial advice — crypto moves fast, size accordingly.")
+DISCLAIMER = ("🤖 Rule-based read (EMA 9/21 · 14-period RSI vs 55/45 gates · ATR "
+              "· recent swing levels), not financial advice — crypto moves fast, "
+              "size accordingly.")
 
 
 def compose_prediction(pair: str, ex_name: str, frames: Dict[str, dict],
@@ -175,7 +176,7 @@ def compose_status(pair: str, ex_name: str, frames: Dict[str, dict]) -> str:
         f"📊 {pair} ({ex_name})\n"
         f"Price: {fmt(f5['price'])}\n"
         f"{_trend_line(frames)}\n"
-        f"Tap 🔮 Prediction for levels and my full read."
+        f"Tap 🔮 Full read for levels and my expectation."
     )
 
 

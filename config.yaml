@@ -8,7 +8,7 @@
 
 timeframe: 5m        # candle size the rules evaluate on (5m, 15m, 1h, 4h, 1d, ...)
 exchange: binance    # default data source (public endpoints, no API key)
-candles: 150         # history fetched per check (enough for EMA21 + RSI14 to settle)
+candles: 400         # history per check (EMA200 needs ~2x its length to settle)
 
 symbols:
   - BTC/USDT
@@ -19,11 +19,22 @@ symbols:
   - {pair: HYPE/USDT, exchange: kucoin}   # not listed on Binance spot
 
 rules:
-  # The goal signal: EMA 9 crosses EMA 21, confirmed by RSI > 50 (bullish)
-  # or RSI < 50 (bearish). alert_weak also reports unconfirmed crosses
-  # (possible fakeouts) as ⚠️ WEAK signals.
+  # The core signal, evaluated on CLOSED candles only.
+  # BUY:  EMA9 crosses above EMA21 · RSI > 55 · volume > 20-period avg ·
+  #       close > EMA200.
+  # SELL: EMA9 crosses below EMA21 · RSI < 45 · volume > 20-period avg ·
+  #       close < EMA200.
+  # alert_weak also reports crosses that fail some filters as ⚠️ WEAK
+  # (listing exactly which checks failed).
   - name: ema_cross_rsi
-    params: {fast: 9, slow: 21, rsi_len: 14, rsi_threshold: 50, alert_weak: true}
+    params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
+             volume_avg: 20, trend_ema: 200, alert_weak: true}
+
+  # Early heads-up while EMA9 converges toward EMA21 (before the cross):
+  # 🟡 NEAR-BUY / NEAR-SELL. once_per_side = one alert per approach episode.
+  - name: ema_cross_soon
+    once_per_side: true
+    params: {fast: 9, slow: 21, gap_pct: 0.1}
 
   # More ready-made rule types (uncomment to enable):
   # - name: rsi_extreme

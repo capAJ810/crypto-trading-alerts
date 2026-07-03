@@ -2,9 +2,10 @@ name: crypto-alerts
 
 on:
   schedule:
-    # Every 5 min (GitHub's minimum cron interval). Each run then checks
-    # 3 times, ~80s apart, for near-continuous coverage on 5m candles.
-    # This volume needs a PUBLIC repo (unlimited free Actions minutes).
+    # Backup only: restarts the run chain if it ever dies. GitHub's cron
+    # proved unreliable for minutes-level schedules (hours of silence), so
+    # the primary cadence comes from each run dispatching the next one
+    # (see the "Chain next run" step).
     - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
@@ -15,6 +16,7 @@ on:
 
 permissions:
   contents: write   # to commit state.json back
+  actions: write    # to self-dispatch the next run
 
 concurrency:
   group: crypto-alerts
@@ -61,3 +63,14 @@ jobs:
             git pull --rebase origin ${GITHUB_REF_NAME}
             git push
           }
+
+      - name: Chain next run
+        # workflow_dispatch via GITHUB_TOKEN is a documented exception to
+        # GitHub's recursion guard, so each run can start the next one.
+        # The concurrency group above queues it until this job finishes;
+        # duplicates from the backup cron collapse into that same queue.
+        # always() keeps the chain alive across transient fetch failures.
+        if: ${{ always() && inputs.test_notify != true }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run alerts.yml --ref "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY"

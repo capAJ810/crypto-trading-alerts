@@ -7,10 +7,18 @@ job wakes up and checks signals 3 times (~80s apart) against exchange
 No TradingView, no ngrok, no paid services, and it runs in the cloud even
 when your computer is off.
 
-**The core signal:** EMA 9 crosses EMA 21, confirmed by RSI > 50 (bullish)
-or RSI < 50 (bearish). Unconfirmed crosses are flagged as ⚠️ possible
-fakeouts. Watching: BTC, ETH, SOL, BNB, ASTER (Binance) and HYPE (KuCoin),
-5-minute candles — alerts typically land within ~1–3 minutes of a cross.
+**The core signals** (evaluated on closed 5m candles only):
+
+- 🟢 **BUY** — EMA 9 crosses above EMA 21 · RSI > 55 · volume > 20-period
+  average · close > EMA 200
+- 🔴 **SELL** — EMA 9 crosses below EMA 21 · RSI < 45 · volume > 20-period
+  average · close < EMA 200
+- ⚠️ **WEAK** — a cross that fails some filters (each failed check listed)
+- 🟡 **NEAR-BUY / NEAR-SELL** — early heads-up while EMA 9 converges toward
+  EMA 21, *before* the cross (once per approach episode)
+
+Watching: BTC, ETH, SOL, BNB, ASTER (Binance) and HYPE (KuCoin) — alerts
+typically land within ~1–3 minutes of a candle close.
 
 ```
 GitHub Actions cron (*/5, 3 check cycles per run)
@@ -110,9 +118,11 @@ them to the secret — slash-separated).
   recipient emails never appear in the public logs. The numeric Telegram
   chat IDs in `telegram.json` are visible but are not credentials — nothing
   can be sent or read without the bot token, which stays secret.
-- **Timing:** GitHub's minimum cron interval is 5 minutes (`*/3` isn't
-  possible) and can drift a few minutes under load; the 3-cycles-per-run
-  loop compensates, giving ~80–100s effective checking granularity.
+- **Timing:** GitHub's cron proved unreliable for minutes-level schedules
+  (hours without firing), so each run dispatches the next one at the end
+  ("Chain next run" step — `workflow_dispatch` via `GITHUB_TOKEN` is a
+  documented exception to GitHub's recursion guard). The `*/5` cron remains
+  only as a dead-chain restarter. Effective checking granularity: ~80–100s.
 - `legacy/` holds the earlier TradingView-webhook attempt (abandoned:
   webhooks need a paid TradingView plan). The Pine scripts there still work
   for eyeballing the same signals on TradingView charts manually.
