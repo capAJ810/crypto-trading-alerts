@@ -132,6 +132,14 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             signal = rule_fn(df, params)
             key = f"{ex_name}|{pair}|{rule_name}"
             if signal is None:
+                # once_per_side re-arm: the condition no longer holds, so the
+                # approach episode is over — the next distinct approach (even
+                # same-side) deserves a fresh heads-up. Matches the episode
+                # definition the tuner backtests.
+                if rule_cfg.get("once_per_side") and \
+                        state.get(key, {}).get("side") and \
+                        state[key].get("last_candle") != candle_ts:
+                    state[key].pop("side", None)
                 log.info("%-28s %s: no signal (candle %s)", key, timeframe, candle_iso)
                 continue
 
