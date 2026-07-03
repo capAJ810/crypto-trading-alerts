@@ -55,6 +55,12 @@ def get_exchange(name: str) -> ccxt.Exchange:
             api = ex.urls.get("api")
             if isinstance(api, dict):
                 api["public"] = BINANCE_PUBLIC_DATA
+            # Restrict market loading to spot only. ccxt's binance defaults
+            # to also loading linear/inverse futures markets via
+            # fapi.binance.com, which is geo-blocked for US IPs (unlike the
+            # spot data-api.binance.vision host above) and we don't trade
+            # futures here anyway.
+            ex.options["fetchMarkets"] = {"types": ["spot"]}
         _exchanges[name] = ex
     return _exchanges[name]
 
