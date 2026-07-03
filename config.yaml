@@ -34,7 +34,7 @@ rules:
   # 🟡 NEAR-BUY / NEAR-SELL. once_per_side = one alert per approach episode.
   - name: ema_cross_soon
     once_per_side: true
-    params: {fast: 9, slow: 21, gap_pct: 0.1}
+    params: {fast: 9, slow: 21, gap_pct: 0.08}
 
   # More ready-made rule types (uncomment to enable):
   # - name: rsi_extreme
