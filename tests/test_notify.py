@@ -1,4 +1,36 @@
-from alerts.notify import render_email, tier_for_side
+from alerts.notify import Notifier, parse_alert_emails, render_email, tier_for_side
+
+
+def test_parse_alert_emails_legacy_comma_list():
+    groups = parse_alert_emails("a@x.com,b@y.com")
+    assert groups == [(["a@x.com", "b@y.com"], None)]
+
+
+def test_parse_alert_emails_with_filters():
+    groups = parse_alert_emails("a@x.com:BTC,eth; b@y.com:all ;c@z.com")
+    assert groups[0] == (["a@x.com"], {"BTC", "ETH"})
+    assert groups[1] == (["b@y.com"], None)   # 'all' keyword
+    assert groups[2] == (["c@z.com"], None)   # no filter given
+
+
+def test_notifier_buckets_route_by_coin(monkeypatch):
+    monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
+    monkeypatch.setenv("ALERT_EMAILS", "a@x.com:BTC;b@y.com:all")
+    n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
+                  "?to=${ALERT_EMAILS}"])
+    assert n.active == 2
+    sends = []
+    for i, (filt, app) in enumerate(n.buckets):
+        app.notify = lambda i=i, **kw: sends.append(i) or True
+    n.send("t", "b", pair="HYPE/USDT")   # only the 'all' bucket
+    assert sends == [1]
+    sends.clear()
+    n.send("t", "b", pair="BTC/USDT")    # both buckets
+    assert sends == [0, 1]
+    sends.clear()
+    n.send("t", "b")                     # no pair (test message) -> everyone
+    assert sends == [0, 1]
 
 
 def test_tier_mapping():

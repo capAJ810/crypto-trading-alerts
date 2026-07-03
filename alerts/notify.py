@@ -6,8 +6,15 @@ Secrets are referenced as ${ENV_VAR} and expanded from the environment
 missing is skipped with a warning, so e.g. Telegram can be added later
 without breaking email.
 
-Add a recipient:  append to ALERT_EMAILS (comma-separated) or
-                  TELEGRAM_CHAT_IDS (slash-separated).
+ALERT_EMAILS supports per-recipient coin filters. Groups are separated
+by ';', each group is 'email[:COIN,COIN,...]':
+
+    a@x.com:BTC,ETH;b@y.com          # a@x only BTC+ETH, b@y everything
+    a@x.com:all;b@y.com:HYPE         # 'all' keyword = no filter
+    a@x.com,b@y.com                  # legacy comma list = everyone, all coins
+
+Add a recipient:  append to ALERT_EMAILS or TELEGRAM_CHAT_IDS
+                  (slash-separated).
 Add a channel:    append any Apprise URL (Discord, Slack, SMS, ...)
                   to `notify:` in config.yaml — 100+ services supported.
 """
@@ -105,29 +112,87 @@ def _expand(raw: str) -> Optional[str]:
     return None if missing else expanded
 
 
-class Notifier:
-    def __init__(self, urls: List[str]):
-        self.apprise = apprise.Apprise()
-        self.active = 0
-        for raw in urls:
-            expanded = _expand(raw)
-            if expanded is None:
-                log.warning("Skipping notify URL with unset variables: %s", raw)
-                continue
-            if self.apprise.add(expanded):
-                self.active += 1
-            else:
-                log.warning("Apprise rejected notify URL (bad format?): %s", raw)
+def parse_alert_emails(value: str) -> List[Tuple[List[str], Optional[set]]]:
+    """Parse ALERT_EMAILS into [(emails, coin_filter_or_None), ...].
 
-    def send(self, title: str, body: str, tier: str = "info") -> bool:
-        if self.active == 0:
+    None filter = all coins. Coin names are base symbols ('BTC'),
+    case-insensitive; 'all' disables the filter for that recipient.
+    """
+    groups = []
+    for part in value.split(";"):
+        part = part.strip()
+        if not part:
+            continue
+        if ":" in part:
+            addr, _, coins = part.partition(":")
+            wanted = {c.strip().upper() for c in coins.split(",") if c.strip()}
+            filt = None if (not wanted or "ALL" in wanted) else wanted
+            groups.append(([addr.strip()], filt))
+        else:  # legacy comma-separated list, no filters
+            emails = [e.strip() for e in part.split(",") if e.strip()]
+            if emails:
+                groups.append((emails, None))
+    return groups
+
+
+class Notifier:
+    """Fan-out with per-recipient coin filtering.
+
+    Each notify URL becomes one or more buckets of (coin_filter, Apprise).
+    A URL containing ${ALERT_EMAILS} is expanded into one bucket per
+    recipient group so different addresses can watch different coins.
+    """
+
+    def __init__(self, urls: List[str]):
+        self.buckets: List[Tuple[Optional[set], apprise.Apprise]] = []
+        for raw in urls:
+            if "${ALERT_EMAILS}" in raw:
+                for emails, filt in parse_alert_emails(
+                        os.environ.get("ALERT_EMAILS", "")):
+                    url = raw.replace("${ALERT_EMAILS}",
+                                      quote(",".join(emails), safe=","))
+                    self._add(url, raw, filt)
+            else:
+                self._add(raw, raw, None)
+
+    def _add(self, url: str, raw: str, filt: Optional[set]) -> None:
+        expanded = _expand(url)
+        if expanded is None:
+            log.warning("Skipping notify URL with unset variables: %s", raw)
+            return
+        app = apprise.Apprise()
+        if app.add(expanded):
+            self.buckets.append((filt, app))
+        else:
+            log.warning("Apprise rejected notify URL (bad format?): %s", raw)
+
+    @property
+    def active(self) -> int:
+        return len(self.buckets)
+
+    def send(self, title: str, body: str, tier: str = "info",
+             pair: Optional[str] = None) -> bool:
+        """Send to every bucket whose coin filter matches `pair`.
+        pair=None (tests, system notices) goes to everyone."""
+        if not self.buckets:
             log.error("No active notification channels — alert NOT delivered: %s", title)
             return False
+        base = pair.split("/")[0].upper() if pair else None
         subject, html_body = render_email(title, body, tier)
-        ok = self.apprise.notify(title=subject, body=html_body,
-                                 body_format=apprise.NotifyFormat.HTML)
-        if ok:
-            log.info("Notified: %s", title)
+        delivered = skipped = 0
+        for filt, app in self.buckets:
+            if base is not None and filt is not None and base not in filt:
+                skipped += 1
+                continue
+            if app.notify(title=subject, body=html_body,
+                          body_format=apprise.NotifyFormat.HTML):
+                delivered += 1
+        if delivered:
+            log.info("Notified %d channel group(s) (%d filtered out): %s",
+                     delivered, skipped, title)
+        elif skipped == len(self.buckets):
+            log.info("All %d channel group(s) filtered out %s — nothing sent",
+                     skipped, pair)
         else:
             log.error("Notification delivery failed for: %s", title)
-        return bool(ok)
+        return delivered > 0 or skipped == len(self.buckets)

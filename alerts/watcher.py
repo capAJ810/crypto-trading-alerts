@@ -162,7 +162,8 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             log.info("SIGNAL %s", title)
             if dry_run:
                 continue
-            delivered = notifier.send(title, body, tier_for_side(signal.side))
+            delivered = notifier.send(title, body, tier_for_side(signal.side),
+                                      pair=pair)
             if bot is not None and tg_state is not None:
                 tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
                 log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
@@ -233,7 +234,8 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
             log.info("SIGNAL %s", title)
             if dry_run:
                 continue
-            delivered = notifier.send(title, body, tier_for_side(signal.side))
+            delivered = notifier.send(title, body, tier_for_side(signal.side),
+                                      pair=pair)
             if bot is not None and tg_state is not None:
                 tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
                 log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
