@@ -25,10 +25,7 @@ import os
 import sys
 import time
 from datetime import datetime, timezone
-from typing import Optional
 
-import ccxt
-import pandas as pd
 import yaml
 
 try:
@@ -38,7 +35,8 @@ except ImportError:
     pass
 
 from . import telegram_bot
-from .indicators import ema, rsi
+from .analysis import make_insight_fn
+from .market import fetch_closed_candles, get_exchange
 from .notify import Notifier
 from .rules import RULES
 
@@ -48,43 +46,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config.yaml")
 DEFAULT_STATE = os.path.join(ROOT, "state.json")
 DEFAULT_TG_STATE = os.path.join(ROOT, "telegram.json")
-
-# Binance's main API geo-blocks US IPs (where GitHub Actions runs);
-# data-api.binance.vision serves the same public market data without the block.
-BINANCE_PUBLIC_DATA = "https://data-api.binance.vision/api/v3"
-
-_exchanges = {}
-
-
-def get_exchange(name: str) -> ccxt.Exchange:
-    if name not in _exchanges:
-        ex = getattr(ccxt, name)({"enableRateLimit": True})
-        if name == "binance":
-            api = ex.urls.get("api")
-            if isinstance(api, dict):
-                api["public"] = BINANCE_PUBLIC_DATA
-            # Restrict market loading to spot only. ccxt's binance defaults
-            # to also loading linear/inverse futures markets via
-            # fapi.binance.com, which is geo-blocked for US IPs (unlike the
-            # spot data-api.binance.vision host above) and we don't trade
-            # futures here anyway.
-            ex.options["fetchMarkets"] = {"types": ["spot"]}
-        _exchanges[name] = ex
-    return _exchanges[name]
-
-
-def timeframe_ms(tf: str) -> int:
-    return ccxt.Exchange.parse_timeframe(tf) * 1000
-
-
-def fetch_closed_candles(exchange: ccxt.Exchange, pair: str, timeframe: str,
-                         limit: int) -> pd.DataFrame:
-    raw = exchange.fetch_ohlcv(pair, timeframe=timeframe, limit=limit)
-    df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
-    # Drop the still-forming candle: keep rows whose close time is in the past.
-    now_ms = int(time.time() * 1000)
-    df = df[df["timestamp"] + timeframe_ms(timeframe) <= now_ms].reset_index(drop=True)
-    return df
 
 
 def load_state(path: str) -> dict:
@@ -112,34 +73,6 @@ def normalize_symbols(config: dict):
             yield entry, default_ex
         else:
             yield entry["pair"], entry.get("exchange", default_ex)
-
-
-def make_snapshot_fn(config):
-    """Live price/EMA/RSI snapshot for the Telegram /status buttons."""
-    timeframe = config.get("timeframe", "1h")
-    limit = int(config.get("candles", 150))
-    pair_exchange = dict(normalize_symbols(config))
-
-    def snapshot(pair: str) -> str:
-        try:
-            ex_name = pair_exchange.get(pair, config.get("exchange", "binance"))
-            df = fetch_closed_candles(get_exchange(ex_name), pair, timeframe, limit)
-            close = df["close"]
-            f9, s21 = ema(close, 9), ema(close, 21)
-            r = rsi(close, 14)
-            trend = "EMA9 above EMA21 (bullish)" if f9.iloc[-1] > s21.iloc[-1] \
-                else "EMA9 below EMA21 (bearish)"
-            ts = datetime.fromtimestamp(int(df["timestamp"].iloc[-1]) / 1000,
-                                        tz=timezone.utc).strftime("%H:%M UTC")
-            return (f"📊 {pair} ({ex_name}, {timeframe})\n"
-                    f"Price: {float(close.iloc[-1]):g}\n"
-                    f"EMA9: {float(f9.iloc[-1]):g} | EMA21: {float(s21.iloc[-1]):g}\n"
-                    f"RSI(14): {float(r.iloc[-1]):.1f}\n"
-                    f"{trend}\nLast closed candle: {ts}")
-        except Exception as e:
-            return f"⚠️ Could not fetch {pair}: {e}"
-
-    return snapshot
 
 
 def run_once(config: dict, notifier: Notifier, state_path: str,
@@ -243,7 +176,8 @@ def main() -> int:
     bot = None
     tg_state = {}
     if config.get("telegram", {}).get("enabled", True):
-        bot = telegram_bot.load_bot(symbols, make_snapshot_fn(config))
+        insight = make_insight_fn(config, dict(normalize_symbols(config)))
+        bot = telegram_bot.load_bot(symbols, insight)
         if bot is not None:
             tg_state = telegram_bot.load_state(args.tg_state)
             bot.ensure_default_chats(tg_state)

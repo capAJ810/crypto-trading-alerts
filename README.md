@@ -23,14 +23,27 @@ GitHub Actions cron (*/5, 3 check cycles per run)
       → notify                    (Apprise → Gmail SMTP; Telegram per-chat routing)
 ```
 
-## The Telegram bot is interactive
+## The Telegram bot is interactive and conversational
 
-Message the bot: **/coins** shows one button per coin — tap to toggle
-which coins alert that chat (✅/☐), with "All on/off" shortcuts.
-**/status** shows a button per coin; tap one for a live price + EMA 9/21 +
-RSI snapshot. Each allowlisted chat has its own subscription set, so two
-people can watch different coins. Button presses are answered by the same
-scheduled job, so expect responses within ~1–2 minutes (worst case ~5).
+Talk to it naturally — it detects the coin and what you want:
+
+- **"btc?"** or **"predict sol"** → a full prediction-style read
+  ([alerts/analysis.py](alerts/analysis.py)): multi-timeframe trend
+  (5m/1h/4h EMA + RSI), support/resistance from recent 1h swings, an
+  expectation narrative ("push toward X likely; if it stalls, Y is first
+  support"), and an ATR-sized example setup (entry / invalidation /
+  1R–2R targets). Every read carries a "rule-based, not financial advice"
+  label — it's deterministic indicator math, no AI oracle.
+- **"how's eth doing"** / **"hype price now"** → quick status snapshot,
+  with a 🔮 button for the full read.
+- **/coins** — one button per coin; toggle which coins alert that chat
+  (✅/☐), with "All on/off" shortcuts.
+- **/status** — pick a coin from buttons for an immediate update.
+
+Each allowlisted chat has its own subscription set, so two people can
+watch different coins. Messages and button presses are answered by the
+same scheduled job, so expect responses within ~1–2 minutes (worst
+case ~5).
 
 Only chat IDs in the `TELEGRAM_CHAT_IDS` secret may use the bot; anyone
 else is refused (the bot tells them their chat ID so you can choose to add

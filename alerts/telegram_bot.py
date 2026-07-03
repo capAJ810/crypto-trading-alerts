@@ -1,8 +1,14 @@
-"""Interactive Telegram bot: per-chat coin subscriptions via inline buttons.
+"""Interactive, conversational Telegram bot.
 
 Runs in the same scheduled process as the watcher (no server needed):
-each cycle drains pending updates with getUpdates, answers commands and
-button presses, and persists state to telegram.json (committed by CI).
+each cycle drains pending updates with getUpdates, answers commands,
+button presses, and plain-language questions, and persists state to
+telegram.json (committed by CI).
+
+Talk to it naturally: "btc?", "how's eth doing", "predict sol" — it
+detects the coin and whether you want a quick status or a full
+prediction-style read (levels + expectation + example setup, computed
+by alerts/analysis.py).
 
 Security: only chat IDs in the TELEGRAM_CHAT_IDS allowlist (slash-
 separated env/secret) may use the bot. Anyone else is shown their chat
@@ -10,12 +16,13 @@ ID so the owner can decide to add them.
 
 Commands:  /start /help — welcome + coin picker
            /coins       — choose which coins alert this chat (✅/☐ toggles)
-           /status      — pick a coin, get a live price/EMA/RSI snapshot
+           /status      — pick a coin for an immediate update
 """
 
 import json
 import logging
 import os
+import re
 from typing import Callable, Dict, List, Optional
 
 import requests
@@ -23,13 +30,57 @@ import requests
 log = logging.getLogger(__name__)
 
 HELP_TEXT = (
-    "🤖 Crypto alerts bot\n\n"
-    "You get an alert when EMA 9 crosses EMA 21 (RSI-confirmed) on any coin "
-    "you're subscribed to.\n\n"
+    "🤖 Hey! I watch the market for you and ping you when EMA 9 crosses "
+    "EMA 21 (RSI-confirmed) on your coins.\n\n"
+    "Just talk to me:\n"
+    "• \"btc?\" or \"how's eth doing\" → live update\n"
+    "• \"predict sol\" → my full read: trend, levels, example setup\n\n"
     "/coins — choose which coins alert you\n"
-    "/status — live price + indicator snapshot\n"
+    "/status — pick a coin for an immediate update\n"
     "/help — this message"
 )
+
+# Common names people type for the bases we track (extend freely).
+COIN_NAMES = {
+    "bitcoin": "BTC", "btc": "BTC", "xbt": "BTC",
+    "ethereum": "ETH", "ether": "ETH", "eth": "ETH",
+    "solana": "SOL", "sol": "SOL",
+    "bnb": "BNB", "binance": "BNB",
+    "aster": "ASTER",
+    "hype": "HYPE", "hyperliquid": "HYPE",
+}
+
+PREDICT_WORDS = ("predict", "prediction", "forecast", "expect", "analysis",
+                 "analyse", "analyze", "signal", "setup", "read", "levels",
+                 "target", "should i", "buy", "sell", "long", "short")
+STATUS_WORDS = ("price", "status", "update", "now", "quick", "how", "doing",
+                "chart", "current")
+
+
+def parse_intent(text: str, symbols: List[str]):
+    """Map free text to (pair, kind) — kind 'status' | 'predict' — or
+    (None, None) when no tracked coin is mentioned."""
+    t = text.lower()
+    words = set(re.findall(r"[a-z]+", t))
+
+    pair = None
+    aliases = dict(COIN_NAMES)
+    for p in symbols:  # symbols' own bases always work, e.g. "aster"
+        aliases.setdefault(p.split("/")[0].lower(), p.split("/")[0])
+    for alias, base in aliases.items():
+        if alias in words:
+            match = next((p for p in symbols if p.split("/")[0] == base), None)
+            if match:
+                pair = match
+                break
+    if pair is None:
+        return None, None
+
+    if any(w in t for w in PREDICT_WORDS):
+        return pair, "predict"
+    if any(w in t for w in STATUS_WORDS):
+        return pair, "status"
+    return pair, "predict"  # bare coin mention → give the full read
 
 
 def _mask(chat_id) -> str:
@@ -39,11 +90,17 @@ def _mask(chat_id) -> str:
 
 class TelegramBot:
     def __init__(self, token: str, allowed_chats: List[str], symbols: List[str],
-                 snapshot_fn: Optional[Callable[[str], str]] = None):
+                 insight_fn: Optional[Callable[[str, str], str]] = None):
         self.base = f"https://api.telegram.org/bot{token}"
         self.allowed = {str(c) for c in allowed_chats}
         self.symbols = symbols
-        self.snapshot_fn = snapshot_fn
+        # insight_fn(pair, kind) -> str, kind in {"status", "predict"}
+        self.insight_fn = insight_fn
+
+    def _insight(self, pair: str, kind: str) -> str:
+        if self.insight_fn is None:
+            return "Insights unavailable right now."
+        return self.insight_fn(pair, kind)
 
     # ── raw API ──────────────────────────────────────────────────────
     def _api(self, method: str, **params) -> dict:
@@ -79,6 +136,17 @@ class TelegramBot:
         rows = [[{"text": pair, "callback_data": f"s|{pair}"}] for pair in self.symbols]
         rows.append([{"text": "⚙️ Choose coins", "callback_data": "m|coins"}])
         return rows
+
+    def _insight_keyboard(self, pair: str, kind: str) -> list:
+        """Follow-up actions under a status/prediction message."""
+        first = {"text": "🔮 Full read", "callback_data": f"p|{pair}"} \
+            if kind == "status" else \
+            {"text": "🔄 Update read", "callback_data": f"p|{pair}"}
+        return [
+            [first, {"text": "📊 Quick status", "callback_data": f"s|{pair}"}],
+            [{"text": "🪙 Other coins", "callback_data": "m|status"},
+             {"text": "⚙️ Alerts", "callback_data": "m|coins"}],
+        ]
 
     # ── state helpers ────────────────────────────────────────────────
     def _chat_subs(self, state: dict, chat_id) -> List[str]:
@@ -133,7 +201,8 @@ class TelegramBot:
 
     def _on_message(self, state: dict, msg: dict) -> None:
         chat_id = msg["chat"]["id"]
-        text = (msg.get("text") or "").strip().lower()
+        text = (msg.get("text") or "").strip()
+        lower = text.lower()
         if not self._authorized(chat_id):
             log.info("Unauthorized chat %s", _mask(chat_id))
             self.send(chat_id,
@@ -142,13 +211,27 @@ class TelegramBot:
                       "to the TELEGRAM_CHAT_IDS secret.")
             return
         subs = self._chat_subs(state, chat_id)
-        if text.startswith("/coins"):
+        if lower.startswith("/coins"):
             self.send(chat_id, "Choose which coins alert this chat:",
                       self._coin_keyboard(subs))
-        elif text.startswith("/status"):
-            self.send(chat_id, "Pick a coin:", self._status_keyboard())
-        else:  # /start, /help, anything else
+        elif lower.startswith("/status"):
+            self.send(chat_id, "Which coin do you want an update on?",
+                      self._status_keyboard())
+        elif lower.startswith("/start") or lower.startswith("/help"):
             self.send(chat_id, HELP_TEXT, self._coin_keyboard(subs))
+        else:
+            # Conversational: "btc?", "how's eth doing", "predict sol" ...
+            pair, kind = parse_intent(text, self.symbols)
+            if pair is not None:
+                self.send(chat_id, self._insight(pair, kind),
+                          self._insight_keyboard(pair, kind))
+            else:
+                coins = ", ".join(p.split("/")[0] for p in self.symbols)
+                self.send(chat_id,
+                          f"Hmm, I didn't catch a coin I track in that 🤔\n"
+                          f"I watch: {coins}. Try \"btc?\" for a quick update or "
+                          f"\"predict sol\" for my full read — or pick one below:",
+                          self._status_keyboard())
 
     def _on_callback(self, state: dict, cb: dict) -> None:
         chat_id = cb["message"]["chat"]["id"]
@@ -179,8 +262,12 @@ class TelegramBot:
                       reply_markup={"inline_keyboard": self._coin_keyboard(subs)})
         elif action == "s" and arg in self.symbols:
             toast = "Fetching…"
-            snap = self.snapshot_fn(arg) if self.snapshot_fn else "Status unavailable."
-            self.send(chat_id, snap)
+            self.send(chat_id, self._insight(arg, "status"),
+                      self._insight_keyboard(arg, "status"))
+        elif action == "p" and arg in self.symbols:
+            toast = "Crunching the numbers…"
+            self.send(chat_id, self._insight(arg, "predict"),
+                      self._insight_keyboard(arg, "predict"))
         elif action == "m":
             if arg == "coins":
                 self.send(chat_id, "Choose which coins alert this chat:",
@@ -195,7 +282,7 @@ class TelegramBot:
 
 
 def load_bot(symbols: List[str],
-             snapshot_fn: Optional[Callable[[str], str]] = None
+             insight_fn: Optional[Callable[[str, str], str]] = None
              ) -> Optional[TelegramBot]:
     """Build the bot from TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_IDS env, or None."""
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
@@ -203,7 +290,7 @@ def load_bot(symbols: List[str],
     if not token or not chats:
         log.warning("Telegram disabled (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_IDS unset)")
         return None
-    return TelegramBot(token, chats, symbols, snapshot_fn)
+    return TelegramBot(token, chats, symbols, insight_fn)
 
 
 def load_state(path: str) -> dict:

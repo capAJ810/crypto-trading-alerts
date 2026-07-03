@@ -39,3 +39,15 @@ def rsi(series: pd.Series, length: int = 14) -> pd.Series:
     with np.errstate(divide="ignore", invalid="ignore"):
         rs = avg_gain / avg_loss
     return 100.0 - (100.0 / (1.0 + rs))
+
+
+def atr(df: pd.DataFrame, length: int = 14) -> pd.Series:
+    """Average True Range (Wilder). Expects high/low/close columns."""
+    prev_close = df["close"].shift(1)
+    tr = pd.concat([
+        df["high"] - df["low"],
+        (df["high"] - prev_close).abs(),
+        (df["low"] - prev_close).abs(),
+    ], axis=1).max(axis=1)
+    tr.iloc[0] = float("nan")  # no previous close for the first candle
+    return _rma(tr, length)
