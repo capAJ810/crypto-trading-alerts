@@ -34,10 +34,11 @@ def timeframe_ms(tf: str) -> int:
 
 
 def fetch_closed_candles(exchange: ccxt.Exchange, pair: str, timeframe: str,
-                         limit: int) -> pd.DataFrame:
+                         limit: int, drop_forming: bool = True) -> pd.DataFrame:
     raw = exchange.fetch_ohlcv(pair, timeframe=timeframe, limit=limit)
     df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
-    # Drop the still-forming candle: keep rows whose close time is in the past.
-    now_ms = int(time.time() * 1000)
-    df = df[df["timestamp"] + timeframe_ms(timeframe) <= now_ms].reset_index(drop=True)
-    return df
+    if drop_forming:
+        # Drop the still-forming candle: keep rows whose close time has passed.
+        now_ms = int(time.time() * 1000)
+        df = df[df["timestamp"] + timeframe_ms(timeframe) <= now_ms]
+    return df.reset_index(drop=True)

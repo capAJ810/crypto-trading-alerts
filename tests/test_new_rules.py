@@ -95,3 +95,24 @@ def test_near_cross_fires_before_actual_cross():
 def test_near_cross_silent_when_diverging():
     closes = [100 + i for i in range(80)]  # EMAs separating, not converging
     assert ema_cross_soon(_df(closes), {"fast": 9, "slow": 21}) is None
+
+
+def test_intrabar_fires_on_live_cross_and_respects_trend():
+    from alerts.rules import ema_cross_intrabar
+    params = {"fast": 9, "slow": 21, "rsi_buy": 55, "rsi_sell": 45,
+              "trend_ema": 200}
+    for rally in range(1, 40):
+        df = _uptrend_dip_recross(rally)  # last row = the crossing candle,
+        sig = ema_cross_intrabar(df, params)  # treated here as still forming
+        if sig is not None:
+            assert sig.side == "INTRABAR BUY"
+            assert "UNCONFIRMED" in sig.details
+            break
+    else:
+        pytest.fail("intrabar never fired")
+
+    # Same shape but below EMA200 (long downtrend) -> trend filter blocks it
+    closes = [300 - 0.5 * i for i in range(280)]
+    for rally in range(1, 40):
+        c = closes + [closes[-1] + 3.0 * i for i in range(1, rally + 1)]
+        assert ema_cross_intrabar(_df(c), params) is None

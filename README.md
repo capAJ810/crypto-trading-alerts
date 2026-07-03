@@ -16,6 +16,9 @@ when your computer is off.
 - ⚠️ **WEAK** — a cross that fails some filters (each failed check listed)
 - 🟡 **NEAR-BUY / NEAR-SELL** — early heads-up while EMA 9 converges toward
   EMA 21, *before* the cross (once per approach episode)
+- ⏱️ **INTRABAR BUY / SELL** — chart-time alert the moment the *forming*
+  candle shows the cross (RSI + trend gated, volume n/a on a partial
+  candle). Unconfirmed: only the close-confirmed 🟢/🔴 alert counts.
 
 Watching: BTC, ETH, SOL, BNB, ASTER (Binance) and HYPE (KuCoin) — alerts
 land ~10–15 seconds after the candle close that confirms the signal.

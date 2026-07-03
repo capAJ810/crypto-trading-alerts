@@ -43,7 +43,7 @@ from . import siglog, telegram_bot
 from .analysis import make_insight_fn
 from .market import fetch_closed_candles, get_exchange, timeframe_ms
 from .notify import Notifier
-from .rules import RULES
+from .rules import INTRABAR_RULES, RULES
 
 log = logging.getLogger("alerts")
 
@@ -114,6 +114,8 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
 
         for rule_cfg in config.get("rules", []):
             rule_name = rule_cfg["name"]
+            if rule_name in INTRABAR_RULES:
+                continue  # needs the forming candle; handled by run_intrabar
             rule_fn = RULES.get(rule_name)
             if rule_fn is None:
                 log.error("Unknown rule '%s' — available: %s", rule_name, list(RULES))
@@ -170,6 +172,77 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
     if not dry_run:
         save_state(state_path, state)
     return alerts_sent
+
+
+def run_intrabar(config: dict, notifier: Notifier, state_path: str,
+                 bot=None, tg_state=None, sig_entries=None, tuned=None,
+                 dry_run: bool = False) -> int:
+    """Evaluate intrabar rules on the FORMING candle (chart-time alerts).
+
+    Called on the ~30s wakeups between candle closes. Dedupe: one alert
+    per (pair, forming candle, direction) — a cross that flickers on and
+    off inside one candle can't spam.
+    """
+    intrabar_cfgs = [r for r in config.get("rules", [])
+                     if r["name"] in INTRABAR_RULES]
+    if not intrabar_cfgs:
+        return 0
+    timeframe = config.get("timeframe", "1h")
+    limit = int(config.get("candles", 150))
+    state = load_state(state_path)
+    sent = 0
+
+    for pair, ex_name in normalize_symbols(config):
+        try:
+            df = fetch_closed_candles(get_exchange(ex_name), pair, timeframe,
+                                      limit, drop_forming=False)
+        except Exception as e:
+            log.error("Intrabar fetch failed for %s on %s: %s", pair, ex_name, e)
+            continue
+        if len(df) < 30:
+            continue
+        live_ts = int(df["timestamp"].iloc[-1])
+
+        for rule_cfg in intrabar_cfgs:
+            rule_name = rule_cfg["name"]
+            only = rule_cfg.get("symbols")
+            if only and pair not in only:
+                continue
+            params = dict(rule_cfg.get("params", {}))
+            if tuned:
+                params.update(tuned.get(pair, {}).get(rule_name, {}))
+            signal = RULES[rule_name](df, params)
+            if signal is None:
+                continue
+            key = f"{ex_name}|{pair}|{rule_name}"
+            prev = state.get(key, {})
+            if prev.get("last_candle") == live_ts and prev.get("side") == signal.side:
+                continue
+            title = f"{signal.emoji} {signal.side} {pair} {timeframe} — {signal.headline}"
+            body = (f"{signal.details}\n\n"
+                    f"Pair: {pair} ({ex_name})\nTimeframe: {timeframe} "
+                    f"(live candle)\nRule: {rule_name}")
+            log.info("SIGNAL %s", title)
+            if dry_run:
+                continue
+            delivered = notifier.send(title, body)
+            if bot is not None and tg_state is not None:
+                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
+                log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
+                delivered = delivered or tg_sent > 0
+            if delivered:
+                sent += 1
+                state[key] = {"last_candle": live_ts, "side": signal.side,
+                              "at": "intrabar"}
+                if sig_entries is not None:
+                    siglog.append(sig_entries, pair=pair, exchange=ex_name,
+                                  rule=rule_name, side=signal.side,
+                                  price=float(df["close"].iloc[-1]),
+                                  candle_ts=live_ts, timeframe=timeframe)
+
+    if not dry_run and sent:
+        save_state(state_path, state)
+    return sent
 
 
 def main() -> int:
@@ -258,15 +331,21 @@ def main() -> int:
         if not args.dry_run:
             save_tg()
 
+    def intrabar():
+        run_intrabar(config, notifier, args.state, bot=bot, tg_state=tg_state,
+                     sig_entries=sig_entries, tuned=tuned, dry_run=args.dry_run)
+
     if args.loop > 0:
         while True:
             cycle()
+            intrabar()
             score_and_save()
             log.info("Sleeping %ds ...", args.loop)
             time.sleep(args.loop)
 
     if args.run_for <= 0:
         cycle()
+        intrabar()
         score_and_save()
         return 0
 
@@ -298,10 +377,13 @@ def main() -> int:
                 time.sleep(to_close + 1)
                 continue
             break
-        wait = min(30.0, to_close + 1, max(deadline - now, 1.0))
         if bot is not None and bot.process_updates(tg_state):
             save_tg()
-        time.sleep(wait)
+        intrabar()  # chart-time cross check on the forming candle
+        now = time.time()
+        to_close = tf_sec - ((now - BUFFER) % tf_sec)
+        wait = min(30.0, to_close + 1, max(deadline - now, 1.0))
+        time.sleep(max(wait, 1.0))
 
     score_and_save()
     return 0

@@ -105,6 +105,61 @@ def ema_cross_rsi(df: pd.DataFrame, params: dict) -> Optional[Signal]:
     return None
 
 
+def ema_cross_intrabar(df: pd.DataFrame, params: dict) -> Optional[Signal]:
+    """Chart-time cross alert: evaluated with the FORMING candle included
+    (df's last row is the live candle — unlike every other rule).
+
+    Fires the moment the live candle shows EMA fast crossing slow with the
+    RSI gate and trend filter met. The volume filter is deliberately
+    skipped — a partial candle's volume can't be compared to full ones.
+    Explicitly labeled unconfirmed: the cross can vanish before the close.
+    The confirmed 🟢/🔴 alert still fires separately if it holds.
+    """
+    fast_len = int(params.get("fast", 9))
+    slow_len = int(params.get("slow", 21))
+    rsi_len = int(params.get("rsi_len", 14))
+    rsi_buy = float(params.get("rsi_buy", 55))
+    rsi_sell = float(params.get("rsi_sell", 45))
+    trend_len = params.get("trend_ema")
+
+    close = df["close"]
+    fast = ema(close, fast_len)
+    slow = ema(close, slow_len)
+
+    if _crossed_over(fast, slow):
+        side, arrow, word = "INTRABAR BUY", "↑", "ABOVE"
+    elif _crossed_under(fast, slow):
+        side, arrow, word = "INTRABAR SELL", "↓", "BELOW"
+    else:
+        return None
+
+    rsi_now = float(rsi(close, rsi_len).iloc[-1])
+    price = float(close.iloc[-1])
+    if side.endswith("BUY") and rsi_now <= rsi_buy:
+        return None
+    if side.endswith("SELL") and rsi_now >= rsi_sell:
+        return None
+    if trend_len:
+        trend = float(ema(close, int(trend_len)).iloc[-1])
+        if side.endswith("BUY") and price <= trend:
+            return None
+        if side.endswith("SELL") and price >= trend:
+            return None
+
+    return Signal(side, "⏱️",
+                  f"EMA{fast_len}{arrow}EMA{slow_len} on the LIVE candle",
+                  f"UNCONFIRMED: EMA {fast_len} is crossing {word} EMA "
+                  f"{slow_len} on the still-forming candle — this is what the "
+                  f"chart shows right now. It only counts if the candle CLOSES "
+                  f"this way; watch for the confirmed alert (or nothing, if it "
+                  f"fades).\nPrice: {price:g}\nRSI({rsi_len}): {rsi_now:.1f}")
+
+
+# Rules that must see the forming candle; the watcher polls these every
+# ~30s instead of only after candle closes.
+INTRABAR_RULES = {"ema_cross_intrabar"}
+
+
 def ema_cross_soon(df: pd.DataFrame, params: dict) -> Optional[Signal]:
     """Early heads-up while EMA fast/slow are CONVERGING toward a cross.
 
@@ -178,6 +233,7 @@ def price_cross_level(df: pd.DataFrame, params: dict) -> Optional[Signal]:
 
 RULES: Dict[str, Callable[[pd.DataFrame, dict], Optional[Signal]]] = {
     "ema_cross_rsi": ema_cross_rsi,
+    "ema_cross_intrabar": ema_cross_intrabar,
     "ema_cross_soon": ema_cross_soon,
     "rsi_extreme": rsi_extreme,
     "price_cross_level": price_cross_level,
