@@ -1,9 +1,9 @@
 # Crypto Trading Alerts
 
-Free, self-hosted crypto signal alerts. Every 5 minutes a GitHub Actions
-job wakes up and checks signals 3 times (~80s apart) against exchange
-**public APIs** (no account, no API key), evaluates indicator rules in
-~200 lines of auditable Python, and sends **email + Telegram** alerts.
+Free, self-hosted crypto signal alerts. A self-chaining GitHub Actions
+job runs continuously and evaluates the rules **seconds after each candle
+closes** (candle-aligned scheduling) against exchange **public APIs**
+(no account, no API key), then sends **email + Telegram** alerts.
 No TradingView, no ngrok, no paid services, and it runs in the cloud even
 when your computer is off.
 
@@ -18,7 +18,10 @@ when your computer is off.
   EMA 21, *before* the cross (once per approach episode)
 
 Watching: BTC, ETH, SOL, BNB, ASTER (Binance) and HYPE (KuCoin) — alerts
-typically land within ~1–3 minutes of a candle close.
+land ~10–15 seconds after the candle close that confirms the signal.
+(The chart shows crosses earlier because it draws the still-forming
+candle; the "Candle Closed" condition deliberately waits out that
+intrabar noise.)
 
 ```
 GitHub Actions cron (*/5, 3 check cycles per run)
@@ -146,7 +149,10 @@ fewer false alerts over time, not a crystal ball.
   (hours without firing), so each run dispatches the next one at the end
   ("Chain next run" step — `workflow_dispatch` via `GITHUB_TOKEN` is a
   documented exception to GitHub's recursion guard). The `*/5` cron remains
-  only as a dead-chain restarter. Effective checking granularity: ~80–100s.
+  only as a dead-chain restarter. Within each run the watcher sleeps until
+  a few seconds past each candle close and evaluates immediately
+  (candle-aligned), extending briefly at the deadline if a close is
+  imminent so no candle falls into the run-handoff gap.
 - `legacy/` holds the earlier TradingView-webhook attempt (abandoned:
   webhooks need a paid TradingView plan). The Pine scripts there still work
   for eyeballing the same signals on TradingView charts manually.

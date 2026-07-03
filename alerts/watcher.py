@@ -9,9 +9,14 @@ Also processes the interactive Telegram bot's pending button presses and
 commands each cycle (see alerts/telegram_bot.py); Telegram alerts are
 routed per-chat based on each chat's coin subscriptions.
 
+Checks are CANDLE-ALIGNED: the watcher sleeps until a few seconds after
+each candle close and evaluates immediately, so alerts land ~10-15s after
+the close instead of at an arbitrary point in the next polling interval.
+Telegram updates are polled every ~30s in between.
+
 Usage:
     python -m alerts.watcher                 # one check cycle
-    python -m alerts.watcher --repeat 3 --sleep 80   # 3 cycles, 80s apart
+    python -m alerts.watcher --run-for 250   # candle-aligned session (CI mode)
     python -m alerts.watcher --test-notify   # send a test alert to all channels
     python -m alerts.watcher --dry-run       # evaluate but don't send
     python -m alerts.watcher --force         # ignore state (re-alert)
@@ -36,7 +41,7 @@ except ImportError:
 
 from . import siglog, telegram_bot
 from .analysis import make_insight_fn
-from .market import fetch_closed_candles, get_exchange
+from .market import fetch_closed_candles, get_exchange, timeframe_ms
 from .notify import Notifier
 from .rules import RULES
 
@@ -180,11 +185,9 @@ def main() -> int:
                         help="evaluate rules but send nothing, don't touch state")
     parser.add_argument("--force", action="store_true",
                         help="alert even if this candle was already alerted")
-    parser.add_argument("--repeat", type=int, default=1, metavar="N",
-                        help="check cycles per invocation (for near-continuous "
-                             "coverage inside a scheduled CI run)")
-    parser.add_argument("--sleep", type=int, default=80, metavar="SECONDS",
-                        help="pause between --repeat cycles")
+    parser.add_argument("--run-for", type=int, default=0, metavar="SECONDS",
+                        help="candle-aligned session: check right after each "
+                             "candle close for this long (CI mode)")
     parser.add_argument("--loop", type=int, metavar="SECONDS", default=0,
                         help="run forever, checking every SECONDS")
     args = parser.parse_args()
@@ -262,11 +265,44 @@ def main() -> int:
             log.info("Sleeping %ds ...", args.loop)
             time.sleep(args.loop)
 
-    for i in range(max(1, args.repeat)):
-        if i > 0:
-            log.info("Cycle %d/%d in %ds ...", i + 1, args.repeat, args.sleep)
-            time.sleep(args.sleep)
+    if args.run_for <= 0:
         cycle()
+        score_and_save()
+        return 0
+
+    # Candle-aligned session: evaluate immediately after each candle close
+    # (+BUFFER seconds for the exchange to finalize the kline), poll
+    # Telegram every ~30s in between, hand off to the next chained run at
+    # the deadline — extending briefly if a close is imminent so no candle
+    # falls into the handoff gap.
+    BUFFER = 4
+    tf_sec = timeframe_ms(config.get("timeframe", "1h")) // 1000
+    start = time.time()
+    deadline = start + args.run_for
+    # Stamp BEFORE the catch-up cycle: if a candle closes while it runs,
+    # the loop below re-evaluates immediately instead of skipping it.
+    last_candle_id = int((time.time() - BUFFER) // tf_sec)
+    cycle()  # catch-up check for anything missed during the handoff gap
+
+    while True:
+        now = time.time()
+        candle_id = int((now - BUFFER) // tf_sec)
+        if candle_id > last_candle_id:
+            log.info("Candle closed — evaluating")
+            cycle()
+            last_candle_id = candle_id
+            continue
+        to_close = tf_sec - ((now - BUFFER) % tf_sec)
+        if now >= deadline:
+            if to_close <= 45:  # cover the imminent close before handing off
+                time.sleep(to_close + 1)
+                continue
+            break
+        wait = min(30.0, to_close + 1, max(deadline - now, 1.0))
+        if bot is not None and bot.process_updates(tg_state):
+            save_tg()
+        time.sleep(wait)
+
     score_and_save()
     return 0
 

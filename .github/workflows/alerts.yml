@@ -47,7 +47,7 @@ jobs:
           if [ "${{ inputs.test_notify }}" = "true" ]; then
             python -m alerts.watcher --test-notify
           else
-            python -m alerts.watcher --repeat 3 --sleep 80
+            python -m alerts.watcher --run-for 250
           fi
 
       - name: Nightly self-tune (runs when >24h since last tune)
