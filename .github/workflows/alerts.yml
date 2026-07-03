@@ -50,6 +50,13 @@ jobs:
             python -m alerts.watcher --repeat 3 --sleep 80
           fi
 
+      - name: Nightly self-tune (runs when >24h since last tune)
+        if: ${{ inputs.test_notify != true }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: python -m alerts.tuner --if-due
+
       - name: Persist alert state
         # Committing state.json prevents duplicate alerts across runs and
         # keeps the repo active (GitHub disables cron workflows after 60
@@ -57,7 +64,7 @@ jobs:
         run: |
           git config user.name "alerts-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add state.json telegram.json
+          git add state.json telegram.json signals_log.json tuned.yaml
           git diff --cached --quiet || {
             git commit -m "chore: update alert state [skip ci]"
             git pull --rebase origin ${GITHUB_REF_NAME}

@@ -34,7 +34,7 @@ try:
 except ImportError:
     pass
 
-from . import telegram_bot
+from . import siglog, telegram_bot
 from .analysis import make_insight_fn
 from .market import fetch_closed_candles, get_exchange
 from .notify import Notifier
@@ -46,6 +46,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config.yaml")
 DEFAULT_STATE = os.path.join(ROOT, "state.json")
 DEFAULT_TG_STATE = os.path.join(ROOT, "telegram.json")
+DEFAULT_SIGLOG = os.path.join(ROOT, "signals_log.json")
+DEFAULT_TUNED = os.path.join(ROOT, "tuned.yaml")
+
+
+def load_tuned(path: str) -> dict:
+    """Per-pair parameter overrides written by the nightly self-tuner."""
+    if os.path.exists(path):
+        with open(path) as f:
+            return (yaml.safe_load(f) or {}).get("pairs", {})
+    return {}
 
 
 def load_state(path: str) -> dict:
@@ -76,7 +86,7 @@ def normalize_symbols(config: dict):
 
 
 def run_once(config: dict, notifier: Notifier, state_path: str,
-             bot=None, tg_state=None,
+             bot=None, tg_state=None, sig_entries=None, tuned=None,
              force: bool = False, dry_run: bool = False) -> int:
     timeframe = config.get("timeframe", "1h")
     limit = int(config.get("candles", 150))
@@ -109,7 +119,10 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             if only and pair not in only:
                 continue
 
-            signal = rule_fn(df, rule_cfg.get("params", {}))
+            params = dict(rule_cfg.get("params", {}))
+            if tuned:
+                params.update(tuned.get(pair, {}).get(rule_name, {}))
+            signal = rule_fn(df, params)
             key = f"{ex_name}|{pair}|{rule_name}"
             if signal is None:
                 log.info("%-28s %s: no signal (candle %s)", key, timeframe, candle_iso)
@@ -143,6 +156,11 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
                 alerts_sent += 1
                 state[key] = {"last_candle": candle_ts, "side": signal.side,
                               "at": candle_iso}
+                if sig_entries is not None:
+                    siglog.append(sig_entries, pair=pair, exchange=ex_name,
+                                  rule=rule_name, side=signal.side,
+                                  price=float(df["close"].iloc[-1]),
+                                  candle_ts=candle_ts, timeframe=timeframe)
 
     if not dry_run:
         save_state(state_path, state)
@@ -154,6 +172,8 @@ def main() -> int:
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--state", default=DEFAULT_STATE)
     parser.add_argument("--tg-state", default=DEFAULT_TG_STATE)
+    parser.add_argument("--siglog", default=DEFAULT_SIGLOG)
+    parser.add_argument("--tuned", default=DEFAULT_TUNED)
     parser.add_argument("--test-notify", action="store_true",
                         help="send a test alert to all channels and exit")
     parser.add_argument("--dry-run", action="store_true",
@@ -180,11 +200,14 @@ def main() -> int:
 
     notifier = Notifier(config.get("notify", []))
     symbols = [pair for pair, _ in normalize_symbols(config)]
+    sig_entries = siglog.load(args.siglog)
+    tuned = load_tuned(args.tuned)
     bot = None
     tg_state = {}
     if config.get("telegram", {}).get("enabled", True):
         insight = make_insight_fn(config, dict(normalize_symbols(config)))
-        bot = telegram_bot.load_bot(symbols, insight)
+        bot = telegram_bot.load_bot(symbols, insight,
+                                    stats_fn=lambda: siglog.stats_text(sig_entries))
         if bot is not None:
             tg_state = telegram_bot.load_state(args.tg_state)
             bot.ensure_default_chats(tg_state)
@@ -205,10 +228,29 @@ def main() -> int:
             save_tg()
         return 0 if ok else 1
 
+    def score_and_save():
+        if args.dry_run:
+            return
+        timeframe = config.get("timeframe", "1h")
+        pair_ex = dict(normalize_symbols(config))
+
+        def fetch(pair, exchange):
+            try:
+                return fetch_closed_candles(get_exchange(exchange), pair,
+                                            timeframe, 400)
+            except Exception as e:
+                log.error("Scoring fetch failed for %s: %s", pair, e)
+                return None
+
+        if any(e["outcome"] is None for e in sig_entries):
+            siglog.score_pending(sig_entries, fetch)
+        siglog.save(args.siglog, sig_entries)
+
     def cycle():
         if bot is not None:
             bot.process_updates(tg_state)
         run_once(config, notifier, args.state, bot=bot, tg_state=tg_state,
+                 sig_entries=sig_entries, tuned=tuned,
                  force=args.force, dry_run=args.dry_run)
         if not args.dry_run:
             save_tg()
@@ -216,6 +258,7 @@ def main() -> int:
     if args.loop > 0:
         while True:
             cycle()
+            score_and_save()
             log.info("Sleeping %ds ...", args.loop)
             time.sleep(args.loop)
 
@@ -224,6 +267,7 @@ def main() -> int:
             log.info("Cycle %d/%d in %ds ...", i + 1, args.repeat, args.sleep)
             time.sleep(args.sleep)
         cycle()
+    score_and_save()
     return 0
 
 

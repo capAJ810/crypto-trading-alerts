@@ -100,6 +100,30 @@ them to the secret — slash-separated).
 .venv/bin/python -m pytest tests/                # indicator math unit tests
 ```
 
+## Self-learning (autoresearch-style loop)
+
+The system measures itself and tunes itself, using the mutate → evaluate →
+keep-if-better pattern from [karpathy/autoresearch](https://github.com/karpathy/autoresearch)
+— minus the LLM, since parameter search doesn't need one:
+
+- **Outcome log** ([alerts/siglog.py](alerts/siglog.py)): every alert is
+  recorded in `signals_log.json`; an hour later it's scored — *hit* if
+  price moved ≥0.3% in the signal's direction (for 🟡 heads-ups: if the
+  predicted cross actually happened). Ask the bot **/accuracy** for live
+  hit-rates per rule and coin.
+- **Nightly self-tune** ([alerts/tuner.py](alerts/tuner.py)): once a day a
+  run replays the last 14 days of candles through a bounded parameter grid
+  (RSI gates, volume window, trend EMA, gap threshold), **walk-forward
+  validated**: best-on-train params are deployed only if they also beat the
+  current params by ≥5 percentage points on the newest 4 days the search
+  never saw. Winners land in `tuned.yaml` (per-coin overrides merged over
+  config.yaml), each change is a bot-announced git commit, and `git revert`
+  undoes any tune. No validation edge → nothing changes.
+
+Overfitting is the failure mode of any market self-tuner; the validation
+gate, minimum-signal counts, and bounded grid are the defenses. Expect
+fewer false alerts over time, not a crystal ball.
+
 ## Operational notes
 
 - **Dedup:** `state.json` records the last-alerted candle per (symbol, rule)

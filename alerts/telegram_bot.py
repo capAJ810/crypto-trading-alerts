@@ -37,6 +37,7 @@ HELP_TEXT = (
     "• \"predict sol\" → my full read: trend, levels, example setup\n\n"
     "/coins — choose which coins alert you\n"
     "/status — pick a coin for an immediate update\n"
+    "/accuracy — how often my alerts have been right\n"
     "/help — this message"
 )
 
@@ -90,12 +91,14 @@ def _mask(chat_id) -> str:
 
 class TelegramBot:
     def __init__(self, token: str, allowed_chats: List[str], symbols: List[str],
-                 insight_fn: Optional[Callable[[str, str], str]] = None):
+                 insight_fn: Optional[Callable[[str, str], str]] = None,
+                 stats_fn: Optional[Callable[[], str]] = None):
         self.base = f"https://api.telegram.org/bot{token}"
         self.allowed = {str(c) for c in allowed_chats}
         self.symbols = symbols
         # insight_fn(pair, kind) -> str, kind in {"status", "predict"}
         self.insight_fn = insight_fn
+        self.stats_fn = stats_fn
 
     def _insight(self, pair: str, kind: str) -> str:
         if self.insight_fn is None:
@@ -221,6 +224,9 @@ class TelegramBot:
         elif lower.startswith("/status"):
             self.send(chat_id, "Which coin do you want an update on?",
                       self._status_keyboard())
+        elif lower.startswith("/accuracy"):
+            self.send(chat_id, self.stats_fn() if self.stats_fn
+                      else "Accuracy tracking unavailable.")
         elif lower.startswith("/start") or lower.startswith("/help"):
             self.send(chat_id, HELP_TEXT, self._coin_keyboard(subs))
         else:
@@ -286,7 +292,8 @@ class TelegramBot:
 
 
 def load_bot(symbols: List[str],
-             insight_fn: Optional[Callable[[str, str], str]] = None
+             insight_fn: Optional[Callable[[str, str], str]] = None,
+             stats_fn: Optional[Callable[[], str]] = None
              ) -> Optional[TelegramBot]:
     """Build the bot from TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_IDS env, or None."""
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
@@ -294,7 +301,7 @@ def load_bot(symbols: List[str],
     if not token or not chats:
         log.warning("Telegram disabled (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_IDS unset)")
         return None
-    return TelegramBot(token, chats, symbols, insight_fn)
+    return TelegramBot(token, chats, symbols, insight_fn, stats_fn)
 
 
 def load_state(path: str) -> dict:
