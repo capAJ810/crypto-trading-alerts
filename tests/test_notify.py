@@ -38,6 +38,20 @@ def test_static_secret_filter_beats_bot_link(monkeypatch):
     assert n.email_recipients("BTC/USDT") == ["a@x.com"]
 
 
+def test_self_registered_email_not_in_alert_emails_is_included(monkeypatch):
+    # A user added their own address via the bot; it isn't in ALERT_EMAILS but
+    # must still receive alerts, filtered by their coin subscriptions.
+    monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
+    monkeypatch.setenv("ALERT_EMAILS", "owner@x.com")
+    links = {"self@new.com": {"BTC", "ETH"}}
+    n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
+                  "?to=${ALERT_EMAILS}"], lambda: links)
+    assert n.email_recipients("BTC/USDT") == ["owner@x.com", "self@new.com"]
+    assert n.email_recipients("SOL/USDT") == ["owner@x.com"]  # self filtered out
+    assert n.email_recipients(None) == ["owner@x.com", "self@new.com"]
+
+
 def test_empty_link_filter_suppresses_email(monkeypatch):
     # A 'telegram only' chat maps its linked address to an empty coin set
     # (see watcher.link_filters); that address then receives no coin's email.

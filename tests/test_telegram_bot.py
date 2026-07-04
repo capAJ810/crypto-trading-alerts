@@ -92,14 +92,42 @@ def test_guide_command_sends_glossary():
     assert "CONFIRMED BUY" in GUIDE_TEXT and "Bearish" in GUIDE_TEXT
 
 
-def test_email_link_flow(monkeypatch):
-    monkeypatch.setenv("ALERT_EMAILS", "me@x.com,other@y.com")
+def test_self_service_email_add_change_remove():
     bot = make_bot([])
     state = {}
     msg = lambda t: {"chat": {"id": 111}, "text": t}
+    # any well-formed address the user picks is accepted (no owner allowlist)
     bot._on_message(state, msg("/email me@x.com"))
     assert state["chats"]["111"]["email"] == "me@x.com"
-    bot._on_message(state, msg("/email stranger@evil.com"))  # not allowlisted
-    assert state["chats"]["111"]["email"] == "me@x.com"
+    bot._on_message(state, msg("/email me@newprovider.io"))
+    assert state["chats"]["111"]["email"] == "me@newprovider.io"
+    # garbage is rejected and keeps the previous value
+    bot._on_message(state, msg("/email not-an-email"))
+    assert state["chats"]["111"]["email"] == "me@newprovider.io"
     bot._on_message(state, msg("/email off"))
+    assert "email" not in state["chats"]["111"]
+
+
+def test_email_button_prompts_then_captures_reply():
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    # tapping 📧 Email arms the "type your address" prompt
+    bot._on_callback(state, {"id": "1", "data": "m|email",
+                             "message": {"chat": {"id": 111}, "message_id": 5}})
+    assert state["chats"]["111"].get("awaiting") == "email"
+    # the next plain message becomes the address, and the prompt is cleared
+    bot._on_message(state, {"chat": {"id": 111}, "text": "trader@mail.com"})
+    assert state["chats"]["111"]["email"] == "trader@mail.com"
+    assert "awaiting" not in state["chats"]["111"]
+
+
+def test_command_cancels_pending_email_prompt():
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    state["chats"]["111"]["awaiting"] = "email"
+    bot._on_message(state, {"chat": {"id": 111}, "text": "/status"})
+    # a command clears the prompt instead of being stored as an email
+    assert "awaiting" not in state["chats"]["111"]
     assert "email" not in state["chats"]["111"]
