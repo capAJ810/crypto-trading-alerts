@@ -2455,5 +2455,31 @@
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
   "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 08:25 UTC",
+  "candle_ts": 1783153500000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_intrabar|1783153500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 570.33,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 08:30 UTC",
+  "candle_ts": 1783153500000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1783153500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 570.52,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
+  "timeframe": "5m"
  }
 ]
