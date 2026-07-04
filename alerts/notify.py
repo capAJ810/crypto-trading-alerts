@@ -180,17 +180,35 @@ class Notifier:
         return len(self.static_buckets) + (1 if self.email_template else 0)
 
     def email_recipients(self, pair: Optional[str]) -> List[str]:
-        """Addresses that should receive an alert for `pair`."""
+        """Addresses that should receive an alert for `pair`.
+
+        Two sources are merged:
+          1. ALERT_EMAILS (owner-set), honoring any static ':BTC,ETH' filter.
+          2. Self-service addresses users added themselves via the Telegram
+             bot's /email — surfaced by link_filters_fn as email -> coin-set —
+             for any address not already covered by ALERT_EMAILS.
+        A coin-set of None = all coins; an empty set = none (e.g. a chat in
+        'telegram only' mode).
+        """
         base = pair.split("/")[0].upper() if pair else None
         links = {k.lower(): v for k, v in self.link_filters_fn().items()}
-        out = []
+        out: List[str] = []
+        seen = set()
+
         for emails, static_filt in parse_alert_emails(
                 os.environ.get("ALERT_EMAILS", "")):
             for addr in emails:
+                seen.add(addr.lower())  # ALERT_EMAILS owns this address
                 filt = static_filt if static_filt is not None \
                     else links.get(addr.lower())
                 if base is None or filt is None or base in filt:
                     out.append(addr)
+
+        for addr, filt in links.items():  # bot self-service addresses
+            if addr in seen:
+                continue
+            if base is None or filt is None or base in filt:
+                out.append(addr)
         return out
 
     def send(self, title: str, body: str, tier: str = "info",

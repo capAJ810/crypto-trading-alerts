@@ -125,7 +125,7 @@ State file: `telegram.json` — committed by CI after each run
 - `/coins` — toggle which coins alert this chat (controls both Telegram AND email if linked)
 - `/mode` — choose delivery: 📱 Telegram only · 📧 Email only · 🔔 Both (default). Changeable anytime; stored as `mode` in each chat's telegram.json entry (absent = "both")
 - `/status` — pick a coin for an immediate 3-line snapshot
-- `/email you@example.com` — link your email; `/email` alone shows current link; `/email off` unlinks
+- `/email you@example.com` — **self-service**: any allowlisted chat can register its OWN email (validated by regex, no owner pre-approval needed); `/email` alone shows current address; `/email off` removes it. Also reachable via the 📧 Email button, which prompts for the address and captures the next plain message (per-chat `awaiting: "email"` flag, cleared by any command or other button). Registered addresses persist in telegram.json and are merged into email routing even when NOT in `ALERT_EMAILS`.
 - `/guide` — glossary of every alert type (confirmed/weak/intrabar/near) and trading term (long/short, bullish/bearish, EMA/RSI/volume/ATR, support/resistance)
 - `/accuracy` — hit rate of past alerts (from signals_log.json)
 - `/help` — help text
@@ -137,7 +137,15 @@ The `/coins` keyboard footer now has 🔔 Alert mode and 📖 Guide buttons alon
 
 ## Per-recipient email coin filtering
 
-Two-tier resolution at send time (per address):
+Resolution at send time (`Notifier.email_recipients`) merges two sources:
+
+- **`ALERT_EMAILS` secret** (owner-set), honoring any static `:BTC,ETH` filter.
+- **Self-service addresses** users registered via the bot's `/email`, surfaced
+  by `link_filters()` as email→coin-set — included even if the address is NOT
+  in `ALERT_EMAILS` (an address in both is owned by `ALERT_EMAILS`; the static
+  filter wins and the self-service copy is skipped).
+
+Per-address precedence:
 
 1. **Static filter** in `ALERT_EMAILS` secret wins if present:
    `manoharabhijat@gmail.com:BTC,ETH` → only BTC and ETH emails
@@ -334,7 +342,29 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-Three changes (2026-07-04):
+**Self-service email registration (2026-07-04, latest).** Previously `/email`
+only let a chat link an address the owner had ALREADY put in `ALERT_EMAILS`;
+users couldn't add their own. Now any allowlisted chat registers its own email:
+- `telegram_bot.py`: `EMAIL_RE` validation; `_register_email()` helper (accepts
+  any valid address, `off`/`none`/`remove` to clear); `_on_email_command`
+  rewritten (no more `allowed_addresses` gate); 📧 Email button (`m|email`) arms
+  a per-chat `awaiting:"email"` prompt captured by the next plain message; any
+  command/other button cancels it.
+- `notify.py`: `email_recipients()` now merges self-service addresses (from
+  `link_filters`) with `ALERT_EMAILS`, deduped (ALERT_EMAILS owns shared addrs).
+- Trust model: the `TELEGRAM_CHAT_IDS` allowlist still gates who can reach the
+  bot, and mail is sent from the owner's own SMTP — so a valid-format check is
+  enough. No email-verification handshake (acceptable for this trusted group;
+  an allowlisted user could enter someone else's address).
+- Tests: `test_self_service_email_add_change_remove`,
+  `test_email_button_prompts_then_captures_reply`,
+  `test_command_cancels_pending_email_prompt` (test_telegram_bot.py),
+  `test_self_registered_email_not_in_alert_emails_is_included` (test_notify.py).
+
+Also chat `8912039448` added to the `TELEGRAM_CHAT_IDS` allowlist secret
+(`1023807933/6381685292/60354093/8912039448`) via `gh secret set`.
+
+### Earlier this session — three changes (2026-07-04):
 
 1. **Chat `60354093` fully allowlisted.** `TELEGRAM_CHAT_IDS` secret set to
    `1023807933/6381685292/60354093` via `gh secret set` (gh was available this
@@ -370,7 +400,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (52 tests, all passing)
+## Test suite (55 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

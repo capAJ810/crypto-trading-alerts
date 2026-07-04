@@ -17,6 +17,7 @@ ID so the owner can decide to add them.
 Commands:  /start /help — welcome + coin picker
            /coins       — choose which coins alert this chat (✅/☐ toggles)
            /mode        — receive alerts by Telegram, email, or both
+           /email       — add/change/remove your own email for alerts
            /status      — pick a coin for an immediate update
            /guide       — glossary of every alert type and trading term
 """
@@ -40,7 +41,7 @@ HELP_TEXT = (
     "/coins — choose which coins alert you (Telegram AND email)\n"
     "/mode — get alerts by Telegram, email, or both\n"
     "/status — pick a coin for an immediate update\n"
-    "/email you@example.com — link your email so /coins controls it too\n"
+    "/email you@example.com — also get alerts by email (or /email off)\n"
     "/guide — glossary of every alert type and trading term\n"
     "/accuracy — how often my alerts have been right\n"
     "/help — this message"
@@ -93,6 +94,11 @@ GUIDE_TEXT = (
 
 # How a chat receives alerts. Absent = "both" (backward-compatible default).
 ALERT_MODES = ("both", "telegram", "email")
+
+# Users self-register their own email via the bot, so accept any syntactically
+# valid address — the TELEGRAM_CHAT_IDS allowlist already gates who can reach
+# the bot at all, and email delivery still goes through the owner's own SMTP.
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # Common names people type for the bases we track (extend freely).
 COIN_NAMES = {
@@ -189,9 +195,10 @@ class TelegramBot:
         rows.append([{"text": "✅ All on", "callback_data": "t|ALL_ON"},
                      {"text": "🚫 All off", "callback_data": "t|ALL_OFF"}])
         rows.append([{"text": "🔔 Alert mode", "callback_data": "m|mode"},
-                     {"text": "📖 Guide", "callback_data": "m|guide"}])
-        rows.append([{"text": "📊 Status", "callback_data": "m|status"},
-                     {"text": "👍 Done", "callback_data": "m|done"}])
+                     {"text": "📧 Email", "callback_data": "m|email"}])
+        rows.append([{"text": "📖 Guide", "callback_data": "m|guide"},
+                     {"text": "📊 Status", "callback_data": "m|status"}])
+        rows.append([{"text": "👍 Done", "callback_data": "m|done"}])
         return rows
 
     def _mode_keyboard(self, mode: str) -> list:
@@ -312,6 +319,11 @@ class TelegramBot:
                       "to the TELEGRAM_CHAT_IDS secret.")
             return
         subs = self._chat_subs(state, chat_id)
+        # A plain reply right after the 📧 Email button is taken as the address.
+        entry = state["chats"][str(chat_id)]
+        if entry.pop("awaiting", None) == "email" and not lower.startswith("/"):
+            self.send(chat_id, self._register_email(state, chat_id, text))
+            return
         if lower.startswith("/coins"):
             self.send(chat_id, "Choose which coins alert this chat:",
                       self._coin_keyboard(subs))
@@ -347,42 +359,49 @@ class TelegramBot:
                           self._status_keyboard())
 
     def _on_email_command(self, state: dict, chat_id, text: str) -> None:
-        """Self-service email link: '/email me@x.com' ties an allowlisted
-        address to this chat so its /coins picks route email alerts too."""
-        from .notify import allowed_addresses  # avoids import cycle at load
+        """Self-service email: '/email you@example.com' registers an address so
+        this chat's alerts are also sent by email; '/email off' removes it;
+        '/email' alone shows the current address and how to change it."""
         entry = state.setdefault("chats", {}).setdefault(
             str(chat_id), {"subs": list(self.symbols)})
         parts = text.split(maxsplit=1)
-        arg = parts[1].strip().lower() if len(parts) > 1 else ""
-        current = entry.get("email")
-
+        arg = parts[1].strip() if len(parts) > 1 else ""
         if not arg:
-            status = f"Linked email: {current}" if current else \
-                "No email linked — you currently receive ALL coins by email."
+            current = entry.get("email")
+            status = f"📧 Your alerts are also emailed to: {current}" \
+                if current else \
+                "No email added yet — you currently get alerts on Telegram only."
             self.send(chat_id,
-                      f"{status}\n\nLink one with:  /email you@example.com\n"
-                      "Unlink with:  /email off\n"
-                      "Once linked, your /coins choices control your email "
-                      "alerts too.")
-        elif arg in ("off", "none", "unlink"):
-            entry.pop("email", None)
-            self.send(chat_id, "📧 Email unlinked — that address gets all "
-                               "coins again.")
-        elif arg in {a.lower() for a in allowed_addresses()}:
-            entry["email"] = arg
-            on = ", ".join(entry.get("subs", [])) or "none"
-            note = ("\n\n⚠️ Heads-up: your alert mode is currently "
-                    "Telegram only, so this email won't get alerts until you "
-                    "switch it with /mode.") \
-                if self._chat_mode(state, chat_id) == "telegram" else ""
-            self.send(chat_id,
-                      f"📧 Linked {arg} to this chat. Your /coins choices now "
-                      f"control email alerts too.\nCurrently: {on}{note}")
-        else:
-            self.send(chat_id,
-                      f"🔒 {arg} isn't on the alert recipient list. Ask the "
-                      "owner to add it to the ALERT_EMAILS secret first — "
-                      "then /email it here.")
+                      f"{status}\n\nAdd or change it:  /email you@example.com\n"
+                      "Remove it:  /email off\n"
+                      "Your /coins choices decide which coins email you.")
+            return
+        self.send(chat_id, self._register_email(state, chat_id, arg))
+
+    def _register_email(self, state: dict, chat_id, raw: str) -> str:
+        """Validate and store (or clear) a user-supplied email; return a reply.
+
+        Accepts any well-formed address — the chat is already allowlisted to
+        use the bot, and mail is sent from the owner's own SMTP account.
+        """
+        entry = state.setdefault("chats", {}).setdefault(
+            str(chat_id), {"subs": list(self.symbols)})
+        arg = (raw or "").strip().lower()
+        if arg in ("off", "none", "unlink", "remove", "stop"):
+            if entry.pop("email", None):
+                return ("📧 Email removed — you'll get alerts on Telegram only "
+                        "from now on.")
+            return "You don't have an email added."
+        if not EMAIL_RE.match(arg):
+            return ("🤔 That doesn't look like a valid email address.\n"
+                    "Send it like:  you@example.com   (or 'off' to remove).")
+        entry["email"] = arg
+        on = ", ".join(entry.get("subs", [])) or "none"
+        note = ("\n\n⚠️ Your alert mode is currently Telegram only — switch it "
+                "with /mode so these emails actually go out.") \
+            if self._chat_mode(state, chat_id) == "telegram" else ""
+        return (f"✅ Done! Alerts will also be emailed to {arg}.\n"
+                f"Coins emailing you now: {on} — change with /coins.{note}")
 
     def _on_callback(self, state: dict, cb: dict) -> None:
         chat_id = cb["message"]["chat"]["id"]
@@ -394,6 +413,9 @@ class TelegramBot:
             return
 
         subs = self._chat_subs(state, chat_id)
+        # Pressing any button cancels a pending "type your email" prompt; the
+        # 📧 Email branch below re-arms it.
+        state["chats"][str(chat_id)].pop("awaiting", None)
         toast = ""
         if action == "t":
             if arg == "ALL_ON":
@@ -442,6 +464,16 @@ class TelegramBot:
                           "How do you want to receive alerts? "
                           "(you can change this anytime)",
                           self._mode_keyboard(self._chat_mode(state, chat_id)))
+            elif arg == "email":
+                entry = state["chats"][str(chat_id)]
+                entry["awaiting"] = "email"
+                current = entry.get("email")
+                cur = f"\n\nCurrent: {current}" if current else ""
+                toast = "Type your email"
+                self.send(chat_id,
+                          "📧 Send me the email address you'd like alerts at "
+                          "(e.g. you@example.com).\nType 'off' to remove it."
+                          + cur)
             elif arg == "guide":
                 self.send(chat_id, GUIDE_TEXT)
             elif arg == "status":
