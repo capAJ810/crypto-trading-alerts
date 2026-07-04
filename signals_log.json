@@ -3580,7 +3580,7 @@
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_soon|1783185900000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 1787.21,
   "rule": "ema_cross_soon",
@@ -3702,6 +3702,19 @@
   "price": 82.19,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 18:30 UTC",
+  "candle_ts": 1783189500000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1783189500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.649,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
