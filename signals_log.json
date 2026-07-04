@@ -1792,5 +1792,31 @@
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
   "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 03:33 UTC",
+  "candle_ts": 1783135800000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1783135800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1751.42,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 03:35 UTC",
+  "candle_ts": 1783135800000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1783135800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1751.7,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
+  "timeframe": "5m"
  }
 ]
