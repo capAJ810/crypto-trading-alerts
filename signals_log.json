@@ -4347,7 +4347,7 @@
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_soon|1783203000000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 69.915,
   "rule": "ema_cross_soon",
@@ -4480,6 +4480,19 @@
   "outcome": null,
   "pair": "HYPE/USDT",
   "price": 69.989,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-04 23:15 UTC",
+  "candle_ts": 1783206600000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1783206600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 574.44,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
   "timeframe": "5m"
