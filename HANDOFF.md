@@ -387,7 +387,11 @@ anchors to swing structure:
   floored at 0.75·ATR so a level hugging price can't make a hair-trigger stop.
 - R-multiples are computed from the ACTUAL stop distance (e.g. "~0.9R / 1.6R"),
   not assumed 1R/2R.
-- `_setup(frames)` → `_setup(frames, lv)`; tests in test_analysis.py. 61 total.
+- **Min 1:2 SL/TP rule:** the final target must offer ≥2R. If the structural
+  T2 falls short, it's extended to the 2R point and the message flags that T2
+  "is set by the 1:2 rule and sits past the mapped levels" (trail/take early
+  if momentum stalls). Structure that already beats 2R is left untouched.
+- `_setup(frames)` → `_setup(frames, lv)`; tests in test_analysis.py. 63 total.
 
 **Parallel 15m pass (2026-07-05).** Added a 15-minute reference-candle
 stream running alongside the existing 5m stream (see "Parallel 15m pass" above).
@@ -462,7 +466,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (61 tests, all passing)
+## Test suite (63 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

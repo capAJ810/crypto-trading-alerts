@@ -159,10 +159,22 @@ def _rr_setup(entry: float, atr: float, lv: dict, side: str) -> str:
     t2 = tp2_anchor if sign * (tp2_anchor - t1) >= 0.3 * atr \
         else entry + sign * max(3 * atr, sign * (t1 - entry) + 1.5 * atr)
 
+    # 1:2 SL/TP rule: the final target must offer at least twice the risk.
+    # If structure falls short, extend T2 to the 2R point — but say so, since
+    # that target then sits beyond the mapped swing levels.
+    tp_2r = entry + sign * 2 * risk
+    rule_note = ""
+    if sign * (t2 - tp_2r) < 0:
+        t2 = tp_2r
+        rule_note = (" T2 is set by the 1:2 rule and sits past the mapped "
+                     "levels — trail or take profit early if momentum stalls "
+                     "before it.")
+
     m1, m2 = abs(t1 - entry) / risk, abs(t2 - entry) / risk
     return (f"Example {side} setup (if momentum holds): entry ~{fmt(entry)}, "
             f"invalidation ~{fmt(stop)}, targets {fmt(t1)} → {fmt(t2)} "
-            f"(~{m1:.1f}R / {m2:.1f}R — swing levels, ATR-guarded).")
+            f"(~{m1:.1f}R / {m2:.1f}R — swing levels, ATR-guarded, "
+            f"min 1:2 SL/TP).{rule_note}")
 
 
 def _setup(frames: Dict[str, dict], lv: dict) -> str:

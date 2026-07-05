@@ -91,6 +91,24 @@ def test_setup_falls_back_to_atr_on_breakout_with_no_resistance_above():
     assert "99" in txt                     # support 94 is >2.5·atr away → ATR stop 105−1.5·atr
 
 
+def test_final_target_enforces_min_1_to_2_sl_tp():
+    # Wide structural stop (support 91 → stop 90, risk 10) but nearby
+    # resistances (108/109) can't offer 2R → T2 extends to the 2R point (120)
+    # and the message says the 1:2 rule set it.
+    lv = {"s1": 91.0, "s2": 85.0, "r1": 108.0, "r2": 109.0}
+    txt = _rr_setup(entry=100.0, atr=4.0, lv=lv, side="long")
+    assert "120" in txt                    # entry + 2 × risk(10)
+    assert "2.0R" in txt
+    assert "1:2 rule" in txt               # flagged as rule-set, not structural
+
+
+def test_no_2r_extension_when_structure_already_beats_it():
+    # Structural T2 (120) ≥ 2R (112) → kept as-is, no rule note.
+    lv = {"s1": 95.0, "s2": 90.0, "r1": 110.0, "r2": 120.0}
+    txt = _rr_setup(entry=100.0, atr=4.0, lv=lv, side="long")
+    assert "120" in txt and "1:2 rule and sits past" not in txt
+
+
 # ── conversational intent parsing ────────────────────────────────────
 
 def test_parse_intent_bare_coin_gives_prediction():
