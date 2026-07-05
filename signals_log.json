@@ -6491,8 +6491,8 @@
   "candle_ts": 1783262700000,
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_rsi|1783262700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.344,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 62728.01,
   "rule": "ema_cross_rsi",
@@ -6601,6 +6601,19 @@
   "price": 81.16,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-05 15:46 UTC",
+  "candle_ts": 1783266300000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_intrabar|1783266300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 62704.0,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
   "timeframe": "5m"
  }
 ]
