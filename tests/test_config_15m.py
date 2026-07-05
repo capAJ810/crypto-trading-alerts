@@ -23,8 +23,10 @@ def test_15m_symbols_match_5m_symbols():
     assert _load("config-15m.yaml")["symbols"] == _load("config.yaml")["symbols"]
 
 
-def test_15m_has_no_intrabar_rule():
-    # The once-per-run 15m pass can't do meaningful intrabar detection.
+def test_15m_runs_the_full_rule_set_including_intrabar():
+    # The 15m pass mirrors the 5m rule set. Intrabar is checked once per CI
+    # run against the forming 15m candle (see config-15m.yaml comment).
     names = {r["name"] for r in _load("config-15m.yaml")["rules"]}
-    assert "ema_cross_intrabar" not in names
-    assert "ema_cross_rsi" in names  # the core signal is still present
+    assert "ema_cross_rsi" in names
+    assert "ema_cross_soon" in names
+    assert "ema_cross_intrabar" in names

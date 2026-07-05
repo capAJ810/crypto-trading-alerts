@@ -75,6 +75,13 @@ python -m alerts.watcher --config config-15m.yaml --state state-15m.json \
   caught by the first run after it — ≤~5 min latency, fine for a 15m timeframe.
 - **Own state/log files** (`state-15m.json`, `signals_log-15m.json`) so dedup
   never collides with the 5m stream.
+- **Intrabar on 15m**: the one-shot's `intrabar()` call checks the FORMING 15m
+  candle once per run (~5 min), so 15m ⏱ intrabar alerts land at ~5-min
+  resolution (vs the 5m loop's ~30s). A 15m candle forms over 15 min, so a
+  cross is usually still visible at the next check; `state-15m.json` dedup
+  (forming-candle ts + side) prevents repeats. For true ~30s 15m intrabar the
+  15m pass would need its own `--run-for` loop — deferred (serializing two
+  --run-for sessions eats the 10-min job budget and creates blind windows).
 - **`--no-bot-poll`**: broadcasts alerts but does NOT drain/save Telegram updates
   — the 5m pass owns the getUpdates offset + telegram.json, so the two never
   fight over it. The 15m pass still reads telegram.json for subscriptions.
@@ -113,7 +120,7 @@ tests/
   test_analysis.py     read_frame, bias_score, compose_* on synthetic data
 
 config.yaml            Symbols, rules, notify URLs (no secrets here, only ${VAR} refs)
-config-15m.yaml        Parallel 15m pass: same symbols, timeframe 15m, no intrabar rule
+config-15m.yaml        Parallel 15m pass: same symbols + full rule set (intrabar checked once/run against the forming 15m candle, ~5-min resolution)
 state-15m.json         Dedup for the 15m pass (separate from state.json)
 signals_log-15m.json   Signal outcome log for the 15m pass (separate from signals_log.json)
 state.json             Dedup: last alerted candle per (exchange|pair|rule)
@@ -384,7 +391,14 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**Idempotent keyboard presses (2026-07-05, latest — bugfix).** User reported
+**15m intrabar enabled (2026-07-05, latest).** Added `ema_cross_intrabar` to
+`config-15m.yaml` (had been intentionally omitted). The piggyback one-shot's
+`intrabar()` call now fires ⏱ 15m intrabar alerts against the forming candle at
+~5-min resolution (see the Parallel 15m pass caveat). No workflow change needed
+— the step already runs `intrabar()`. test_config_15m flipped to assert the
+rule is present.
+
+**Idempotent keyboard presses (2026-07-05 — bugfix).** User reported
 unticking "5m candles" re-ticked itself. Root cause: toggle-semantics buttons
 + ~30s poll latency → impatient double-taps undo themselves; and Telegram
 redelivery after a failed run re-applies presses. Fix: `_apply_toggle()` +
@@ -429,7 +443,7 @@ anchors to swing structure:
 
 **Parallel 15m pass (2026-07-05).** Added a 15-minute reference-candle
 stream running alongside the existing 5m stream (see "Parallel 15m pass" above).
-- New `config-15m.yaml` (same symbols, timeframe 15m, no intrabar rule),
+- New `config-15m.yaml` (same symbols, timeframe 15m; intrabar added later),
   `state-15m.json` (`{}`), `signals_log-15m.json` (`[]`).
 - `watcher.py`: new `--no-bot-poll` flag (broadcast only; skips
   `process_updates`/`save_tg`) so the 15m pass doesn't fight the 5m pass over
