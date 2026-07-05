@@ -12,6 +12,10 @@ on 5-minute candles. Sends tiered email (Gmail SMTP via Apprise) and
 Telegram alerts — one per signal per candle, never duplicates. Runs 24/7
 on GitHub Actions with zero cost (no API keys, all public exchange data).
 
+A **parallel 15-minute pass** runs alongside the 5m stream (same coins, same
+subscribers) — every alert is tagged `5m` or `15m` in its title. See
+"Parallel 15m pass" below. Subscribers receive both streams.
+
 **The full signal hierarchy (highest to lowest confidence):**
 
 | Alert type | Trigger | Email style |
@@ -50,11 +54,37 @@ if somehow the chain dies. Normal operation never relies on it.
 
 **Each run:**
 1. Checks out the repo
-2. Runs `python -m alerts.watcher --run-for 250` (4 minutes 10 seconds)
+2. Runs `python -m alerts.watcher --run-for 250` (4 minutes 10 seconds) — the 5m stream
 3. Inside `--run-for`, the watcher aligns to candle closes (BUFFER=4s past each 5m close), evaluates rules, polls Telegram every ~30s in between
-4. Runs `python -m alerts.tuner --if-due` (nightly self-tune, skips if last run <24h ago)
-5. Commits `state.json`, `telegram.json`, `signals_log.json`, `tuned.yaml` back to main
-6. Dispatches the next run
+4. Runs the **15m pass** (one-shot, see below)
+5. Runs `python -m alerts.tuner --if-due` (nightly self-tune, skips if last run <24h ago)
+6. Commits `state.json`, `telegram.json`, `signals_log.json`, `tuned.yaml`, `state-15m.json`, `signals_log-15m.json` back to main
+7. Dispatches the next run
+
+### Parallel 15m pass
+
+Runs alongside the 5m stream **inside the same job** (not a second workflow —
+two independent workflows would race on every push to main). After the 5m
+`--run-for`, one step runs:
+```
+python -m alerts.watcher --config config-15m.yaml --state state-15m.json \
+  --siglog signals_log-15m.json --tuned tuned-15m.yaml --no-bot-poll
+```
+- **One-shot** (no `--run-for`): evaluates the latest CLOSED 15m candle. Since
+  runs chain every ~5 min and 15m candles close every 15 min, each 15m close is
+  caught by the first run after it — ≤~5 min latency, fine for a 15m timeframe.
+- **Own state/log files** (`state-15m.json`, `signals_log-15m.json`) so dedup
+  never collides with the 5m stream.
+- **`--no-bot-poll`**: broadcasts alerts but does NOT drain/save Telegram updates
+  — the 5m pass owns the getUpdates offset + telegram.json, so the two never
+  fight over it. The 15m pass still reads telegram.json for subscriptions.
+- **`--tuned tuned-15m.yaml`** points at a non-existent file on purpose, so the
+  5m tuner's `tuned.yaml` doesn't bleed into the 15m params. The 15m pass is not
+  self-tuned; it uses `config-15m.yaml` params as-is.
+- Alerts are tagged `15m` in the title (vs `5m`), so subscribers can tell them
+  apart. Everyone who gets 5m alerts also gets 15m alerts for their coins.
+- To disable: delete the "Run 15m watcher" step and drop `state-15m.json` /
+  `signals_log-15m.json` from the persist `git add`.
 
 ---
 
@@ -83,6 +113,9 @@ tests/
   test_analysis.py     read_frame, bias_score, compose_* on synthetic data
 
 config.yaml            Symbols, rules, notify URLs (no secrets here, only ${VAR} refs)
+config-15m.yaml        Parallel 15m pass: same symbols, timeframe 15m, no intrabar rule
+state-15m.json         Dedup for the 15m pass (separate from state.json)
+signals_log-15m.json   Signal outcome log for the 15m pass (separate from signals_log.json)
 state.json             Dedup: last alerted candle per (exchange|pair|rule)
 telegram.json          Bot state: chat subs, email links, getUpdates offset
 tuned.yaml             Self-tuner output: per-pair param overrides
@@ -342,7 +375,22 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**Self-service email registration (2026-07-04, latest).** Previously `/email`
+**Parallel 15m pass (2026-07-05, latest).** Added a 15-minute reference-candle
+stream running alongside the existing 5m stream (see "Parallel 15m pass" above).
+- New `config-15m.yaml` (same symbols, timeframe 15m, no intrabar rule),
+  `state-15m.json` (`{}`), `signals_log-15m.json` (`[]`).
+- `watcher.py`: new `--no-bot-poll` flag (broadcast only; skips
+  `process_updates`/`save_tg`) so the 15m pass doesn't fight the 5m pass over
+  the bot offset / telegram.json.
+- `.github/workflows/alerts.yml`: new "Run 15m watcher" one-shot step; persist
+  step now also `git add`s `state-15m.json` and `signals_log-15m.json`.
+- Tests: `tests/test_config_15m.py` guards that the 15m symbols/timeframe stay
+  in sync with the 5m config. Local dry-run confirmed real 15m candles fetch and
+  evaluate (BTC/ETH/ASTER fired `15m`-tagged signals). Suite now 58 tests.
+- Trade-off chosen: piggyback in one workflow (robust, no push races) over a
+  literal second parallel workflow. Latency ≤~5 min on 15m closes.
+
+**Self-service email registration (2026-07-04).** Previously `/email`
 only let a chat link an address the owner had ALREADY put in `ALERT_EMAILS`;
 users couldn't add their own. Now any allowlisted chat registers its own email:
 - `telegram_bot.py`: `EMAIL_RE` validation; `_register_email()` helper (accepts
@@ -400,7 +448,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (55 tests, all passing)
+## Test suite (58 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

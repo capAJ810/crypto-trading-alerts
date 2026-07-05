@@ -50,6 +50,27 @@ jobs:
             python -m alerts.watcher --run-for 250
           fi
 
+      - name: Run 15m watcher (parallel higher-timeframe pass)
+        # One-shot check of the latest CLOSED 15m candle, running alongside
+        # the 5m stream above. Own state/log files so dedup never collides;
+        # --no-bot-poll = broadcast only (the 5m pass owns the bot's offset
+        # and telegram.json). --tuned points at a non-existent file so no 5m
+        # tuning bleeds into the 15m params.
+        if: ${{ inputs.test_notify != true }}
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ALERT_EMAILS: ${{ secrets.ALERT_EMAILS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: |
+          python -m alerts.watcher \
+            --config config-15m.yaml \
+            --state state-15m.json \
+            --siglog signals_log-15m.json \
+            --tuned tuned-15m.yaml \
+            --no-bot-poll
+
       - name: Nightly self-tune (runs when >24h since last tune)
         if: ${{ inputs.test_notify != true }}
         env:
@@ -64,7 +85,8 @@ jobs:
         run: |
           git config user.name "alerts-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add state.json telegram.json signals_log.json tuned.yaml
+          git add state.json telegram.json signals_log.json tuned.yaml \
+                  state-15m.json signals_log-15m.json
           git diff --cached --quiet || {
             git commit -m "chore: update alert state [skip ci]"
             git pull --rebase origin ${GITHUB_REF_NAME}

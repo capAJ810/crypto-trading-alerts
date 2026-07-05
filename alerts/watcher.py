@@ -273,6 +273,11 @@ def main() -> int:
                              "candle close for this long (CI mode)")
     parser.add_argument("--loop", type=int, metavar="SECONDS", default=0,
                         help="run forever, checking every SECONDS")
+    parser.add_argument("--no-bot-poll", action="store_true",
+                        help="don't drain or save Telegram bot updates — still "
+                             "broadcasts alerts. Use for a parallel-timeframe "
+                             "pass so it doesn't fight the main pass over the "
+                             "bot's getUpdates offset / telegram.json")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO,
@@ -353,12 +358,12 @@ def main() -> int:
         siglog.save(args.siglog, sig_entries)
 
     def cycle():
-        if bot is not None:
+        if bot is not None and not args.no_bot_poll:
             bot.process_updates(tg_state)
         run_once(config, notifier, args.state, bot=bot, tg_state=tg_state,
                  sig_entries=sig_entries, tuned=tuned,
                  force=args.force, dry_run=args.dry_run)
-        if not args.dry_run:
+        if not args.dry_run and not args.no_bot_poll:
             save_tg()
 
     def intrabar():
@@ -407,7 +412,7 @@ def main() -> int:
                 time.sleep(to_close + 1)
                 continue
             break
-        if bot is not None and bot.process_updates(tg_state):
+        if bot is not None and not args.no_bot_poll and bot.process_updates(tg_state):
             save_tg()
         intrabar()  # chart-time cross check on the forming candle
         now = time.time()

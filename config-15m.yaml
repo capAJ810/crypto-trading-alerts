@@ -1,0 +1,39 @@
+# ── Crypto alerts — PARALLEL 15-minute pass ──────────────────────────
+# Runs alongside the main 5m config (config.yaml). CI evaluates this once
+# per run as a one-shot on the latest CLOSED 15m candle, with its own
+# dedup/log files (state-15m.json, signals_log-15m.json) so the two
+# timeframes never clobber each other. Same symbols, same subscribers;
+# alerts are tagged "15m" in the title so they're distinct from the 5m ones.
+#
+# Keep `symbols` in sync with config.yaml when adding/removing coins.
+
+timeframe: 15m       # higher-timeframe reference candle
+exchange: binance
+candles: 400         # 400×15m ≈ 4 days — enough for EMA200 to settle
+
+symbols:
+  - BTC/USDT
+  - ETH/USDT
+  - SOL/USDT
+  - BNB/USDT
+  - ASTER/USDT
+  - {pair: HYPE/USDT, exchange: kucoin}   # not listed on Binance spot
+
+rules:
+  # Closed-candle signals only. The intrabar rule from config.yaml is
+  # intentionally omitted here: intrabar needs the frequent candle-aligned
+  # polling of a --run-for session, which the once-per-run 15m pass doesn't
+  # do. Everything else mirrors the 5m rules.
+  - name: ema_cross_rsi
+    params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
+             volume_avg: 20, trend_ema: 200, alert_weak: true}
+
+  - name: ema_cross_soon
+    once_per_side: true
+    params: {fast: 9, slow: 21, gap_pct: 0.08}
+
+notify:
+  - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
+
+telegram:
+  enabled: true
