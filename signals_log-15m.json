@@ -154,5 +154,18 @@
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-05 11:00 UTC",
+  "candle_ts": 1783248300000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1783248300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 62756.12,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
  }
 ]
