@@ -20,10 +20,12 @@ symbols:
   - {pair: HYPE/USDT, exchange: kucoin}   # not listed on Binance spot
 
 rules:
-  # Closed-candle signals only. The intrabar rule from config.yaml is
-  # intentionally omitted here: intrabar needs the frequent candle-aligned
-  # polling of a --run-for session, which the once-per-run 15m pass doesn't
-  # do. Everything else mirrors the 5m rules.
+  # Mirrors the 5m rule set. Caveat on intrabar: the 15m pass checks the
+  # FORMING 15m candle once per CI run (~every 5 min), not every ~30s like the
+  # 5m --run-for loop — so 15m intrabar alerts land at ~5-min resolution. Since
+  # a 15m candle forms over 15 min, a cross is usually still visible when the
+  # next run looks; dedup (state-15m.json, keyed by forming-candle ts + side)
+  # stops repeats within the same candle.
   - name: ema_cross_rsi
     params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
              volume_avg: 20, trend_ema: 200, alert_weak: true}
@@ -31,6 +33,10 @@ rules:
   - name: ema_cross_soon
     once_per_side: true
     params: {fast: 9, slow: 21, gap_pct: 0.08}
+
+  - name: ema_cross_intrabar
+    params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
+             trend_ema: 200}
 
 notify:
   - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
