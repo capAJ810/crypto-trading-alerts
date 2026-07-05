@@ -1,12 +1,20 @@
 {
   "chats": {
     "1023807933": {
+      "cats": [
+        "confirmed",
+        "weak",
+        "intrabar"
+      ],
       "email": "manoharabhijat@gmail.com",
       "mode": "telegram",
       "subs": [
         "BTC/USDT",
         "ASTER/USDT",
         "HYPE/USDT"
+      ],
+      "tfs": [
+        "15m"
       ]
     },
     "60354093": {
@@ -39,5 +47,5 @@
       ]
     }
   },
-  "offset": 429691262
+  "offset": 429691269
 }
