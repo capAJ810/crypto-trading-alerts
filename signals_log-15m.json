@@ -382,7 +382,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1783275300000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 62681.94,
   "rule": "ema_cross_soon",
@@ -478,6 +478,19 @@
   "price": 81.31,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-05 21:30 UTC",
+  "candle_ts": 1783286100000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_rsi|1783286100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 81.5,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "15m"
  }
 ]
