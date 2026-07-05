@@ -128,5 +128,18 @@
   "rule": "ema_cross_rsi",
   "side": "SELL",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-05 10:15 UTC",
+  "candle_ts": 1783245600000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1783245600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 68.838,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
  }
 ]
