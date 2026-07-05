@@ -125,20 +125,56 @@ def _expectation(frames: Dict[str, dict], lv: dict) -> str:
             f"trusting a direction.")
 
 
-def _setup(frames: Dict[str, dict]) -> str:
+def _rr_setup(entry: float, atr: float, lv: dict, side: str) -> str:
+    """Example entry / invalidation / targets anchored to swing structure.
+
+    Targets sit at the swing levels price is likely to react at — resistance
+    for a long, support for a short — and the stop sits just past the level
+    that would prove the trade wrong (support for a long, resistance for a
+    short). ATR is the fallback yardstick and guardrail: it fills in when a
+    level isn't usefully placed (e.g. a breakout with no resistance overhead),
+    caps a stop that would otherwise be absurdly far, and floors one that would
+    otherwise hug price. R is measured from the ACTUAL stop distance, so the
+    reported multiples reflect where the structure really is (not a fixed 1R/2R).
+    """
+    sign = 1.0 if side == "long" else -1.0          # +1 up-trade, -1 down-trade
+    if side == "long":
+        stop_anchor, tp1_anchor, tp2_anchor = lv["s1"], lv["r1"], lv["r2"]
+    else:
+        stop_anchor, tp1_anchor, tp2_anchor = lv["r1"], lv["s1"], lv["s2"]
+
+    # Invalidation: 0.25·ATR past the adverse swing level, used only when that
+    # level is on the losing side and within 2.5·ATR; otherwise a 1.5·ATR stop.
+    struct_stop = stop_anchor - sign * 0.25 * atr
+    adverse_dist = sign * (entry - struct_stop)     # >0 ⇒ correct (losing) side
+    stop = struct_stop if 0 < adverse_dist <= 2.5 * atr else entry - sign * 1.5 * atr
+    if sign * (entry - stop) < 0.75 * atr:          # too tight → widen to 0.75·ATR
+        stop = entry - sign * 0.75 * atr
+    risk = abs(entry - stop)
+
+    # Target 1: nearest profit level if ≥ 0.5·ATR ahead of entry, else 1.5·ATR.
+    t1 = tp1_anchor if sign * (tp1_anchor - entry) >= 0.5 * atr \
+        else entry + sign * 1.5 * atr
+    # Target 2: wider profit level if clearly beyond T1, else an ATR extension.
+    t2 = tp2_anchor if sign * (tp2_anchor - t1) >= 0.3 * atr \
+        else entry + sign * max(3 * atr, sign * (t1 - entry) + 1.5 * atr)
+
+    m1, m2 = abs(t1 - entry) / risk, abs(t2 - entry) / risk
+    return (f"Example {side} setup (if momentum holds): entry ~{fmt(entry)}, "
+            f"invalidation ~{fmt(stop)}, targets {fmt(t1)} → {fmt(t2)} "
+            f"(~{m1:.1f}R / {m2:.1f}R — swing levels, ATR-guarded).")
+
+
+def _setup(frames: Dict[str, dict], lv: dict) -> str:
     score = bias_score(frames)
     p = frames["5m"]["price"]
     a = frames["1h"]["atr"]
+    if a <= 0:
+        return "No clean setup — volatility read unavailable. Patience."
     if score >= 4:
-        stop, t1, t2 = p - 1.5 * a, p + 1.5 * a, p + 3 * a
-        return (f"Example long setup (if momentum holds): entry ~{fmt(p)}, "
-                f"invalidation ~{fmt(stop)}, targets {fmt(t1)} → {fmt(t2)} "
-                f"(1R/2R, ATR-sized).")
+        return _rr_setup(p, a, lv, "long")
     if score <= -4:
-        stop, t1, t2 = p + 1.5 * a, p - 1.5 * a, p - 3 * a
-        return (f"Example short setup (if momentum holds): entry ~{fmt(p)}, "
-                f"invalidation ~{fmt(stop)}, targets {fmt(t1)} → {fmt(t2)} "
-                f"(1R/2R, ATR-sized).")
+        return _rr_setup(p, a, lv, "short")
     return "No clean setup — mixed signals are where accounts go to shrink. Patience."
 
 
@@ -165,7 +201,7 @@ def compose_prediction(pair: str, ex_name: str, frames: Dict[str, dict],
         f"{_expectation(frames, lv)}\n\n"
         f"📌 Levels — resistance {_level_span(lv['r1'], lv['r2'])}, "
         f"support {_level_span(lv['s1'], lv['s2'])}\n"
-        f"{_setup(frames)}\n\n"
+        f"{_setup(frames, lv)}\n\n"
         f"{DISCLAIMER}"
     )
 

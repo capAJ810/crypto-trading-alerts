@@ -1,7 +1,7 @@
 import pandas as pd
 
-from alerts.analysis import (bias_score, compose_prediction, compose_status,
-                             fmt, read_frame, swing_levels)
+from alerts.analysis import (_rr_setup, bias_score, compose_prediction,
+                             compose_status, fmt, read_frame, swing_levels)
 from alerts.telegram_bot import parse_intent
 
 SYMBOLS = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT", "ASTER/USDT",
@@ -62,6 +62,33 @@ def test_fmt_precision_scales():
     assert fmt(67.328) == "67.33"
     assert fmt(0.7345) == "0.7345"
     assert fmt(0.001234) == "0.001234"
+
+
+# ── structure-aware example setup ────────────────────────────────────
+
+def test_long_setup_targets_resistance_and_stops_below_support():
+    lv = {"s1": 95.0, "s2": 90.0, "r1": 110.0, "r2": 120.0}
+    txt = _rr_setup(entry=100.0, atr=4.0, lv=lv, side="long")
+    assert "long setup" in txt
+    assert "110" in txt and "120" in txt   # targets = the resistances above
+    assert "94" in txt                     # stop = s1(95) − 0.25·atr(1)
+    assert "R" in txt                      # reports risk-multiples
+
+
+def test_short_setup_targets_support_and_stops_above_resistance():
+    lv = {"s1": 90.0, "s2": 80.0, "r1": 105.0, "r2": 115.0}
+    txt = _rr_setup(entry=100.0, atr=4.0, lv=lv, side="short")
+    assert "short setup" in txt
+    assert "90" in txt and "80" in txt     # targets = the supports below
+    assert "106" in txt                    # stop = r1(105) + 0.25·atr(1)
+
+
+def test_setup_falls_back_to_atr_on_breakout_with_no_resistance_above():
+    # price above both resistances and far above support → pure ATR sizing
+    lv = {"s1": 95.0, "s2": 90.0, "r1": 100.0, "r2": 101.0}
+    txt = _rr_setup(entry=105.0, atr=4.0, lv=lv, side="long")
+    assert "111" in txt and "117" in txt   # 105+1.5·atr, 105+3·atr
+    assert "99" in txt                     # support 94 is >2.5·atr away → ATR stop 105−1.5·atr
 
 
 # ── conversational intent parsing ────────────────────────────────────
