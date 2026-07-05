@@ -162,10 +162,13 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             log.info("SIGNAL %s", title)
             if dry_run:
                 continue
+            category = telegram_bot.category_for_side(signal.side)
             delivered = notifier.send(title, body, tier_for_side(signal.side),
-                                      pair=pair)
+                                      pair=pair, category=category,
+                                      timeframe=timeframe)
             if bot is not None and tg_state is not None:
-                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
+                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}",
+                                        category=category, timeframe=timeframe)
                 log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
                 delivered = delivered or tg_sent > 0
             if delivered:
@@ -234,10 +237,13 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
             log.info("SIGNAL %s", title)
             if dry_run:
                 continue
+            category = telegram_bot.category_for_side(signal.side)
             delivered = notifier.send(title, body, tier_for_side(signal.side),
-                                      pair=pair)
+                                      pair=pair, category=category,
+                                      timeframe=timeframe)
             if bot is not None and tg_state is not None:
-                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}")
+                tg_sent = bot.broadcast(tg_state, pair, f"{title}\n\n{body}",
+                                        category=category, timeframe=timeframe)
                 log.info("Telegram: sent to %d subscribed chat(s)", tg_sent)
                 delivered = delivered or tg_sent > 0
             if delivered:
@@ -303,11 +309,12 @@ def main() -> int:
             bot.ensure_default_chats(tg_state)
 
     def link_filters():
-        """Live email -> coin-set map from the bot's /email + /coins state.
+        """Live email -> prefs map from the bot's self-service state.
 
-        A chat's delivery mode (see /mode) also gates email: a 'telegram'-
-        only chat maps its address to an empty coin set, so no email is sent
-        to it even though it stays linked. 'both'/'email' route normally.
+        Values are {"coins": set, "cats": set|None, "tfs": set|None} — the
+        chat's /coins picks plus its /alerts type & candle-size choices
+        (None = no preference = everything). A 'telegram'-only /mode chat
+        maps to an empty coin set so no email is sent while it stays linked.
         """
         out = {}
         for entry in tg_state.get("chats", {}).values():
@@ -315,10 +322,14 @@ def main() -> int:
             if not email:
                 continue
             if entry.get("mode", "both") == "telegram":
-                out[email] = set()  # linked but email delivery turned off
+                out[email] = {"coins": set()}  # linked, email delivery off
             else:
-                out[email] = {p.split("/")[0].upper()
-                              for p in entry.get("subs", [])}
+                out[email] = {
+                    "coins": {p.split("/")[0].upper()
+                              for p in entry.get("subs", [])},
+                    "cats": set(entry["cats"]) if "cats" in entry else None,
+                    "tfs": set(entry["tfs"]) if "tfs" in entry else None,
+                }
         return out
 
     notifier = Notifier(config.get("notify", []), link_filters)

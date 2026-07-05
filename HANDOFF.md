@@ -156,6 +156,7 @@ State file: `telegram.json` — committed by CI after each run
 
 **Bot commands:**
 - `/coins` — toggle which coins alert this chat (controls both Telegram AND email if linked)
+- `/alerts` — personalize alert types (✅ confirmed / weak / intrabar / near) and candle sizes (✅ 5m / 15m). Stored per chat as `cats` and `tfs` lists in telegram.json; absent keys = everything (backward compatible). Gates BOTH Telegram (`chats_for`) and linked email (`link_filters` → `Notifier._prefs_pass`). Also reachable via the 🎚 Alert types button. `category_for_side()` in telegram_bot.py buckets a Signal.side into confirmed/weak/intrabar/near; the watcher passes category+timeframe on every broadcast/send. ⚠️ `ALERT_TIMEFRAMES` must list the timeframes the CI passes actually run (5m, 15m) — update it if configs change.
 - `/mode` — choose delivery: 📱 Telegram only · 📧 Email only · 🔔 Both (default). Changeable anytime; stored as `mode` in each chat's telegram.json entry (absent = "both")
 - `/status` — pick a coin for an immediate 3-line snapshot
 - `/email you@example.com` — **self-service**: any allowlisted chat can register its OWN email (validated by regex, no owner pre-approval needed); `/email` alone shows current address; `/email off` removes it. Also reachable via the 📧 Email button, which prompts for the address and captures the next plain message (per-chat `awaiting: "email"` flag, cleared by any command or other button). Registered addresses persist in telegram.json and are merged into email routing even when NOT in `ALERT_EMAILS`.
@@ -375,7 +376,24 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**Structure-aware example setup (2026-07-05, latest).** The 🔮 Full read's
+**Personalized alerts (2026-07-05, latest).** Each chat can now filter WHAT
+kind of alerts it gets, not just which coins:
+- `/alerts` command + 🎚 Alert types button → toggles for the 4 alert-type
+  categories (confirmed/weak/intrabar/near) and candle sizes (5m/15m).
+- Stored as `cats`/`tfs` lists per chat entry; absent = all (existing users
+  unaffected). Callbacks `a|<cat>` and `f|<tf>`.
+- `chats_for()`/`broadcast()` take optional `category`/`timeframe`;
+  `category_for_side()` maps Signal.side → category. Watcher passes both from
+  `run_once`/`run_intrabar` (the 15m pass passes timeframe="15m").
+- Email honors the same prefs: `link_filters()` now returns
+  `{email: {"coins", "cats", "tfs"}}` (legacy bare-set still accepted via
+  `Notifier._norm_link`), and `email_recipients(pair, category, timeframe)`
+  gates linked addresses through `_prefs_pass`. Static ALERT_EMAILS recipients
+  without a link are unaffected.
+- Tests: category mapping, toggle flow, confirmed-only/15m-only profile,
+  email type+tf gating; FakeNotifier signature updated. Suite: 67 tests.
+
+**Structure-aware example setup (2026-07-05).** The 🔮 Full read's
 example entry/invalidation/targets (`analysis.py:_setup`) used to be pure ATR
 multiples (±1.5·ATR stop, +1.5/+3·ATR targets = fixed 1R/2R). Now `_rr_setup`
 anchors to swing structure:
@@ -466,7 +484,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (63 tests, all passing)
+## Test suite (67 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

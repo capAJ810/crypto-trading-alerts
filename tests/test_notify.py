@@ -64,6 +64,25 @@ def test_empty_link_filter_suppresses_email(monkeypatch):
     assert n.email_recipients("ETH/USDT") == ["b@y.com"]
 
 
+def test_email_respects_type_and_timeframe_prefs(monkeypatch):
+    # A linked chat's /alerts choices (confirmed-only, 15m-only) gate its
+    # email; unrestricted recipients still get everything.
+    monkeypatch.setenv("GMAIL_USER", "sender@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "pw")
+    monkeypatch.setenv("ALERT_EMAILS", "owner@x.com")
+    links = {"picky@z.com": {"coins": {"BTC"}, "cats": {"confirmed"},
+                             "tfs": {"15m"}}}
+    n = Notifier(["mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com"
+                  "?to=${ALERT_EMAILS}"], lambda: links)
+    both = ["owner@x.com", "picky@z.com"]
+    assert n.email_recipients("BTC/USDT", "confirmed", "15m") == both
+    assert n.email_recipients("BTC/USDT", "near", "15m") == ["owner@x.com"]
+    assert n.email_recipients("BTC/USDT", "confirmed", "5m") == ["owner@x.com"]
+    assert n.email_recipients("ETH/USDT", "confirmed", "15m") == ["owner@x.com"]
+    # no category/timeframe passed (e.g. test notification) = no gating
+    assert n.email_recipients("BTC/USDT") == both
+
+
 def test_tier_mapping():
     assert tier_for_side("BUY") == "confirmed-buy"
     assert tier_for_side("SELL") == "confirmed-sell"

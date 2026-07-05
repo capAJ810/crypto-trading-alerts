@@ -39,6 +39,8 @@ HELP_TEXT = (
     "• \"btc?\" or \"how's eth doing\" → live update\n"
     "• \"predict sol\" → my full read: trend, levels, example setup\n\n"
     "/coins — choose which coins alert you (Telegram AND email)\n"
+    "/alerts — pick alert types (confirmed/weak/intrabar/near) & candle "
+    "sizes (5m/15m)\n"
     "/mode — get alerts by Telegram, email, or both\n"
     "/status — pick a coin for an immediate update\n"
     "/email you@example.com — also get alerts by email (or /email off)\n"
@@ -99,6 +101,31 @@ ALERT_MODES = ("both", "telegram", "email")
 # valid address — the TELEGRAM_CHAT_IDS allowlist already gates who can reach
 # the bot at all, and email delivery still goes through the owner's own SMTP.
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+# Alert-type categories a chat can toggle via /alerts. Stored per chat as
+# `cats` (list); absent key = all categories (backward-compatible default).
+ALERT_CATEGORIES = ("confirmed", "weak", "intrabar", "near")
+CATEGORY_LABELS = {
+    "confirmed": "🟢🔴 Confirmed BUY/SELL",
+    "weak": "⚠️ Weak (filters failed)",
+    "intrabar": "⏱ Intrabar (live candle)",
+    "near": "🟡 Near (early heads-up)",
+}
+# Candle sizes alerts arrive on (must match the timeframes the CI passes run:
+# config.yaml=5m, config-15m.yaml=15m). Stored per chat as `tfs` (list);
+# absent key = all.
+ALERT_TIMEFRAMES = ("5m", "15m")
+
+
+def category_for_side(side: str) -> str:
+    """Bucket a Signal.side into one of ALERT_CATEGORIES."""
+    if "INTRABAR" in side:
+        return "intrabar"
+    if "NEAR" in side:
+        return "near"
+    if "WEAK" in side:
+        return "weak"
+    return "confirmed"
 
 # Common names people type for the bases we track (extend freely).
 COIN_NAMES = {
@@ -198,7 +225,20 @@ class TelegramBot:
                      {"text": "📧 Email", "callback_data": "m|email"}])
         rows.append([{"text": "📖 Guide", "callback_data": "m|guide"},
                      {"text": "📊 Status", "callback_data": "m|status"}])
-        rows.append([{"text": "👍 Done", "callback_data": "m|done"}])
+        rows.append([{"text": "🎚 Alert types", "callback_data": "m|alerts"},
+                     {"text": "👍 Done", "callback_data": "m|done"}])
+        return rows
+
+    def _prefs_keyboard(self, entry: dict) -> list:
+        """Toggles for alert-type categories and candle timeframes."""
+        cats = set(entry.get("cats", ALERT_CATEGORIES))
+        tfs = set(entry.get("tfs", ALERT_TIMEFRAMES))
+        rows = [[{"text": f"{'✅' if c in cats else '☐'} {CATEGORY_LABELS[c]}",
+                  "callback_data": f"a|{c}"}] for c in ALERT_CATEGORIES]
+        rows.append([{"text": f"{'✅' if tf in tfs else '☐'} {tf} candles",
+                      "callback_data": f"f|{tf}"} for tf in ALERT_TIMEFRAMES])
+        rows.append([{"text": "🪙 Coins", "callback_data": "m|coins"},
+                     {"text": "👍 Done", "callback_data": "m|done"}])
         return rows
 
     def _mode_keyboard(self, mode: str) -> list:
@@ -259,22 +299,33 @@ class TelegramBot:
         return f"Telegram + Email ({email})" if email else \
             "Telegram (link an email with /email to add email alerts)"
 
-    def chats_for(self, state: dict, pair: str) -> List[str]:
+    def chats_for(self, state: dict, pair: str, category: Optional[str] = None,
+                  timeframe: Optional[str] = None) -> List[str]:
         """Chat IDs that should get a Telegram alert for `pair`.
 
-        Allowlisted, subscribed to the pair, and in a mode that includes
-        Telegram ('both' or 'telegram' — not email-only).
+        Allowlisted, subscribed to the pair, in a mode that includes Telegram
+        ('both' or 'telegram'), and — when given — matching the chat's
+        alert-type (`cats`) and candle-size (`tfs`) preferences. Absent
+        preference keys mean "everything".
         """
         out = []
         for chat_id, entry in state.get("chats", {}).items():
-            if chat_id in self.allowed and pair in entry.get("subs", []) \
-                    and self._chat_mode(state, chat_id) in ("both", "telegram"):
-                out.append(chat_id)
+            if chat_id not in self.allowed or pair not in entry.get("subs", []):
+                continue
+            if self._chat_mode(state, chat_id) not in ("both", "telegram"):
+                continue
+            if category and category not in entry.get("cats", ALERT_CATEGORIES):
+                continue
+            if timeframe and timeframe not in entry.get("tfs", ALERT_TIMEFRAMES):
+                continue
+            out.append(chat_id)
         return out
 
-    def broadcast(self, state: dict, pair: str, text: str) -> int:
+    def broadcast(self, state: dict, pair: str, text: str,
+                  category: Optional[str] = None,
+                  timeframe: Optional[str] = None) -> int:
         sent = 0
-        for chat_id in self.chats_for(state, pair):
+        for chat_id in self.chats_for(state, pair, category, timeframe):
             if self.send(chat_id, text):
                 sent += 1
         return sent
@@ -327,6 +378,11 @@ class TelegramBot:
         if lower.startswith("/coins"):
             self.send(chat_id, "Choose which coins alert this chat:",
                       self._coin_keyboard(subs))
+        elif lower.startswith("/alerts"):
+            self.send(chat_id,
+                      "Pick which alert types and candle sizes reach you "
+                      "(✅ = on):",
+                      self._prefs_keyboard(entry))
         elif lower.startswith("/mode"):
             self.send(chat_id,
                       "How do you want to receive alerts? "
@@ -433,6 +489,36 @@ class TelegramBot:
                     toast = f"{arg} alerts ON"
             self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
                       reply_markup={"inline_keyboard": self._coin_keyboard(subs)})
+        elif action == "a" and arg in ALERT_CATEGORIES:
+            entry = state["chats"][str(chat_id)]
+            cats = [c for c in ALERT_CATEGORIES
+                    if c in entry.get("cats", ALERT_CATEGORIES)]
+            if arg in cats:
+                cats.remove(arg)
+                toast = f"{CATEGORY_LABELS[arg]} OFF"
+            else:
+                cats = [c for c in ALERT_CATEGORIES if c in cats or c == arg]
+                toast = f"{CATEGORY_LABELS[arg]} ON"
+            entry["cats"] = cats
+            if not cats:
+                toast = "All alert types off — you'll get nothing!"
+            self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
+                      reply_markup={"inline_keyboard": self._prefs_keyboard(entry)})
+        elif action == "f" and arg in ALERT_TIMEFRAMES:
+            entry = state["chats"][str(chat_id)]
+            tfs = [t for t in ALERT_TIMEFRAMES
+                   if t in entry.get("tfs", ALERT_TIMEFRAMES)]
+            if arg in tfs:
+                tfs.remove(arg)
+                toast = f"{arg} candle alerts OFF"
+            else:
+                tfs = [t for t in ALERT_TIMEFRAMES if t in tfs or t == arg]
+                toast = f"{arg} candle alerts ON"
+            entry["tfs"] = tfs
+            if not tfs:
+                toast = "All candle sizes off — you'll get nothing!"
+            self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
+                      reply_markup={"inline_keyboard": self._prefs_keyboard(entry)})
         elif action == "md" and arg in ALERT_MODES:
             entry = state.setdefault("chats", {}).setdefault(
                 str(chat_id), {"subs": list(self.symbols)})
@@ -474,6 +560,11 @@ class TelegramBot:
                           "📧 Send me the email address you'd like alerts at "
                           "(e.g. you@example.com).\nType 'off' to remove it."
                           + cur)
+            elif arg == "alerts":
+                self.send(chat_id,
+                          "Pick which alert types and candle sizes reach you "
+                          "(✅ = on):",
+                          self._prefs_keyboard(state["chats"][str(chat_id)]))
             elif arg == "guide":
                 self.send(chat_id, GUIDE_TEXT)
             elif arg == "status":
@@ -481,9 +572,16 @@ class TelegramBot:
             elif arg == "done":
                 on = ", ".join(subs) if subs else "none"
                 toast = "Saved"
+                entry = state["chats"][str(chat_id)]
+                extras = ""
+                if "cats" in entry:  # only shown once customized
+                    extras += "\nAlert types: " + \
+                        (", ".join(entry["cats"]) or "none")
+                if "tfs" in entry:
+                    extras += "\nCandles: " + (", ".join(entry["tfs"]) or "none")
                 self.send(chat_id, f"👍 Saved. Delivery: "
                                    f"{self._channels_desc(state, chat_id)}.\n"
-                                   f"Coins: {on}")
+                                   f"Coins: {on}{extras}")
         self._api("answerCallbackQuery", callback_query_id=cb["id"], text=toast)
 
 

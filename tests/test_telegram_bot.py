@@ -1,4 +1,4 @@
-from alerts.telegram_bot import GUIDE_TEXT, TelegramBot
+from alerts.telegram_bot import GUIDE_TEXT, TelegramBot, category_for_side
 
 SYMBOLS = ["BTC/USDT", "ETH/USDT", "HYPE/USDT"]
 
@@ -90,6 +90,51 @@ def test_guide_command_sends_glossary():
     sends = [p["text"] for m, p in calls if m == "sendMessage"]
     assert GUIDE_TEXT in sends
     assert "CONFIRMED BUY" in GUIDE_TEXT and "Bearish" in GUIDE_TEXT
+
+
+def test_category_for_side_mapping():
+    assert category_for_side("BUY") == "confirmed"
+    assert category_for_side("SELL") == "confirmed"
+    assert category_for_side("WEAK BUY") == "weak"
+    assert category_for_side("WEAK SELL") == "weak"
+    assert category_for_side("NEAR-BUY") == "near"
+    assert category_for_side("NEAR-SELL") == "near"
+    assert category_for_side("INTRABAR BUY") == "intrabar"
+    assert category_for_side("INTRABAR SELL") == "intrabar"
+
+
+def test_alert_type_and_timeframe_personalization():
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    cb = lambda d: {"id": "1", "data": d,
+                    "message": {"chat": {"id": 111}, "message_id": 5}}
+    # default (no prefs stored): everything gets through
+    assert bot.chats_for(state, "BTC/USDT", "near", "15m") == ["111"]
+    # turn NEAR alerts and the 15m stream off
+    bot._on_callback(state, cb("a|near"))
+    bot._on_callback(state, cb("f|15m"))
+    assert state["chats"]["111"]["cats"] == ["confirmed", "weak", "intrabar"]
+    assert state["chats"]["111"]["tfs"] == ["5m"]
+    assert bot.chats_for(state, "BTC/USDT", "near", "5m") == []       # type off
+    assert bot.chats_for(state, "BTC/USDT", "confirmed", "15m") == []  # tf off
+    assert bot.chats_for(state, "BTC/USDT", "confirmed", "5m") == ["111"]
+    # toggle NEAR back on
+    bot._on_callback(state, cb("a|near"))
+    assert bot.chats_for(state, "BTC/USDT", "near", "5m") == ["111"]
+
+
+def test_confirmed_only_15m_only_profile():
+    # The exact profile from the feature request: only confirmed alerts,
+    # only 15m candles, one coin.
+    bot = make_bot([])
+    state = {"chats": {"111": {"subs": ["BTC/USDT"],
+                               "cats": ["confirmed"], "tfs": ["15m"]}}}
+    assert bot.chats_for(state, "BTC/USDT", "confirmed", "15m") == ["111"]
+    assert bot.chats_for(state, "BTC/USDT", "confirmed", "5m") == []
+    assert bot.chats_for(state, "BTC/USDT", "near", "15m") == []
+    assert bot.chats_for(state, "BTC/USDT", "weak", "15m") == []
+    assert bot.chats_for(state, "ETH/USDT", "confirmed", "15m") == []
 
 
 def test_self_service_email_add_change_remove():
