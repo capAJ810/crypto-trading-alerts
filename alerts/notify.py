@@ -179,19 +179,50 @@ class Notifier:
     def active(self) -> int:
         return len(self.static_buckets) + (1 if self.email_template else 0)
 
-    def email_recipients(self, pair: Optional[str]) -> List[str]:
+    @staticmethod
+    def _norm_link(v) -> dict:
+        """Normalize a link_filters value to {"coins":…, "cats":…, "tfs":…}.
+
+        Legacy shape was a bare coin-set; the current watcher supplies a dict
+        that also carries the chat's /alerts type & candle-size preferences.
+        """
+        if isinstance(v, dict):
+            return v
+        return {"coins": v}
+
+    @staticmethod
+    def _prefs_pass(link: Optional[dict], category: Optional[str],
+                    timeframe: Optional[str]) -> bool:
+        """Does this link's type/candle preference allow the alert through?
+        None preference (or no link at all) = no restriction."""
+        if not link:
+            return True
+        cats = link.get("cats")
+        if category and cats is not None and category not in cats:
+            return False
+        tfs = link.get("tfs")
+        if timeframe and tfs is not None and timeframe not in tfs:
+            return False
+        return True
+
+    def email_recipients(self, pair: Optional[str],
+                         category: Optional[str] = None,
+                         timeframe: Optional[str] = None) -> List[str]:
         """Addresses that should receive an alert for `pair`.
 
         Two sources are merged:
           1. ALERT_EMAILS (owner-set), honoring any static ':BTC,ETH' filter.
           2. Self-service addresses users added themselves via the Telegram
-             bot's /email — surfaced by link_filters_fn as email -> coin-set —
-             for any address not already covered by ALERT_EMAILS.
-        A coin-set of None = all coins; an empty set = none (e.g. a chat in
-        'telegram only' mode).
+             bot's /email — surfaced by link_filters_fn — for any address not
+             already covered by ALERT_EMAILS.
+        Coin filter None = all coins; empty set = none (e.g. a chat in
+        'telegram only' mode). A linked chat's /alerts preferences (alert-type
+        categories, candle timeframes) gate its email too — even when the
+        owner's static coin filter decides the coins.
         """
         base = pair.split("/")[0].upper() if pair else None
-        links = {k.lower(): v for k, v in self.link_filters_fn().items()}
+        links = {k.lower(): self._norm_link(v)
+                 for k, v in self.link_filters_fn().items()}
         out: List[str] = []
         seen = set()
 
@@ -199,20 +230,29 @@ class Notifier:
                 os.environ.get("ALERT_EMAILS", "")):
             for addr in emails:
                 seen.add(addr.lower())  # ALERT_EMAILS owns this address
-                filt = static_filt if static_filt is not None \
-                    else links.get(addr.lower())
-                if base is None or filt is None or base in filt:
-                    out.append(addr)
+                link = links.get(addr.lower())
+                coins = static_filt if static_filt is not None \
+                    else (link or {}).get("coins")
+                if base is not None and coins is not None and base not in coins:
+                    continue
+                if not self._prefs_pass(link, category, timeframe):
+                    continue
+                out.append(addr)
 
-        for addr, filt in links.items():  # bot self-service addresses
+        for addr, link in links.items():  # bot self-service addresses
             if addr in seen:
                 continue
-            if base is None or filt is None or base in filt:
-                out.append(addr)
+            coins = link.get("coins")
+            if base is not None and coins is not None and base not in coins:
+                continue
+            if not self._prefs_pass(link, category, timeframe):
+                continue
+            out.append(addr)
         return out
 
     def send(self, title: str, body: str, tier: str = "info",
-             pair: Optional[str] = None) -> bool:
+             pair: Optional[str] = None, category: Optional[str] = None,
+             timeframe: Optional[str] = None) -> bool:
         if self.active == 0:
             log.error("No active notification channels — alert NOT delivered: %s", title)
             return False
@@ -225,7 +265,7 @@ class Notifier:
                                         body_format=apprise.NotifyFormat.HTML))
 
         if self.email_template:
-            recipients = self.email_recipients(pair)
+            recipients = self.email_recipients(pair, category, timeframe)
             if recipients:
                 attempted += 1
                 url = self.email_template.replace(

@@ -14,7 +14,8 @@ class FakeNotifier:
         self.sent = []
         self.active = 1
 
-    def send(self, title, body, tier="info", pair=None):
+    def send(self, title, body, tier="info", pair=None, category=None,
+             timeframe=None):
         self.sent.append(title)
         return True
 
