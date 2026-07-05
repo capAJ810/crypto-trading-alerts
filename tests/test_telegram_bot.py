@@ -137,6 +137,58 @@ def test_confirmed_only_15m_only_profile():
     assert bot.chats_for(state, "ETH/USDT", "confirmed", "15m") == []
 
 
+def test_pref_press_is_idempotent_on_double_tap_or_redelivery():
+    # Regression: unticking "5m candles" used to re-tick itself. Cause: taps
+    # were blind toggles, so an impatient double-tap (bot polls every ~30s)
+    # or a Telegram-redelivered callback (run died before committing the
+    # offset) re-applied the toggle and flipped the setting back. Buttons now
+    # carry the explicit target — replaying the same press is a no-op.
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    cb = lambda d: {"id": "1", "data": d,
+                    "message": {"chat": {"id": 111}, "message_id": 5}}
+    for _ in range(3):  # same "turn 5m OFF" press delivered three times
+        bot._on_callback(state, cb("f|5m|off"))
+    assert state["chats"]["111"]["tfs"] == ["15m"]  # stays off
+    for _ in range(2):  # same "turn NEAR OFF" press twice
+        bot._on_callback(state, cb("a|near|off"))
+    assert state["chats"]["111"]["cats"] == ["confirmed", "weak", "intrabar"]
+    for _ in range(2):  # coin presses are explicit-target too
+        bot._on_callback(state, cb("t|ETH/USDT|off"))
+    assert "ETH/USDT" not in state["chats"]["111"]["subs"]
+    # explicit ON restores, in canonical order
+    bot._on_callback(state, cb("f|5m|on"))
+    assert state["chats"]["111"]["tfs"] == ["5m", "15m"]
+
+
+def test_rendered_keyboards_carry_explicit_targets():
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    entry = state["chats"]["111"]
+    entry["tfs"] = ["15m"]  # 5m currently off
+    flat = [b for row in bot._prefs_keyboard(entry) for b in row]
+    data = {b["callback_data"] for b in flat}
+    assert "f|5m|on" in data      # off → button offers ON
+    assert "f|15m|off" in data    # on  → button offers OFF
+    coin_flat = [b for row in bot._coin_keyboard(entry["subs"]) for b in row]
+    assert any(b["callback_data"].endswith("|off") for b in coin_flat)
+
+
+def test_legacy_two_part_callback_still_toggles():
+    # Old keyboards in chat history send "a|near" with no target.
+    bot = make_bot([])
+    state = {}
+    bot.ensure_default_chats(state)
+    cb = lambda d: {"id": "1", "data": d,
+                    "message": {"chat": {"id": 111}, "message_id": 5}}
+    bot._on_callback(state, cb("a|near"))
+    assert "near" not in state["chats"]["111"]["cats"]
+    bot._on_callback(state, cb("a|near"))
+    assert "near" in state["chats"]["111"]["cats"]
+
+
 def test_self_service_email_add_change_remove():
     bot = make_bot([])
     state = {}

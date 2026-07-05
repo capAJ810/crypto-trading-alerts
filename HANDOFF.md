@@ -357,6 +357,14 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## Known gotchas
 
+- **Keyboard buttons must carry explicit target state, not "toggle".** The bot
+  polls every ~30s (minutes during run handoffs), so users double-tap; and if a
+  run dies before committing telegram.json, the getUpdates offset regresses and
+  Telegram REDELIVERS presses to the next run. Blind toggles then flip settings
+  back ("unticking 5m re-ticked itself" — real bug, 2026-07-05). All t|/a|/f|
+  buttons now send `…|on` / `…|off` (`_apply_toggle`); two-part legacy data
+  from old keyboards still toggles. Keep this pattern for any new toggle.
+
 - **`gh` not in PATH in this shell.** The binary lives at `~/.local/bin/gh`.
   In Bash: `export PATH="$HOME/.local/bin:$PATH"`. Or use full path.
 - **`git push` may fail** if CI committed during your session. Always
@@ -376,7 +384,15 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**Personalized alerts (2026-07-05, latest).** Each chat can now filter WHAT
+**Idempotent keyboard presses (2026-07-05, latest — bugfix).** User reported
+unticking "5m candles" re-ticked itself. Root cause: toggle-semantics buttons
++ ~30s poll latency → impatient double-taps undo themselves; and Telegram
+redelivery after a failed run re-applies presses. Fix: `_apply_toggle()` +
+explicit `|on`/`|off` targets in all t|/a|/f| callback_data (legacy two-part
+data still toggles). See Known gotchas. Tests: idempotent replay ×3,
+keyboard target rendering, legacy toggle. Suite: 70 tests.
+
+**Personalized alerts (2026-07-05).** Each chat can now filter WHAT
 kind of alerts it gets, not just which coins:
 - `/alerts` command + 🎚 Alert types button → toggles for the 4 alert-type
   categories (confirmed/weak/intrabar/near) and candle sizes (5m/15m).
@@ -484,7 +500,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (67 tests, all passing)
+## Test suite (70 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference

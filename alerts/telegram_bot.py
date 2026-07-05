@@ -218,7 +218,11 @@ class TelegramBot:
         rows = []
         for pair in self.symbols:
             mark = "✅" if pair in subs else "☐"
-            rows.append([{"text": f"{mark} {pair}", "callback_data": f"t|{pair}"}])
+            # Explicit target ('on'/'off'), not a blind toggle: a double-tap
+            # or a Telegram-redelivered press then can't flip the state back.
+            want = "off" if pair in subs else "on"
+            rows.append([{"text": f"{mark} {pair}",
+                          "callback_data": f"t|{pair}|{want}"}])
         rows.append([{"text": "✅ All on", "callback_data": "t|ALL_ON"},
                      {"text": "🚫 All off", "callback_data": "t|ALL_OFF"}])
         rows.append([{"text": "🔔 Alert mode", "callback_data": "m|mode"},
@@ -230,13 +234,19 @@ class TelegramBot:
         return rows
 
     def _prefs_keyboard(self, entry: dict) -> list:
-        """Toggles for alert-type categories and candle timeframes."""
+        """Toggles for alert-type categories and candle timeframes.
+
+        Buttons carry the explicit target state ('on'/'off') so a repeated
+        or redelivered press is idempotent instead of flipping back.
+        """
         cats = set(entry.get("cats", ALERT_CATEGORIES))
         tfs = set(entry.get("tfs", ALERT_TIMEFRAMES))
         rows = [[{"text": f"{'✅' if c in cats else '☐'} {CATEGORY_LABELS[c]}",
-                  "callback_data": f"a|{c}"}] for c in ALERT_CATEGORIES]
+                  "callback_data": f"a|{c}|{'off' if c in cats else 'on'}"}]
+                for c in ALERT_CATEGORIES]
         rows.append([{"text": f"{'✅' if tf in tfs else '☐'} {tf} candles",
-                      "callback_data": f"f|{tf}"} for tf in ALERT_TIMEFRAMES])
+                      "callback_data": f"f|{tf}|{'off' if tf in tfs else 'on'}"}
+                     for tf in ALERT_TIMEFRAMES])
         rows.append([{"text": "🪙 Coins", "callback_data": "m|coins"},
                      {"text": "👍 Done", "callback_data": "m|done"}])
         return rows
@@ -459,10 +469,27 @@ class TelegramBot:
         return (f"✅ Done! Alerts will also be emailed to {arg}.\n"
                 f"Coins emailing you now: {on} — change with /coins.{note}")
 
+    @staticmethod
+    def _apply_toggle(items: List[str], arg: str, target: str, order) -> bool:
+        """Set `arg`'s membership in `items` (kept in `order`'s order).
+
+        target 'on'/'off' = explicit desired state — reprocessing the same
+        press (impatient double-tap, or Telegram redelivering the update
+        after a run died before committing the offset) is a no-op instead
+        of flipping the setting back. Any other target = legacy toggle,
+        for keyboards still in chat history from older code.
+        Returns the final on/off state.
+        """
+        on = (target == "on") if target in ("on", "off") else (arg not in items)
+        items[:] = [x for x in order
+                    if (x == arg and on) or (x != arg and x in items)]
+        return on
+
     def _on_callback(self, state: dict, cb: dict) -> None:
         chat_id = cb["message"]["chat"]["id"]
         msg_id = cb["message"]["message_id"]
-        action, _, arg = (cb.get("data") or "").partition("|")
+        action, _, rest = (cb.get("data") or "").partition("|")
+        arg, _, target = rest.partition("|")
         if not self._authorized(chat_id):
             self._api("answerCallbackQuery", callback_query_id=cb["id"],
                       text="This bot is private.")
@@ -481,25 +508,17 @@ class TelegramBot:
                 subs.clear()
                 toast = "All alerts off for this chat"
             elif arg in self.symbols:
-                if arg in subs:
-                    subs.remove(arg)
-                    toast = f"{arg} alerts OFF"
-                else:
-                    subs[:] = [p for p in self.symbols if p in subs or p == arg]
-                    toast = f"{arg} alerts ON"
+                on = self._apply_toggle(subs, arg, target, self.symbols)
+                toast = f"{arg} alerts {'ON' if on else 'OFF'}"
             self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
                       reply_markup={"inline_keyboard": self._coin_keyboard(subs)})
         elif action == "a" and arg in ALERT_CATEGORIES:
             entry = state["chats"][str(chat_id)]
             cats = [c for c in ALERT_CATEGORIES
                     if c in entry.get("cats", ALERT_CATEGORIES)]
-            if arg in cats:
-                cats.remove(arg)
-                toast = f"{CATEGORY_LABELS[arg]} OFF"
-            else:
-                cats = [c for c in ALERT_CATEGORIES if c in cats or c == arg]
-                toast = f"{CATEGORY_LABELS[arg]} ON"
+            on = self._apply_toggle(cats, arg, target, ALERT_CATEGORIES)
             entry["cats"] = cats
+            toast = f"{CATEGORY_LABELS[arg]} {'ON' if on else 'OFF'}"
             if not cats:
                 toast = "All alert types off — you'll get nothing!"
             self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
@@ -508,13 +527,9 @@ class TelegramBot:
             entry = state["chats"][str(chat_id)]
             tfs = [t for t in ALERT_TIMEFRAMES
                    if t in entry.get("tfs", ALERT_TIMEFRAMES)]
-            if arg in tfs:
-                tfs.remove(arg)
-                toast = f"{arg} candle alerts OFF"
-            else:
-                tfs = [t for t in ALERT_TIMEFRAMES if t in tfs or t == arg]
-                toast = f"{arg} candle alerts ON"
+            on = self._apply_toggle(tfs, arg, target, ALERT_TIMEFRAMES)
             entry["tfs"] = tfs
+            toast = f"{arg} candle alerts {'ON' if on else 'OFF'}"
             if not tfs:
                 toast = "All candle sizes off — you'll get nothing!"
             self._api("editMessageReplyMarkup", chat_id=chat_id, message_id=msg_id,
