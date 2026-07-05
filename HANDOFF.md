@@ -96,7 +96,7 @@ alerts/
   indicators.py        EMA (ewm adjust=False), Wilder RSI (_rma SMA-seeded), ATR
   market.py            ccxt exchange cache; Binance geo-block workaround; fetch_closed_candles
   rules.py             Signal dataclass + 5 rule functions + RULES dict + INTRABAR_RULES set
-  analysis.py          Multi-TF (5m/1h/4h) Finora-style coin reads for Telegram bot
+  analysis.py          Multi-TF (5m/1h/4h) coin reads for Telegram bot; structure-aware example setup (_rr_setup: targets at swing resistance/support, stop past the adverse level, ATR fallback+guardrail)
   notify.py            Apprise fan-out; tier-based HTML email; per-recipient coin filtering
   telegram_bot.py      Interactive bot: /coins /mode /status /email /guide /accuracy; conversational NLP
   siglog.py            Signal outcome log: append, score_pending, stats_text (/accuracy)
@@ -375,7 +375,25 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**Parallel 15m pass (2026-07-05, latest).** Added a 15-minute reference-candle
+**Structure-aware example setup (2026-07-05, latest).** The 🔮 Full read's
+example entry/invalidation/targets (`analysis.py:_setup`) used to be pure ATR
+multiples (±1.5·ATR stop, +1.5/+3·ATR targets = fixed 1R/2R). Now `_rr_setup`
+anchors to swing structure:
+- Targets snap to resistance (long) / support (short): T1 = nearest level if
+  ≥0.5·ATR ahead, T2 = wider level if clearly beyond T1; ATR fills in on a
+  breakout with no level overhead.
+- Invalidation sits 0.25·ATR past the adverse level (support for long,
+  resistance for short) when it's within 2.5·ATR; else a 1.5·ATR stop. Risk is
+  floored at 0.75·ATR so a level hugging price can't make a hair-trigger stop.
+- R-multiples are computed from the ACTUAL stop distance (e.g. "~0.9R / 1.6R"),
+  not assumed 1R/2R.
+- **Min 1:2 SL/TP rule:** the final target must offer ≥2R. If the structural
+  T2 falls short, it's extended to the 2R point and the message flags that T2
+  "is set by the 1:2 rule and sits past the mapped levels" (trail/take early
+  if momentum stalls). Structure that already beats 2R is left untouched.
+- `_setup(frames)` → `_setup(frames, lv)`; tests in test_analysis.py. 63 total.
+
+**Parallel 15m pass (2026-07-05).** Added a 15-minute reference-candle
 stream running alongside the existing 5m stream (see "Parallel 15m pass" above).
 - New `config-15m.yaml` (same symbols, timeframe 15m, no intrabar rule),
   `state-15m.json` (`{}`), `signals_log-15m.json` (`[]`).
@@ -448,7 +466,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (58 tests, all passing)
+## Test suite (63 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference
