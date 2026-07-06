@@ -114,6 +114,16 @@ def ema_cross_intrabar(df: pd.DataFrame, params: dict) -> Optional[Signal]:
     skipped — a partial candle's volume can't be compared to full ones.
     Explicitly labeled unconfirmed: the cross can vanish before the close.
     The confirmed 🟢/🔴 alert still fires separately if it holds.
+
+    Flicker guards (2026-07-06 audit — a single sub-minute tick fired a
+    hairline-gap SELL that vanished by candle close):
+      min_gap_pct      live |EMAfast−EMAslow| must be ≥ this % of price,
+                       else the "cross" is indistinguishable from noise.
+      whipsaw_candles  skip a cross AGAINST a cross that confirmed on one of
+                       the last N CLOSED candles — right after a real cross
+                       the gap is microscopic and flips on any tick.
+    Both default to 0 (off) so existing configs keep old behavior; the
+    watcher-level confirm_polls guard lives in run_intrabar.
     """
     fast_len = int(params.get("fast", 9))
     slow_len = int(params.get("slow", 21))
@@ -121,6 +131,8 @@ def ema_cross_intrabar(df: pd.DataFrame, params: dict) -> Optional[Signal]:
     rsi_buy = float(params.get("rsi_buy", 55))
     rsi_sell = float(params.get("rsi_sell", 45))
     trend_len = params.get("trend_ema")
+    min_gap_pct = float(params.get("min_gap_pct", 0.0))
+    whipsaw_n = int(params.get("whipsaw_candles", 0))
 
     close = df["close"]
     fast = ema(close, fast_len)
@@ -133,8 +145,22 @@ def ema_cross_intrabar(df: pd.DataFrame, params: dict) -> Optional[Signal]:
     else:
         return None
 
-    rsi_now = float(rsi(close, rsi_len).iloc[-1])
     price = float(close.iloc[-1])
+    gap_pct = abs(float(fast.iloc[-1] - slow.iloc[-1])) / price * 100
+    if gap_pct < min_gap_pct:
+        return None
+    if whipsaw_n:
+        cf, cs = fast.iloc[:-1], slow.iloc[:-1]  # closed candles only
+        for i in range(whipsaw_n):
+            a, b = -1 - i, -2 - i
+            if side.endswith("SELL") and \
+                    cf.iloc[b] <= cs.iloc[b] and cf.iloc[a] > cs.iloc[a]:
+                return None  # bullish cross just confirmed — don't fade it
+            if side.endswith("BUY") and \
+                    cf.iloc[b] >= cs.iloc[b] and cf.iloc[a] < cs.iloc[a]:
+                return None
+
+    rsi_now = float(rsi(close, rsi_len).iloc[-1])
     if side.endswith("BUY") and rsi_now <= rsi_buy:
         return None
     if side.endswith("SELL") and rsi_now >= rsi_sell:
@@ -152,7 +178,11 @@ def ema_cross_intrabar(df: pd.DataFrame, params: dict) -> Optional[Signal]:
                   f"{slow_len} on the still-forming candle — this is what the "
                   f"chart shows right now. It only counts if the candle CLOSES "
                   f"this way; watch for the confirmed alert (or nothing, if it "
-                  f"fades).\nPrice: {price:g}\nRSI({rsi_len}): {rsi_now:.1f}")
+                  f"fades).\nPrice: {price:g}\n"
+                  f"EMA{fast_len}: {float(fast.iloc[-1]):g} | "
+                  f"EMA{slow_len}: {float(slow.iloc[-1]):g} "
+                  f"(gap {gap_pct:.4f}% of price)\n"
+                  f"RSI({rsi_len}): {rsi_now:.1f}")
 
 
 # Rules that must see the forming candle; the watcher polls these every

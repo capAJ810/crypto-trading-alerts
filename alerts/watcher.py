@@ -194,6 +194,11 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
     Called on the ~30s wakeups between candle closes. Dedupe: one alert
     per (pair, forming candle, direction) — a cross that flickers on and
     off inside one candle can't spam.
+
+    confirm_polls (per-rule config key, like once_per_side): the cross must
+    be seen on N consecutive checks before alerting. A candidate is stashed
+    in state as `pending` {candle, side, seen}; it's dropped the moment the
+    cross vanishes, so a single flickering tick can never fire an alert.
     """
     intrabar_cfgs = [r for r in config.get("rules", [])
                      if r["name"] in INTRABAR_RULES]
@@ -203,6 +208,7 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
     limit = int(config.get("candles", 150))
     state = load_state(state_path)
     sent = 0
+    pending_changed = False
 
     for pair, ex_name in normalize_symbols(config):
         try:
@@ -224,12 +230,32 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
             if tuned:
                 params.update(tuned.get(pair, {}).get(rule_name, {}))
             signal = RULES[rule_name](df, params)
-            if signal is None:
-                continue
             key = f"{ex_name}|{pair}|{rule_name}"
             prev = state.get(key, {})
+            if signal is None:
+                # candidate's cross vanished mid-candle — it was a flicker
+                if prev.get("pending", {}).get("candle") == live_ts:
+                    prev.pop("pending", None)
+                    pending_changed = True
+                continue
             if prev.get("last_candle") == live_ts and prev.get("side") == signal.side:
                 continue
+            need = int(rule_cfg.get("confirm_polls", 1))
+            if need > 1:
+                pend = prev.get("pending")
+                if pend and pend.get("candle") == live_ts and \
+                        pend.get("side") == signal.side:
+                    pend["seen"] += 1
+                else:
+                    pend = {"candle": live_ts, "side": signal.side, "seen": 1}
+                state.setdefault(key, {})["pending"] = pend
+                pending_changed = True
+                if pend["seen"] < need:
+                    log.info("%-28s intrabar candidate %s (%d/%d checks) — "
+                             "awaiting confirmation", key, signal.side,
+                             pend["seen"], need)
+                    continue
+                state[key].pop("pending", None)
             title = f"{signal.emoji} {signal.side} {pair} {timeframe} — {signal.headline}"
             body = (f"{signal.details}\n\n"
                     f"Pair: {pair} ({ex_name})\nTimeframe: {timeframe} "
@@ -256,7 +282,7 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
                                   price=float(df["close"].iloc[-1]),
                                   candle_ts=live_ts, timeframe=timeframe)
 
-    if not dry_run and sent:
+    if not dry_run and (sent or pending_changed):
         save_state(state_path, state)
     return sent
 

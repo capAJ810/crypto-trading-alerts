@@ -384,6 +384,11 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 - **Intrabar alerts for SELL** require `rsi < rsi_sell` (default 45) AND
   `close < EMA200`. If either fails, no intrabar SELL fires. This is correct — a
   cross on the forming candle without RSI confirmation isn't worth alerting.
+- **Intrabar flicker guards** (post-audit): `min_gap_pct` + `whipsaw_candles`
+  (rule params) and `confirm_polls` (rule_cfg key, handled in run_intrabar like
+  once_per_side). Rule defaults are OFF — the values live in the configs. The
+  `pending` record in state.json is the confirm_polls candidate; it's normal
+  to see it come and go between runs.
 - **ASTER/USDT** on Binance — verify it still exists on Binance spot if you see
   fetch errors. It was listed but low-liquidity coins get delisted.
 
@@ -391,7 +396,33 @@ See https://github.com/caronc/apprise/wiki for 100+ supported services.
 
 ## What was done in the last session
 
-**15m intrabar enabled (2026-07-05, latest).** Added `ema_cross_intrabar` to
+**Intrabar flicker guards (2026-07-06, latest — audit + fix).** User got a
+false ⏱ INTRABAR SELL ASTER 5m at 07:31 UTC. Audit (replayed spot 1m/5m data)
+showed the watcher's ~30s poll caught a single sub-minute tick to 0.6360: at
+that instant live EMA9 dipped 0.0057% under EMA21, RSI 44.6 (gate 45), 60s
+after a bullish cross had confirmed on the 07:25 close (the WEAK BUY). All
+gates passed on a tick that left only a wick — mechanically correct, noise.
+Scored intrabar precision was 50% (46/92). Fixes, all in ema_cross_intrabar
+params + one watcher key:
+- `min_gap_pct: 0.0125` — live |EMA9−EMA21| ≥ 0.0125% of price (threshold
+  chosen by replaying all 92 logged intrabar signals: 50%→~60% precision,
+  ~64% with whipsaw; kills the audited 0.0057% alert, keeps the verified
+  0.0165% hit). Rule default 0 = off; configs set it.
+- `whipsaw_candles: 2` — skip a cross AGAINST a cross confirmed on the last
+  2 closed candles (the audited alert faded a 60s-old bullish cross).
+- `confirm_polls: 2` (rule_cfg key, 5m config only) — run_intrabar stashes a
+  `pending {candle, side, seen}` candidate in state; alerts only when the
+  cross survives N consecutive ~30s checks; a vanished cross clears the
+  candidate. NOT set on 15m (checks are ~5 min apart; gap/whipsaw guard it).
+- Alert body now includes EMA9/EMA21/gap% for instant future audits.
+- Regression-verified: the exact 07:31 scenario is BLOCKED, the 08:35 hit
+  still FIRES. tests/test_intrabar_guards.py covers all three guards. 75 tests.
+- Expect intrabar volume to drop well over half — that's the point. If too
+  quiet, lower min_gap_pct toward 0.0075 before touching the other guards.
+- Note: user charts may be PERP with EMA(7)/21 (Binance app default overlay);
+  alerts are SPOT EMA(9)/21 — flag this when someone reports a "false" alert.
+
+**15m intrabar enabled (2026-07-05).** Added `ema_cross_intrabar` to
 `config-15m.yaml` (had been intentionally omitted). The piggyback one-shot's
 `intrabar()` call now fires ⏱ 15m intrabar alerts against the forming candle at
 ~5-min resolution (see the Parallel 15m pass caveat). No workflow change needed
@@ -514,7 +545,7 @@ Before that, an earlier session implemented self-serve email coin selection:
 
 ---
 
-## Test suite (70 tests, all passing)
+## Test suite (75 tests, all passing)
 
 ```
 tests/test_indicators.py      EMA/RSI numeric accuracy vs reference
