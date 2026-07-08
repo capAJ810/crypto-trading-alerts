@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-07-05 17:35 UTC",
-  "candle_ts": 1783272600000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1783272600000",
-  "move_pct": 0.154,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 62690.95,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-05 17:40 UTC",
-  "candle_ts": 1783272900000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1783272900000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 81.19,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-05 17:40 UTC",
-  "candle_ts": 1783272900000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1783272900000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 585.7,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-05 17:45 UTC",
   "candle_ts": 1783273200000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 68.258,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-08 12:56 UTC",
+  "candle_ts": 1783515300000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1783515300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 68.211,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-08 12:59 UTC",
+  "candle_ts": 1783515300000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1783515300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1738.55,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-08 13:00 UTC",
+  "candle_ts": 1783515300000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1783515300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 67.981,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
   "timeframe": "5m"
  }
 ]
