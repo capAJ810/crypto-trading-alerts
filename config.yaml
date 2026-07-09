@@ -41,9 +41,18 @@ rules:
   # Unconfirmed by nature (the cross can fade); checked every ~30s.
   # Volume filter skipped (a partial candle's volume can't be compared).
   # Comment this block out to go back to close-confirmed alerts only.
+  #
+  # Flicker guards (2026-07-06 audit of a false ASTER INTRABAR SELL that
+  # fired on one sub-minute tick with a 0.006% EMA gap):
+  #   confirm_polls: 2      cross must survive 2 consecutive ~30s checks
+  #   min_gap_pct: 0.0125   live EMA gap ≥ 0.0125% of price (hits median
+  #                         0.008/mean 0.012; picked from replaying all 92
+  #                         logged intrabar signals: 50% -> ~60% precision)
+  #   whipsaw_candles: 2    don't fade a cross confirmed on the last 2 closes
   - name: ema_cross_intrabar
+    confirm_polls: 2
     params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
-             trend_ema: 200}
+             trend_ema: 200, min_gap_pct: 0.0125, whipsaw_candles: 2}
 
   # More ready-made rule types (uncomment to enable):
   # - name: rsi_extreme

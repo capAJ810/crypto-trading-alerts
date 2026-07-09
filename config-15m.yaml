@@ -34,9 +34,13 @@ rules:
     once_per_side: true
     params: {fast: 9, slow: 21, gap_pct: 0.08}
 
+  # Flicker guards (see config.yaml): min_gap + whipsaw apply here too.
+  # confirm_polls deliberately NOT set — the 15m pass checks once per CI run
+  # (~5 min apart), so requiring 2 sightings would delay alerts up to ~10 min
+  # into a 15m candle; the gap/whipsaw guards are the flicker defense here.
   - name: ema_cross_intrabar
     params: {fast: 9, slow: 21, rsi_len: 14, rsi_buy: 55, rsi_sell: 45,
-             trend_ema: 200}
+             trend_ema: 200, min_gap_pct: 0.0125, whipsaw_candles: 2}
 
 notify:
   - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
