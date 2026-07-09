@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-07-06 15:35 UTC",
-  "candle_ts": 1783351800000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_rsi|1783351800000",
-  "move_pct": 0.0,
-  "outcome": "miss",
-  "pair": "ASTER/USDT",
-  "price": 0.634,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-06 15:45 UTC",
-  "candle_ts": 1783352400000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_rsi|1783352400000",
-  "move_pct": 0.943,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.636,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-06 17:35 UTC",
   "candle_ts": 1783359000000,
   "exchange": "binance",
@@ -7623,7 +7597,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1783568100000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 61978.01,
   "rule": "ema_cross_soon",
@@ -7636,7 +7610,7 @@
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_soon|1783568100000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 568.08,
   "rule": "ema_cross_soon",
@@ -7649,7 +7623,7 @@
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_soon|1783568100000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "ASTER/USDT",
   "price": 0.62,
   "rule": "ema_cross_soon",
@@ -7797,6 +7771,32 @@
   "price": 67.484,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-09 04:36 UTC",
+  "candle_ts": 1783571700000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1783571700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 67.582,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-09 04:40 UTC",
+  "candle_ts": 1783571700000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1783571700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 67.677,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "5m"
  }
 ]
