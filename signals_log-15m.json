@@ -3924,5 +3924,18 @@
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-09 23:20 UTC",
+  "candle_ts": 1783638900000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1783638900000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "ETH/USDT",
+  "price": 1743.04,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "15m"
  }
 ]
