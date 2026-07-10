@@ -1,4 +1,4 @@
-last_run: '2026-07-09T11:55:58.071498+00:00'
+last_run: '2026-07-10T11:50:18.779223+00:00'
 pairs:
   ASTER/USDT:
     ema_cross_rsi:
@@ -35,3 +35,5 @@ pairs:
   SOL/USDT:
     ema_cross_rsi:
       rsi_sell: 40.0
+    ema_cross_soon:
+      gap_pct: 0.05
