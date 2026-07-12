@@ -5959,7 +5959,7 @@
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_soon|1783810800000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 67.493,
   "rule": "ema_cross_soon",
@@ -5990,6 +5990,19 @@
   "price": 67.198,
   "rule": "ema_cross_rsi",
   "side": "SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-12 02:16 UTC",
+  "candle_ts": 1783821600000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1783821600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 64053.2,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "15m"
  }
 ]
