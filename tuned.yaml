@@ -1,4 +1,4 @@
-last_run: '2026-07-11T11:45:21.298775+00:00'
+last_run: '2026-07-12T11:43:12.865187+00:00'
 pairs:
   ASTER/USDT:
     ema_cross_rsi:
@@ -22,13 +22,14 @@ pairs:
   ETH/USDT:
     ema_cross_rsi:
       rsi_buy: 60.0
-      volume_avg: 10
+      volume_avg: 30
     ema_cross_soon:
       gap_pct: 0.05
   HYPE/USDT:
     ema_cross_rsi:
       rsi_buy: 60.0
-      rsi_sell: 40.0
+      rsi_sell: 48.0
+      trend_ema: 100
       volume_avg: 30
     ema_cross_soon:
       gap_pct: 0.05
