@@ -6901,5 +6901,18 @@
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR SELL",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-12 22:03 UTC",
+  "candle_ts": 1783892700000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1783892700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 63920.4,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
+  "timeframe": "15m"
  }
 ]
