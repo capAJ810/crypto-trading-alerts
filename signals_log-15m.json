@@ -7681,5 +7681,18 @@
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-14 20:00 UTC",
+  "candle_ts": 1784058300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1784058300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 580.64,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
  }
 ]
