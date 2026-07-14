@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-07-11 00:05 UTC",
-  "candle_ts": 1783728000000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1783728000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 78.0,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-11 00:05 UTC",
-  "candle_ts": 1783728000000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1783728000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 67.483,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-11 00:14 UTC",
   "candle_ts": 1783728600000,
   "exchange": "binance",
@@ -7797,6 +7771,32 @@
   "price": 63.716,
   "rule": "ema_cross_rsi",
   "side": "SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-14 12:10 UTC",
+  "candle_ts": 1784030700000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1784030700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 62789.32,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-14 12:10 UTC",
+  "candle_ts": 1784030700000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1784030700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 570.57,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
