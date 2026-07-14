@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-07-11 08:50 UTC",
-  "candle_ts": 1783759500000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1783759500000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 66.498,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-11 08:55 UTC",
-  "candle_ts": 1783759800000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1783759800000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 64256.56,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-11 09:10 UTC",
   "candle_ts": 1783760700000,
   "exchange": "binance",
@@ -7765,8 +7739,8 @@
   "candle_ts": 1784067600000,
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_rsi|1784067600000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.738,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 1882.25,
   "rule": "ema_cross_rsi",
@@ -7778,8 +7752,8 @@
   "candle_ts": 1784067600000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1784067600000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.263,
+  "outcome": "miss",
   "pair": "BNB/USDT",
   "price": 581.38,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 65.688,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-14 23:25 UTC",
+  "candle_ts": 1784071200000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_soon|1784071200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.63,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-14 23:25 UTC",
+  "candle_ts": 1784071200000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1784071200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 65.635,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
