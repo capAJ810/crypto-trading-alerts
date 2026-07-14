@@ -7408,5 +7408,18 @@
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
   "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-14 08:10 UTC",
+  "candle_ts": 1784016000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1784016000000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "ETH/USDT",
+  "price": 1779.61,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "15m"
  }
 ]
