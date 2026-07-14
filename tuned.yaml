@@ -1,9 +1,11 @@
-last_run: '2026-07-12T11:43:12.865187+00:00'
+last_run: '2026-07-14T02:40:22.313369+00:00'
 pairs:
   ASTER/USDT:
     ema_cross_rsi:
       rsi_buy: 52.0
       rsi_sell: 40.0
+      trend_ema: 100
+      volume_avg: 10
     ema_cross_soon:
       gap_pct: 0.05
   BNB/USDT:
