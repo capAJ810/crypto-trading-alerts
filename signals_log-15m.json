@@ -1,45 +1,6 @@
 [
  {
   "at": "2026-07-07 15:00 UTC",
-  "candle_ts": 1783435500000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1783435500000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 81.81,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-07 15:00 UTC",
-  "candle_ts": 1783435500000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1783435500000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 581.01,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-07 15:00 UTC",
-  "candle_ts": 1783435500000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1783435500000",
-  "move_pct": 0.804,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 72.407,
-  "rule": "ema_cross_rsi",
-  "side": "BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-07 15:00 UTC",
   "candle_ts": 1783436400000,
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_intrabar|1783436400000",
@@ -7797,6 +7758,45 @@
   "price": 66.082,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-16 15:15 UTC",
+  "candle_ts": 1784214000000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1784214000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 76.06,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-16 15:15 UTC",
+  "candle_ts": 1784214000000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1784214000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 577.42,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-16 15:15 UTC",
+  "candle_ts": 1784214900000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_intrabar|1784214900000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "SOL/USDT",
+  "price": 76.07,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
   "timeframe": "15m"
  }
 ]
