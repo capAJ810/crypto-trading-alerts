@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-07-09 01:45 UTC",
-  "candle_ts": 1783561500000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_intrabar|1783561500000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "BTC/USDT",
-  "price": 62089.62,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-09 01:55 UTC",
-  "candle_ts": 1783561500000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_intrabar|1783561500000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "ASTER/USDT",
-  "price": 0.62,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-09 02:00 UTC",
-  "candle_ts": 1783561500000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1783561500000",
-  "move_pct": 0.34,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 61916.0,
-  "rule": "ema_cross_rsi",
-  "side": "SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-07-09 02:00 UTC",
   "candle_ts": 1783561500000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 567.92,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-18 03:00 UTC",
+  "candle_ts": 1784342700000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1784342700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 63967.61,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-18 03:00 UTC",
+  "candle_ts": 1784342700000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1784342700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1841.91,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-18 03:00 UTC",
+  "candle_ts": 1784343600000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_intrabar|1784343600000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "ASTER/USDT",
+  "price": 0.621,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
   "timeframe": "15m"
  }
 ]
