@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-07-17 03:50 UTC",
-  "candle_ts": 1784259900000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1784259900000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.619,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-17 03:55 UTC",
-  "candle_ts": 1784260200000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1784260200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 75.24,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-17 03:55 UTC",
   "candle_ts": 1784260200000,
   "exchange": "binance",
@@ -7687,8 +7661,8 @@
   "candle_ts": 1784452500000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_rsi|1784452500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.066,
+  "outcome": "miss",
   "pair": "SOL/USDT",
   "price": 75.95,
   "rule": "ema_cross_rsi",
@@ -7700,8 +7674,8 @@
   "candle_ts": 1784452500000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_rsi|1784452500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.161,
+  "outcome": "miss",
   "pair": "ASTER/USDT",
   "price": 0.622,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 567.87,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-19 10:20 UTC",
+  "candle_ts": 1784456100000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1784456100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 64594.81,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-19 10:20 UTC",
+  "candle_ts": 1784456100000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1784456100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 61.009,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
