@@ -1,57 +1,5 @@
 [
  {
-  "at": "2026-07-11 16:45 UTC",
-  "candle_ts": 1783787400000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1783787400000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 77.8,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-11 16:45 UTC",
-  "candle_ts": 1783788300000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_intrabar|1783788300000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "SOL/USDT",
-  "price": 77.77,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-11 17:00 UTC",
-  "candle_ts": 1783788300000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1783788300000",
-  "move_pct": 0.154,
-  "outcome": "miss",
-  "pair": "SOL/USDT",
-  "price": 77.94,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-11 17:30 UTC",
-  "candle_ts": 1783790100000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1783790100000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 64300.0,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-07-11 17:35 UTC",
   "candle_ts": 1783791000000,
   "exchange": "binance",
@@ -7797,6 +7745,58 @@
   "price": 0.62,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 14:00 UTC",
+  "candle_ts": 1784555100000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1784555100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1862.68,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 14:00 UTC",
+  "candle_ts": 1784555100000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1784555100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 566.76,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 14:00 UTC",
+  "candle_ts": 1784555100000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1784555100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.619,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 14:00 UTC",
+  "candle_ts": 1784556000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1784556000000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "ETH/USDT",
+  "price": 1862.44,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
   "timeframe": "15m"
  }
 ]
