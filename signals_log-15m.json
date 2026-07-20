@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-07-11 13:45 UTC",
-  "candle_ts": 1783776600000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1783776600000",
-  "move_pct": 0.411,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 64239.93,
-  "rule": "ema_cross_rsi",
-  "side": "BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-11 13:45 UTC",
-  "candle_ts": 1783776600000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1783776600000",
-  "move_pct": 0.051,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 66.58,
-  "rule": "ema_cross_rsi",
-  "side": "SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-07-11 14:30 UTC",
-  "candle_ts": 1783779300000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1783779300000",
-  "move_pct": 0.963,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 67.193,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-07-11 15:45 UTC",
   "candle_ts": 1783783800000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 0.622,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 10:16 UTC",
+  "candle_ts": 1784541600000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1784541600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 64281.99,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 10:16 UTC",
+  "candle_ts": 1784541600000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1784541600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1865.99,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-07-20 10:16 UTC",
+  "candle_ts": 1784541600000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1784541600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.622,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "15m"
  }
 ]
