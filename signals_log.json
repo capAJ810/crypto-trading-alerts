@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-07-22 08:15 UTC",
-  "candle_ts": 1784707800000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1784707800000",
-  "move_pct": 0.2,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 66032.81,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-22 08:15 UTC",
-  "candle_ts": 1784707800000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_rsi|1784707800000",
-  "move_pct": 0.109,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 569.79,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-22 08:20 UTC",
-  "candle_ts": 1784708100000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_rsi|1784708100000",
-  "move_pct": 0.256,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 1921.59,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-22 08:20 UTC",
   "candle_ts": 1784708100000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 1859.0,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-25 01:05 UTC",
+  "candle_ts": 1784941200000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1784941200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1862.18,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-25 01:05 UTC",
+  "candle_ts": 1784941200000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1784941200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.629,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-25 01:05 UTC",
+  "candle_ts": 1784941200000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1784941200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 57.489,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
