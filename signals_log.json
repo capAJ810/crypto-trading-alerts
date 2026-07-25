@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-07-22 08:05 UTC",
-  "candle_ts": 1784707200000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1784707200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 568.95,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-07-22 08:10 UTC",
-  "candle_ts": 1784707500000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1784707500000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 66043.67,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-07-22 08:10 UTC",
   "candle_ts": 1784707500000,
   "exchange": "binance",
@@ -7609,8 +7583,8 @@
   "candle_ts": 1784936700000,
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_rsi|1784936700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.129,
+  "outcome": "miss",
   "pair": "BTC/USDT",
   "price": 64159.46,
   "rule": "ema_cross_rsi",
@@ -7622,8 +7596,8 @@
   "candle_ts": 1784936700000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1784936700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.044,
+  "outcome": "miss",
   "pair": "BNB/USDT",
   "price": 564.6,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 57.324,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-25 00:50 UTC",
+  "candle_ts": 1784940300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1784940300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 564.99,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-07-25 00:50 UTC",
+  "candle_ts": 1784940300000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1784940300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 57.349,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
