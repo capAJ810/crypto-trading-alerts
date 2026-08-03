@@ -44,8 +44,7 @@
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-08-03 17:00 UTC",
-    "last_candle": 1785776400000,
-    "side": "NEAR-SELL"
+    "last_candle": 1785776400000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -69,6 +68,11 @@
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1785755400000,
+    "pending": {
+      "candle": 1785777300000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR SELL"
   },
   "binance|SOL/USDT|ema_cross_rsi": {
