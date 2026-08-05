@@ -5,9 +5,9 @@
     "side": "INTRABAR BUY"
   },
   "binance|ASTER/USDT|ema_cross_rsi": {
-    "at": "2026-08-05 03:05 UTC",
-    "last_candle": 1785899100000,
-    "side": "WEAK BUY"
+    "at": "2026-08-05 03:15 UTC",
+    "last_candle": 1785899700000,
+    "side": "SELL"
   },
   "binance|ASTER/USDT|ema_cross_soon": {
     "at": "2026-08-05 02:15 UTC",
@@ -24,8 +24,9 @@
     "side": "BUY"
   },
   "binance|BNB/USDT|ema_cross_soon": {
-    "at": "2026-08-05 00:25 UTC",
-    "last_candle": 1785889500000
+    "at": "2026-08-05 03:15 UTC",
+    "last_candle": 1785899700000,
+    "side": "NEAR-SELL"
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -43,31 +44,31 @@
     "side": "WEAK BUY"
   },
   "binance|BTC/USDT|ema_cross_soon": {
-    "at": "2026-08-05 01:25 UTC",
-    "last_candle": 1785893100000
+    "at": "2026-08-05 03:15 UTC",
+    "last_candle": 1785899700000,
+    "side": "NEAR-SELL"
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1785894000000,
-    "side": "INTRABAR BUY"
+    "last_candle": 1785899700000,
+    "side": "INTRABAR SELL"
   },
   "binance|ETH/USDT|ema_cross_rsi": {
-    "at": "2026-08-05 01:40 UTC",
-    "last_candle": 1785894000000,
-    "side": "WEAK BUY"
+    "at": "2026-08-05 03:15 UTC",
+    "last_candle": 1785899700000,
+    "side": "SELL"
   },
   "binance|ETH/USDT|ema_cross_soon": {
     "at": "2026-08-05 03:05 UTC",
-    "last_candle": 1785899100000,
-    "side": "NEAR-SELL"
+    "last_candle": 1785899100000
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1785876000000,
     "pending": {
-      "candle": 1785893700000,
+      "candle": 1785900000000,
       "seen": 1,
-      "side": "INTRABAR BUY"
+      "side": "INTRABAR SELL"
     },
     "side": "INTRABAR BUY"
   },
@@ -77,8 +78,9 @@
     "side": "WEAK BUY"
   },
   "binance|SOL/USDT|ema_cross_soon": {
-    "at": "2026-08-05 01:30 UTC",
-    "last_candle": 1785893400000
+    "at": "2026-08-05 03:15 UTC",
+    "last_candle": 1785899700000,
+    "side": "NEAR-SELL"
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
