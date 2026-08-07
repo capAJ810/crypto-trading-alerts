@@ -2,12 +2,17 @@
   "binance|ASTER/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1786091700000,
+    "pending": {
+      "candle": 1786119900000,
+      "seen": 1,
+      "side": "INTRABAR SELL"
+    },
     "side": "INTRABAR SELL"
   },
   "binance|ASTER/USDT|ema_cross_rsi": {
-    "at": "2026-08-07 15:45 UTC",
-    "last_candle": 1786117500000,
-    "side": "WEAK BUY"
+    "at": "2026-08-07 16:25 UTC",
+    "last_candle": 1786119900000,
+    "side": "SELL"
   },
   "binance|ASTER/USDT|ema_cross_soon": {
     "at": "2026-08-07 15:45 UTC",
