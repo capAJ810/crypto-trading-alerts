@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-08 04:10 UTC",
-  "candle_ts": 1786161900000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1786161900000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 64976.0,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-08 04:15 UTC",
-  "candle_ts": 1786162200000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1786162200000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 1916.91,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-08 04:20 UTC",
   "candle_ts": 1786162500000,
   "exchange": "kucoin",
@@ -7661,8 +7635,8 @@
   "candle_ts": 1786365900000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_intrabar|1786365900000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.821,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 76.77,
   "rule": "ema_cross_intrabar",
@@ -7674,8 +7648,8 @@
   "candle_ts": 1786365900000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_rsi|1786365900000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.795,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 76.75,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 0.609,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-10 13:50 UTC",
+  "candle_ts": 1786369500000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1786369500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.608,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-10 13:50 UTC",
+  "candle_ts": 1786369500000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_soon|1786369500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.608,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
