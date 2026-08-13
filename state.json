@@ -25,29 +25,32 @@
     "side": "INTRABAR BUY"
   },
   "binance|BNB/USDT|ema_cross_rsi": {
-    "at": "2026-08-12 23:35 UTC",
-    "last_candle": 1786577700000,
-    "side": "WEAK BUY"
+    "at": "2026-08-13 01:25 UTC",
+    "last_candle": 1786584300000,
+    "side": "WEAK SELL"
   },
   "binance|BNB/USDT|ema_cross_soon": {
     "at": "2026-08-13 01:20 UTC",
-    "last_candle": 1786584000000,
-    "side": "NEAR-SELL"
+    "last_candle": 1786584000000
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1786331700000,
+    "pending": {
+      "candle": 1786584300000,
+      "seen": 1,
+      "side": "INTRABAR SELL"
+    },
     "side": "INTRABAR SELL"
   },
   "binance|BTC/USDT|ema_cross_rsi": {
-    "at": "2026-08-13 00:05 UTC",
-    "last_candle": 1786579500000,
-    "side": "WEAK BUY"
+    "at": "2026-08-13 01:25 UTC",
+    "last_candle": 1786584300000,
+    "side": "SELL"
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-08-13 01:15 UTC",
-    "last_candle": 1786583700000,
-    "side": "NEAR-SELL"
+    "last_candle": 1786583700000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -65,23 +68,17 @@
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1786562400000,
-    "pending": {
-      "candle": 1786569600000,
-      "seen": 1,
-      "side": "INTRABAR SELL"
-    },
+    "last_candle": 1786584300000,
     "side": "INTRABAR SELL"
   },
   "binance|SOL/USDT|ema_cross_rsi": {
-    "at": "2026-08-12 23:55 UTC",
-    "last_candle": 1786578900000,
-    "side": "WEAK BUY"
+    "at": "2026-08-13 01:25 UTC",
+    "last_candle": 1786584300000,
+    "side": "WEAK SELL"
   },
   "binance|SOL/USDT|ema_cross_soon": {
     "at": "2026-08-13 01:20 UTC",
-    "last_candle": 1786584000000,
-    "side": "NEAR-SELL"
+    "last_candle": 1786584000000
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -94,7 +91,8 @@
     "side": "BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
-    "at": "2026-08-12 23:45 UTC",
-    "last_candle": 1786578300000
+    "at": "2026-08-13 01:25 UTC",
+    "last_candle": 1786584300000,
+    "side": "NEAR-SELL"
   }
 }
