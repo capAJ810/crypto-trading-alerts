@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-07 19:45 UTC",
-  "candle_ts": 1786131900000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_intrabar|1786131900000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "SOL/USDT",
-  "price": 73.84,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-07 20:00 UTC",
-  "candle_ts": 1786131900000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1786131900000",
-  "move_pct": 0.108,
-  "outcome": "miss",
-  "pair": "SOL/USDT",
-  "price": 74.02,
-  "rule": "ema_cross_rsi",
-  "side": "BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-07 20:10 UTC",
-  "candle_ts": 1786132800000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_intrabar|1786132800000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "BTC/USDT",
-  "price": 64990.12,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-07 20:15 UTC",
   "candle_ts": 1786132800000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 0.603,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-15 05:15 UTC",
+  "candle_ts": 1786770000000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1786770000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 63149.54,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-15 05:15 UTC",
+  "candle_ts": 1786770000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1786770000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1884.79,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-15 05:15 UTC",
+  "candle_ts": 1786770000000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1786770000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.603,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
   "timeframe": "15m"
  }
 ]
