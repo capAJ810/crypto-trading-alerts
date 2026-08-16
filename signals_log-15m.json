@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-08 20:00 UTC",
-  "candle_ts": 1786218300000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1786218300000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 65075.41,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-08 20:00 UTC",
-  "candle_ts": 1786218300000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1786218300000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 603.29,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-08 20:45 UTC",
   "candle_ts": 1786221000000,
   "exchange": "binance",
@@ -7623,7 +7597,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1786846500000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 63115.01,
   "rule": "ema_cross_soon",
@@ -7636,7 +7610,7 @@
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_soon|1786846500000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 1884.22,
   "rule": "ema_cross_soon",
@@ -7649,7 +7623,7 @@
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_soon|1786846500000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 75.61,
   "rule": "ema_cross_soon",
@@ -7797,6 +7771,32 @@
   "price": 0.6,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-16 05:30 UTC",
+  "candle_ts": 1786857300000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1786857300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 63070.01,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-16 05:30 UTC",
+  "candle_ts": 1786857300000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_rsi|1786857300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 75.37,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
   "timeframe": "15m"
  }
 ]
