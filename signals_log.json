@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-17 21:05 UTC",
-  "candle_ts": 1787000400000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_rsi|1787000400000",
-  "move_pct": 0.002,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 606.05,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-17 21:10 UTC",
-  "candle_ts": 1787000700000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1787000700000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 1908.7,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-17 21:10 UTC",
   "candle_ts": 1787000700000,
   "exchange": "binance",
@@ -7765,8 +7739,8 @@
   "candle_ts": 1787207700000,
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_intrabar|1787207700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.427,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 2257.67,
   "rule": "ema_cross_intrabar",
@@ -7778,8 +7752,8 @@
   "candle_ts": 1787207700000,
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_rsi|1787207700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.385,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 2258.6,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 2253.17,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-20 07:40 UTC",
+  "candle_ts": 1787211300000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1787211300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 69555.91,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-20 07:40 UTC",
+  "candle_ts": 1787211300000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1787211300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2245.01,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
