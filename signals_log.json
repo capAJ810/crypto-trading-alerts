@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-18 08:40 UTC",
-  "candle_ts": 1787042100000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1787042100000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 603.2,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-18 08:45 UTC",
-  "candle_ts": 1787042400000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1787042400000",
-  "move_pct": 0.014,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 64286.81,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-18 08:45 UTC",
   "candle_ts": 1787042400000,
   "exchange": "binance",
@@ -7739,8 +7713,8 @@
   "candle_ts": 1787271300000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1787271300000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.62,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 656.93,
   "rule": "ema_cross_rsi",
@@ -7752,8 +7726,8 @@
   "candle_ts": 1787271300000,
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787271300000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.464,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 74.078,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 655.98,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-21 01:19 UTC",
+  "candle_ts": 1787274900000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1787274900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 74.237,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-21 01:20 UTC",
+  "candle_ts": 1787274900000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787274900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 74.087,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "5m"
  }
 ]
