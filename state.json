@@ -15,8 +15,9 @@
     "side": "WEAK SELL"
   },
   "binance|ASTER/USDT|ema_cross_soon": {
-    "at": "2026-08-22 04:50 UTC",
-    "last_candle": 1787374200000
+    "at": "2026-08-22 11:40 UTC",
+    "last_candle": 1787398800000,
+    "side": "NEAR-BUY"
   },
   "binance|BNB/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -29,8 +30,9 @@
     "side": "WEAK SELL"
   },
   "binance|BNB/USDT|ema_cross_soon": {
-    "at": "2026-08-22 09:40 UTC",
-    "last_candle": 1787391600000
+    "at": "2026-08-22 11:40 UTC",
+    "last_candle": 1787398800000,
+    "side": "NEAR-BUY"
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -43,14 +45,13 @@
     "side": "INTRABAR BUY"
   },
   "binance|BTC/USDT|ema_cross_rsi": {
-    "at": "2026-08-22 05:05 UTC",
-    "last_candle": 1787375100000,
-    "side": "WEAK SELL"
+    "at": "2026-08-22 11:40 UTC",
+    "last_candle": 1787398800000,
+    "side": "WEAK BUY"
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-08-22 11:30 UTC",
-    "last_candle": 1787398200000,
-    "side": "NEAR-BUY"
+    "last_candle": 1787398200000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -77,9 +78,9 @@
     "side": "INTRABAR SELL"
   },
   "binance|SOL/USDT|ema_cross_rsi": {
-    "at": "2026-08-22 07:55 UTC",
-    "last_candle": 1787385300000,
-    "side": "WEAK SELL"
+    "at": "2026-08-22 11:40 UTC",
+    "last_candle": 1787398800000,
+    "side": "WEAK BUY"
   },
   "binance|SOL/USDT|ema_cross_soon": {
     "at": "2026-08-22 09:25 UTC",
@@ -88,12 +89,17 @@
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1787381400000,
+    "pending": {
+      "candle": 1787398800000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_rsi": {
-    "at": "2026-08-22 07:40 UTC",
-    "last_candle": 1787384400000,
-    "side": "WEAK SELL"
+    "at": "2026-08-22 11:40 UTC",
+    "last_candle": 1787398800000,
+    "side": "WEAK BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
     "at": "2026-08-22 07:20 UTC",
