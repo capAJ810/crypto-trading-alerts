@@ -49,12 +49,17 @@
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1787367900000,
+    "pending": {
+      "candle": 1787373000000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR BUY"
   },
   "binance|ETH/USDT|ema_cross_rsi": {
-    "at": "2026-08-22 04:15 UTC",
-    "last_candle": 1787372100000,
-    "side": "WEAK SELL"
+    "at": "2026-08-22 04:30 UTC",
+    "last_candle": 1787373000000,
+    "side": "WEAK BUY"
   },
   "binance|ETH/USDT|ema_cross_soon": {
     "at": "2026-08-22 03:55 UTC",
