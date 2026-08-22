@@ -30,17 +30,21 @@
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1787343300000,
+    "pending": {
+      "candle": 1787365200000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR BUY"
   },
   "binance|BTC/USDT|ema_cross_rsi": {
-    "at": "2026-08-22 00:00 UTC",
-    "last_candle": 1787356800000,
-    "side": "WEAK SELL"
+    "at": "2026-08-22 02:20 UTC",
+    "last_candle": 1787365200000,
+    "side": "WEAK BUY"
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-08-22 02:10 UTC",
-    "last_candle": 1787364600000,
-    "side": "NEAR-BUY"
+    "last_candle": 1787364600000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
