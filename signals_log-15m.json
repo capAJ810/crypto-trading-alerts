@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-08-15 12:45 UTC",
-  "candle_ts": 1786797000000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1786797000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 611.59,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-15 13:00 UTC",
   "candle_ts": 1786797900000,
   "exchange": "binance",
@@ -7797,6 +7784,19 @@
   "price": 79.537,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-23 16:15 UTC",
+  "candle_ts": 1787500800000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1787500800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 79.956,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "15m"
  }
 ]
