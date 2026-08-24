@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-16 01:45 UTC",
-  "candle_ts": 1786843800000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1786843800000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 75.45,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-16 02:00 UTC",
-  "candle_ts": 1786844700000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1786844700000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 63084.78,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-16 02:00 UTC",
   "candle_ts": 1786844700000,
   "exchange": "kucoin",
@@ -7570,8 +7544,8 @@
   "candle_ts": 1787554800000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_rsi|1787554800000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.0,
+  "outcome": "miss",
   "pair": "SOL/USDT",
   "price": 95.33,
   "rule": "ema_cross_rsi",
@@ -7583,8 +7557,8 @@
   "candle_ts": 1787554800000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1787554800000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.017,
+  "outcome": "miss",
   "pair": "BNB/USDT",
   "price": 703.38,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 700.56,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-24 10:15 UTC",
+  "candle_ts": 1787565600000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1787565600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 701.82,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-24 10:15 UTC",
+  "candle_ts": 1787565600000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_soon|1787565600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.686,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "15m"
  }
 ]
