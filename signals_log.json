@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-21 23:35 UTC",
-  "candle_ts": 1787355000000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787355000000",
-  "move_pct": -0.03,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 76.435,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-21 23:40 UTC",
-  "candle_ts": 1787355300000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787355300000",
-  "move_pct": 1.85,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 76.071,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-21 23:40 UTC",
   "candle_ts": 1787355300000,
   "exchange": "kucoin",
@@ -7635,8 +7609,8 @@
   "candle_ts": 1787609400000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_intrabar|1787609400000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.329,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 702.41,
   "rule": "ema_cross_intrabar",
@@ -7648,8 +7622,8 @@
   "candle_ts": 1787609400000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1787609400000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.366,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 702.67,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 77.728,
   "rule": "ema_cross_rsi",
   "side": "SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-24 23:15 UTC",
+  "candle_ts": 1787613000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1787613000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2477.65,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-24 23:15 UTC",
+  "candle_ts": 1787613000000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1787613000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 77.86,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
