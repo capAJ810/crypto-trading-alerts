@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-15 20:45 UTC",
-  "candle_ts": 1786825800000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1786825800000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ASTER/USDT",
-  "price": 0.601,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-15 21:00 UTC",
-  "candle_ts": 1786826700000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_rsi|1786826700000",
-  "move_pct": 0.076,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 1883.42,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-15 21:00 UTC",
-  "candle_ts": 1786826700000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_rsi|1786826700000",
-  "move_pct": 0.5,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 610.55,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-15 21:15 UTC",
   "candle_ts": 1786827600000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 77503.88,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-24 07:00 UTC",
+  "candle_ts": 1787553900000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1787553900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 77464.33,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-24 07:00 UTC",
+  "candle_ts": 1787553900000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1787553900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 94.56,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-24 07:00 UTC",
+  "candle_ts": 1787553900000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1787553900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 699.76,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "15m"
  }
 ]
