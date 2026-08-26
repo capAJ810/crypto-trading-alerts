@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-17 13:00 UTC",
-  "candle_ts": 1786970700000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1786970700000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 59.2,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-17 13:15 UTC",
-  "candle_ts": 1786971600000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1786971600000",
-  "move_pct": 0.47,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 59.154,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-17 13:30 UTC",
   "candle_ts": 1786972500000,
   "exchange": "binance",
@@ -7597,7 +7571,7 @@
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_soon|1787722200000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 97.19,
   "rule": "ema_cross_soon",
@@ -7610,7 +7584,7 @@
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_soon|1787722200000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 696.31,
   "rule": "ema_cross_soon",
@@ -7623,7 +7597,7 @@
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_soon|1787722200000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "ASTER/USDT",
   "price": 0.706,
   "rule": "ema_cross_soon",
@@ -7797,6 +7771,32 @@
   "price": 0.7,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-26 08:45 UTC",
+  "candle_ts": 1787733000000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1787733000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 78998.98,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-26 08:45 UTC",
+  "candle_ts": 1787733000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1787733000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2464.2,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "15m"
  }
 ]
