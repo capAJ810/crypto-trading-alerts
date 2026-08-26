@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-17 13:45 UTC",
-  "candle_ts": 1786973400000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1786973400000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ASTER/USDT",
-  "price": 0.6,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-17 13:50 UTC",
-  "candle_ts": 1786974300000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_intrabar|1786974300000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "BNB/USDT",
-  "price": 606.92,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-17 14:00 UTC",
   "candle_ts": 1786974300000,
   "exchange": "binance",
@@ -7584,7 +7558,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1787724000000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 79008.0,
   "rule": "ema_cross_soon",
@@ -7596,8 +7570,8 @@
   "candle_ts": 1787724000000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_rsi|1787724000000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.142,
+  "outcome": "miss",
   "pair": "ASTER/USDT",
   "price": 0.703,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 2455.57,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-26 09:15 UTC",
+  "candle_ts": 1787734800000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1787734800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2456.09,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-26 09:15 UTC",
+  "candle_ts": 1787734800000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_rsi|1787734800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 96.83,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "15m"
  }
 ]
