@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-24 07:40 UTC",
-  "candle_ts": 1787556900000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1787556900000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 79.636,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-24 07:43 UTC",
-  "candle_ts": 1787557200000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1787557200000",
-  "move_pct": 2.847,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 79.459,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-24 07:45 UTC",
-  "candle_ts": 1787557200000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1787557200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 94.04,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-24 07:45 UTC",
   "candle_ts": 1787557200000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 704.69,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-27 00:35 UTC",
+  "candle_ts": 1787790600000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1787790600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 78847.49,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-27 00:35 UTC",
+  "candle_ts": 1787790600000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1787790600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 704.14,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-27 00:35 UTC",
+  "candle_ts": 1787790600000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787790600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 81.655,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
