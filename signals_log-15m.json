@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-20 21:00 UTC",
-  "candle_ts": 1787258700000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1787258700000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.666,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-20 21:00 UTC",
-  "candle_ts": 1787259600000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_intrabar|1787259600000",
-  "move_pct": null,
-  "outcome": "unscorable",
-  "pair": "ASTER/USDT",
-  "price": 0.666,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-20 21:15 UTC",
-  "candle_ts": 1787259600000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_rsi|1787259600000",
-  "move_pct": 0.902,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.665,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-20 21:30 UTC",
   "candle_ts": 1787260500000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 81.275,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-29 12:45 UTC",
+  "candle_ts": 1788006600000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1788006600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 77575.05,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-29 12:45 UTC",
+  "candle_ts": 1788006600000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1788006600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2434.45,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-29 12:45 UTC",
+  "candle_ts": 1788006600000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1788006600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 688.52,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "15m"
  }
 ]

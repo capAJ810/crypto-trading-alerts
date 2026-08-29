@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-26 17:35 UTC",
-  "candle_ts": 1787765400000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787765400000",
-  "move_pct": 0.103,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 81.196,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-26 18:25 UTC",
-  "candle_ts": 1787768400000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1787768400000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 698.74,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-26 18:40 UTC",
   "candle_ts": 1787769300000,
   "exchange": "binance",
@@ -7597,7 +7571,7 @@
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_soon|1788003600000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 2435.88,
   "rule": "ema_cross_soon",
@@ -7610,7 +7584,7 @@
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_soon|1788003600000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "miss",
   "pair": "SOL/USDT",
   "price": 103.53,
   "rule": "ema_cross_soon",
@@ -7623,7 +7597,7 @@
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_soon|1788003600000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 689.15,
   "rule": "ema_cross_soon",
@@ -7797,6 +7771,32 @@
   "price": 0.7,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-29 12:45 UTC",
+  "candle_ts": 1788007200000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1788007200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 77575.05,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-29 12:45 UTC",
+  "candle_ts": 1788007200000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1788007200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 81.262,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
