@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-22 14:15 UTC",
-  "candle_ts": 1787407200000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1787407200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 93.81,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-22 14:30 UTC",
-  "candle_ts": 1787408100000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1787408100000",
-  "move_pct": 0.863,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 93.86,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-22 14:30 UTC",
   "candle_ts": 1787408100000,
   "exchange": "binance",
@@ -7583,8 +7557,8 @@
   "candle_ts": 1788070500000,
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_rsi|1788070500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.171,
+  "outcome": "miss",
   "pair": "BTC/USDT",
   "price": 78177.41,
   "rule": "ema_cross_rsi",
@@ -7596,8 +7570,8 @@
   "candle_ts": 1788070500000,
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_rsi|1788070500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.861,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 83.261,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 694.44,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-30 09:30 UTC",
+  "candle_ts": 1788081300000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1788081300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2453.34,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-30 09:30 UTC",
+  "candle_ts": 1788081300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1788081300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 692.65,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "15m"
  }
 ]
