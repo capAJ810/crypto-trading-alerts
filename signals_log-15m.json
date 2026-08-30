@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-08-22 17:30 UTC",
-  "candle_ts": 1787418900000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1787418900000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 77084.94,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-22 17:45 UTC",
   "candle_ts": 1787419800000,
   "exchange": "binance",
@@ -7609,8 +7596,8 @@
   "candle_ts": 1788080400000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1788080400000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.177,
+  "outcome": "miss",
   "pair": "BNB/USDT",
   "price": 694.44,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7784,19 @@
   "price": 695.1,
   "rule": "ema_cross_intrabar",
   "side": "INTRABAR BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-08-30 12:15 UTC",
+  "candle_ts": 1788091200000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1788091200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 695.65,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "15m"
  }
 ]
