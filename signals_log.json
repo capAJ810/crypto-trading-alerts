@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-28 15:20 UTC",
-  "candle_ts": 1787930100000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1787930100000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.699,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-28 15:25 UTC",
-  "candle_ts": 1787930400000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_rsi|1787930400000",
-  "move_pct": 0.094,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 703.94,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-28 15:25 UTC",
   "candle_ts": 1787930400000,
   "exchange": "binance",
@@ -7661,8 +7635,8 @@
   "candle_ts": 1788149700000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_intrabar|1788149700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.434,
+  "outcome": "hit",
   "pair": "ASTER/USDT",
   "price": 0.692,
   "rule": "ema_cross_intrabar",
@@ -7674,8 +7648,8 @@
   "candle_ts": 1788149700000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_rsi|1788149700000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.289,
+  "outcome": "miss",
   "pair": "ASTER/USDT",
   "price": 0.691,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 101.69,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-31 05:20 UTC",
+  "candle_ts": 1788153300000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_rsi|1788153300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 102.32,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-31 05:20 UTC",
+  "candle_ts": 1788153300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1788153300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 686.53,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
   "timeframe": "5m"
  }
 ]
