@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-28 14:10 UTC",
-  "candle_ts": 1787925900000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_rsi|1787925900000",
-  "move_pct": 0.774,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2487.26,
-  "rule": "ema_cross_rsi",
-  "side": "SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-28 14:15 UTC",
-  "candle_ts": 1787926200000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787926200000",
-  "move_pct": 0.063,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 82.697,
-  "rule": "ema_cross_rsi",
-  "side": "SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-28 14:35 UTC",
-  "candle_ts": 1787927400000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1787927400000",
-  "move_pct": 1.253,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 84.195,
-  "rule": "ema_cross_rsi",
-  "side": "BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-28 14:38 UTC",
   "candle_ts": 1787927700000,
   "exchange": "binance",
@@ -7558,7 +7519,7 @@
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_soon|1788145800000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 684.37,
   "rule": "ema_cross_soon",
@@ -7797,6 +7758,45 @@
   "price": 80.181,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-31 04:15 UTC",
+  "candle_ts": 1788149400000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1788149400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2414.74,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-31 04:15 UTC",
+  "candle_ts": 1788149400000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1788149400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 684.01,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-08-31 04:15 UTC",
+  "candle_ts": 1788149400000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_soon|1788149400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.694,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
