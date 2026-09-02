@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-30 17:25 UTC",
-  "candle_ts": 1788110400000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1788110400000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 83.115,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-30 17:26 UTC",
-  "candle_ts": 1788110700000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1788110700000",
-  "move_pct": 0.36,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 82.943,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-08-30 17:30 UTC",
-  "candle_ts": 1788110700000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1788110700000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 78940.62,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-08-30 17:30 UTC",
   "candle_ts": 1788110700000,
   "exchange": "kucoin",
@@ -7797,6 +7758,45 @@
   "price": 2418.56,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-02 07:05 UTC",
+  "candle_ts": 1788332400000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1788332400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 77621.18,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-02 07:05 UTC",
+  "candle_ts": 1788332400000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_rsi|1788332400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 688.41,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-02 07:05 UTC",
+  "candle_ts": 1788332400000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1788332400000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 83.235,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
