@@ -11,8 +11,7 @@
   },
   "binance|ASTER/USDT|ema_cross_soon": {
     "at": "2026-09-02 19:50 UTC",
-    "last_candle": 1788378600000,
-    "side": "NEAR-SELL"
+    "last_candle": 1788378600000
   },
   "binance|BNB/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -40,18 +39,22 @@
     "side": "INTRABAR SELL"
   },
   "binance|BTC/USDT|ema_cross_rsi": {
-    "at": "2026-09-02 19:25 UTC",
-    "last_candle": 1788377100000,
-    "side": "WEAK SELL"
+    "at": "2026-09-02 20:00 UTC",
+    "last_candle": 1788379200000,
+    "side": "BUY"
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-09-02 19:55 UTC",
-    "last_candle": 1788378900000,
-    "side": "NEAR-BUY"
+    "last_candle": 1788378900000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1788336000000,
+    "pending": {
+      "candle": 1788379500000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR SELL"
   },
   "binance|ETH/USDT|ema_cross_rsi": {
@@ -66,18 +69,17 @@
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1788371700000,
+    "last_candle": 1788379200000,
     "side": "INTRABAR BUY"
   },
   "binance|SOL/USDT|ema_cross_rsi": {
-    "at": "2026-09-02 19:40 UTC",
-    "last_candle": 1788378000000,
-    "side": "WEAK SELL"
+    "at": "2026-09-02 20:00 UTC",
+    "last_candle": 1788379200000,
+    "side": "BUY"
   },
   "binance|SOL/USDT|ema_cross_soon": {
     "at": "2026-09-02 19:55 UTC",
-    "last_candle": 1788378900000,
-    "side": "NEAR-BUY"
+    "last_candle": 1788378900000
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
