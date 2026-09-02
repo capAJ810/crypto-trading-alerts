@@ -1,45 +1,6 @@
 [
  {
   "at": "2026-08-26 05:45 UTC",
-  "candle_ts": 1787722200000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1787722200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 97.19,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-26 05:45 UTC",
-  "candle_ts": 1787722200000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1787722200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 696.31,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-26 05:45 UTC",
-  "candle_ts": 1787722200000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1787722200000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.706,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-26 05:45 UTC",
   "candle_ts": 1787723100000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_intrabar|1787723100000",
@@ -7797,6 +7758,45 @@
   "price": 81.453,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-02 15:15 UTC",
+  "candle_ts": 1788361200000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1788361200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 76819.99,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-02 15:15 UTC",
+  "candle_ts": 1788361200000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1788361200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2385.15,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-02 15:15 UTC",
+  "candle_ts": 1788361200000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1788361200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 684.21,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "15m"
  }
 ]
