@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-09-01 00:18 UTC",
-  "candle_ts": 1788221700000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_intrabar|1788221700000",
-  "move_pct": 0.133,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 78794.94,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-01 00:18 UTC",
-  "candle_ts": 1788221700000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_intrabar|1788221700000",
-  "move_pct": 0.17,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 2473.34,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-01 00:20 UTC",
-  "candle_ts": 1788221700000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_rsi|1788221700000",
-  "move_pct": 0.113,
-  "outcome": "miss",
-  "pair": "BTC/USDT",
-  "price": 78811.03,
-  "rule": "ema_cross_rsi",
-  "side": "BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-01 00:20 UTC",
   "candle_ts": 1788221700000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 77890.03,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-03 09:15 UTC",
+  "candle_ts": 1788426600000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1788426600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2404.9,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-03 09:15 UTC",
+  "candle_ts": 1788426600000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1788426600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 100.65,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-03 09:15 UTC",
+  "candle_ts": 1788426600000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1788426600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 82.154,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
