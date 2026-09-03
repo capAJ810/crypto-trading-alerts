@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-08-27 03:45 UTC",
-  "candle_ts": 1787801400000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_rsi|1787801400000",
-  "move_pct": 0.267,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 702.93,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-27 04:30 UTC",
-  "candle_ts": 1787804100000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1787804100000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 78785.06,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-27 04:45 UTC",
-  "candle_ts": 1787805000000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_rsi|1787805000000",
-  "move_pct": 0.298,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 2489.15,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-27 05:15 UTC",
   "candle_ts": 1787807700000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 77562.89,
   "rule": "ema_cross_rsi",
   "side": "SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-03 11:15 UTC",
+  "candle_ts": 1788433200000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1788433200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 77822.89,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-03 11:15 UTC",
+  "candle_ts": 1788433200000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1788433200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2399.85,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-03 11:15 UTC",
+  "candle_ts": 1788434100000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_intrabar|1788434100000",
+  "move_pct": null,
+  "outcome": "unscorable",
+  "pair": "BTC/USDT",
+  "price": 77879.13,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
   "timeframe": "15m"
  }
 ]

@@ -29,8 +29,8 @@
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1788387300000,
-    "side": "INTRABAR SELL"
+    "last_candle": 1788434100000,
+    "side": "INTRABAR BUY"
   },
   "binance|BTC/USDT|ema_cross_rsi": {
     "at": "2026-09-03 10:00 UTC",
@@ -38,8 +38,9 @@
     "side": "SELL"
   },
   "binance|BTC/USDT|ema_cross_soon": {
-    "at": "2026-09-03 09:30 UTC",
-    "last_candle": 1788427800000
+    "at": "2026-09-03 11:00 UTC",
+    "last_candle": 1788433200000,
+    "side": "NEAR-BUY"
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -52,8 +53,9 @@
     "side": "WEAK SELL"
   },
   "binance|ETH/USDT|ema_cross_soon": {
-    "at": "2026-09-03 09:00 UTC",
-    "last_candle": 1788426000000
+    "at": "2026-09-03 11:00 UTC",
+    "last_candle": 1788433200000,
+    "side": "NEAR-BUY"
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
