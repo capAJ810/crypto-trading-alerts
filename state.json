@@ -63,13 +63,14 @@
     "side": "INTRABAR BUY"
   },
   "binance|SOL/USDT|ema_cross_rsi": {
-    "at": "2026-09-03 08:30 UTC",
-    "last_candle": 1788424200000,
-    "side": "WEAK BUY"
+    "at": "2026-09-03 08:35 UTC",
+    "last_candle": 1788424500000,
+    "side": "WEAK SELL"
   },
   "binance|SOL/USDT|ema_cross_soon": {
-    "at": "2026-09-03 08:05 UTC",
-    "last_candle": 1788422700000
+    "at": "2026-09-03 08:35 UTC",
+    "last_candle": 1788424500000,
+    "side": "NEAR-BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -83,7 +84,6 @@
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
     "at": "2026-09-03 08:30 UTC",
-    "last_candle": 1788424200000,
-    "side": "NEAR-BUY"
+    "last_candle": 1788424200000
   }
 }
