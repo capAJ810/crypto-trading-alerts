@@ -1,4 +1,4 @@
-last_run: '2026-09-02T22:10:23.072432+00:00'
+last_run: '2026-09-03T22:05:20.626943+00:00'
 pairs:
   ASTER/USDT:
     ema_cross_rsi:
@@ -27,7 +27,7 @@ pairs:
     ema_cross_rsi:
       rsi_buy: 60.0
       rsi_sell: 40.0
-      volume_avg: 10
+      volume_avg: 30
     ema_cross_soon:
       gap_pct: 0.05
   HYPE/USDT:
@@ -41,8 +41,8 @@ pairs:
   SOL/USDT:
     ema_cross_rsi:
       rsi_buy: 60.0
-      rsi_sell: 40.0
-      trend_ema: 100
-      volume_avg: 30
+      rsi_sell: 45.0
+      trend_ema: 200
+      volume_avg: 10
     ema_cross_soon:
       gap_pct: 0.05
