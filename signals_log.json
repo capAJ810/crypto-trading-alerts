@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-09-01 11:55 UTC",
-  "candle_ts": 1788263400000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1788263400000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 102.4,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-01 12:01 UTC",
-  "candle_ts": 1788264000000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_intrabar|1788264000000",
-  "move_pct": 0.724,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 102.15,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-01 12:05 UTC",
   "candle_ts": 1788264000000,
   "exchange": "binance",
@@ -7661,8 +7635,8 @@
   "candle_ts": 1788490500000,
   "exchange": "binance",
   "id": "binance|ETH/USDT|ema_cross_rsi|1788490500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.377,
+  "outcome": "hit",
   "pair": "ETH/USDT",
   "price": 2507.74,
   "rule": "ema_cross_rsi",
@@ -7674,8 +7648,8 @@
   "candle_ts": 1788490500000,
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_rsi|1788490500000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.506,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 87.024,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 80932.58,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-04 04:00 UTC",
+  "candle_ts": 1788494100000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1788494100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 103.72,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-04 04:00 UTC",
+  "candle_ts": 1788494100000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1788494100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 723.54,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
