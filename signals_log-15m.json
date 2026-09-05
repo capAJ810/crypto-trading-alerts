@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-08-28 23:45 UTC",
-  "candle_ts": 1787959800000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1787959800000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 690.77,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-08-29 00:00 UTC",
-  "candle_ts": 1787960700000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1787960700000",
-  "move_pct": 0.422,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 104.15,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-29 00:30 UTC",
   "candle_ts": 1787962500000,
   "exchange": "binance",
@@ -7661,8 +7635,8 @@
   "candle_ts": 1788562800000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_rsi|1788562800000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.393,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 101.8,
   "rule": "ema_cross_rsi",
@@ -7674,8 +7648,8 @@
   "candle_ts": 1788562800000,
   "exchange": "binance",
   "id": "binance|BNB/USDT|ema_cross_rsi|1788562800000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.616,
+  "outcome": "hit",
   "pair": "BNB/USDT",
   "price": 719.28,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 0.735,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-05 02:15 UTC",
+  "candle_ts": 1788573600000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1788573600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 101.86,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-05 02:15 UTC",
+  "candle_ts": 1788573600000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_rsi|1788573600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.733,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "15m"
  }
 ]
