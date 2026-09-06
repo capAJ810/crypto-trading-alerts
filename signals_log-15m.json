@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-08-29 13:15 UTC",
-  "candle_ts": 1788008400000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1788008400000",
-  "move_pct": 2.411,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 81.391,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-08-29 13:30 UTC",
   "candle_ts": 1788009300000,
   "exchange": "binance",
@@ -7701,7 +7688,7 @@
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_soon|1788660000000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "miss",
   "pair": "HYPE/USDT",
   "price": 85.496,
   "rule": "ema_cross_soon",
@@ -7797,6 +7784,19 @@
   "price": 0.8,
   "rule": "ema_cross_rsi",
   "side": "BUY",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-06 05:15 UTC",
+  "candle_ts": 1788670800000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1788670800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 79804.0,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "15m"
  }
 ]
