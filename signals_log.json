@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-09-04 21:05 UTC",
-  "candle_ts": 1788555600000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1788555600000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.739,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-04 21:10 UTC",
-  "candle_ts": 1788555900000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1788555900000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2453.45,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-04 21:15 UTC",
   "candle_ts": 1788556200000,
   "exchange": "binance",
@@ -7661,8 +7635,8 @@
   "candle_ts": 1788786300000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_intrabar|1788786300000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 1.125,
+  "outcome": "hit",
   "pair": "ASTER/USDT",
   "price": 0.8,
   "rule": "ema_cross_intrabar",
@@ -7674,8 +7648,8 @@
   "candle_ts": 1788786300000,
   "exchange": "binance",
   "id": "binance|ASTER/USDT|ema_cross_rsi|1788786300000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 1.125,
+  "outcome": "hit",
   "pair": "ASTER/USDT",
   "price": 0.8,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 744.78,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-07 14:06 UTC",
+  "candle_ts": 1788789900000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_intrabar|1788789900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2492.25,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-07 14:10 UTC",
+  "candle_ts": 1788789900000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_rsi|1788789900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2486.34,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
   "timeframe": "5m"
  }
 ]
