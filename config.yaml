@@ -62,12 +62,8 @@ rules:
   #   params: {level: 100000}
 
 notify:
-  # Broadcast channels — every alert goes to all of these.
-  # ${VARS} come from GitHub Actions secrets (CI) or .env (local);
-  # ALERT_EMAILS is comma-separated. Any Apprise URL works here —
-  # Discord, Slack, SMS, push, 100+ services:
-  # https://github.com/caronc/apprise/wiki
-  - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
+  # Email disabled — Telegram only. To re-enable, uncomment the line below:
+  # - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
 
 # Interactive Telegram bot (alerts/telegram_bot.py): inline buttons let each
 # allowlisted chat (TELEGRAM_CHAT_IDS secret, slash-separated) pick which
