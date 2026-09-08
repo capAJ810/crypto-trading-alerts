@@ -44,8 +44,7 @@
   },
   "binance|BTC/USDT|ema_cross_soon": {
     "at": "2026-09-08 05:25 UTC",
-    "last_candle": 1788845100000,
-    "side": "NEAR-BUY"
+    "last_candle": 1788845100000
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -79,6 +78,11 @@
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1788815100000,
+    "pending": {
+      "candle": 1788845700000,
+      "seen": 1,
+      "side": "INTRABAR SELL"
+    },
     "side": "INTRABAR SELL"
   },
   "kucoin|HYPE/USDT|ema_cross_rsi": {
