@@ -234,10 +234,10 @@ def make_insight_fn(config: dict, pair_exchange: Dict[str, str]
 
     insight(pair, kind) with kind "status" (quick) or "predict" (full read).
     """
-    limit = int(config.get("candles", 150))
+    limit = int(config.get("candles") or 150)
 
     def insight(pair: str, kind: str = "predict") -> str:
-        ex_name = pair_exchange.get(pair, config.get("exchange", "binance"))
+        ex_name = pair_exchange.get(pair, config.get("exchange") or "binance")
         try:
             ex = get_exchange(ex_name)
             dfs = {tf: fetch_closed_candles(ex, pair, tf, limit)

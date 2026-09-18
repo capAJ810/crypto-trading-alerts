@@ -82,8 +82,8 @@ def normalize_symbols(config: dict):
     Entries are either a plain pair string ("BTC/USDT", uses the default
     exchange) or a mapping {pair: HYPE/USDT, exchange: kucoin}.
     """
-    default_ex = config.get("exchange", "binance")
-    for entry in config.get("symbols", []):
+    default_ex = config.get("exchange") or "binance"
+    for entry in config.get("symbols") or []:
         if isinstance(entry, str):
             yield entry, default_ex
         else:
@@ -93,8 +93,8 @@ def normalize_symbols(config: dict):
 def run_once(config: dict, notifier: Notifier, state_path: str,
              bot=None, tg_state=None, sig_entries=None, tuned=None,
              force: bool = False, dry_run: bool = False) -> int:
-    timeframe = config.get("timeframe", "1h")
-    limit = int(config.get("candles", 150))
+    timeframe = config.get("timeframe") or "1h"
+    limit = int(config.get("candles") or 150)
     state = load_state(state_path)
     alerts_sent = 0
 
@@ -112,7 +112,7 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
         candle_iso = datetime.fromtimestamp(candle_ts / 1000, tz=timezone.utc).strftime(
             "%Y-%m-%d %H:%M UTC")
 
-        for rule_cfg in config.get("rules", []):
+        for rule_cfg in config.get("rules") or []:
             rule_name = rule_cfg["name"]
             if rule_name in INTRABAR_RULES:
                 continue  # needs the forming candle; handled by run_intrabar
@@ -126,7 +126,7 @@ def run_once(config: dict, notifier: Notifier, state_path: str,
             if only and pair not in only:
                 continue
 
-            params = dict(rule_cfg.get("params", {}))
+            params = dict(rule_cfg.get("params") or {})
             if tuned:
                 params.update(tuned.get(pair, {}).get(rule_name, {}))
             signal = rule_fn(df, params)
@@ -200,12 +200,12 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
     in state as `pending` {candle, side, seen}; it's dropped the moment the
     cross vanishes, so a single flickering tick can never fire an alert.
     """
-    intrabar_cfgs = [r for r in config.get("rules", [])
+    intrabar_cfgs = [r for r in (config.get("rules") or [])
                      if r["name"] in INTRABAR_RULES]
     if not intrabar_cfgs:
         return 0
-    timeframe = config.get("timeframe", "1h")
-    limit = int(config.get("candles", 150))
+    timeframe = config.get("timeframe") or "1h"
+    limit = int(config.get("candles") or 150)
     state = load_state(state_path)
     sent = 0
     pending_changed = False
@@ -226,7 +226,7 @@ def run_intrabar(config: dict, notifier: Notifier, state_path: str,
             only = rule_cfg.get("symbols")
             if only and pair not in only:
                 continue
-            params = dict(rule_cfg.get("params", {}))
+            params = dict(rule_cfg.get("params") or {})
             if tuned:
                 params.update(tuned.get(pair, {}).get(rule_name, {}))
             signal = RULES[rule_name](df, params)
@@ -326,7 +326,7 @@ def main() -> int:
     tuned = load_tuned(args.tuned)
     bot = None
     tg_state = {}
-    if config.get("telegram", {}).get("enabled", True):
+    if (config.get("telegram") or {}).get("enabled", True):
         insight = make_insight_fn(config, dict(normalize_symbols(config)))
         bot = telegram_bot.load_bot(symbols, insight,
                                     stats_fn=lambda: siglog.stats_text(sig_entries))
@@ -358,7 +358,7 @@ def main() -> int:
                 }
         return out
 
-    notifier = Notifier(config.get("notify", []), link_filters)
+    notifier = Notifier(config.get("notify") or [], link_filters)
 
     def save_tg():
         if bot is not None:
@@ -379,7 +379,7 @@ def main() -> int:
     def score_and_save():
         if args.dry_run:
             return
-        timeframe = config.get("timeframe", "1h")
+        timeframe = config.get("timeframe") or "1h"
         pair_ex = dict(normalize_symbols(config))
 
         def fetch(pair, exchange):
@@ -427,7 +427,7 @@ def main() -> int:
     # the deadline — extending briefly if a close is imminent so no candle
     # falls into the handoff gap.
     BUFFER = 4
-    tf_sec = timeframe_ms(config.get("timeframe", "1h")) // 1000
+    tf_sec = timeframe_ms(config.get("timeframe") or "1h") // 1000
     start = time.time()
     deadline = start + args.run_for
     # Stamp BEFORE the catch-up cycle: if a candle closes while it runs,

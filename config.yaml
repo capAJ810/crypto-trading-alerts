@@ -61,8 +61,9 @@ rules:
   #   symbols: [BTC/USDT]          # optional: restrict a rule to some pairs
   #   params: {level: 100000}
 
-notify:
-  # Email disabled — Telegram only. To re-enable, uncomment the line below:
+notify: []
+  # Email disabled — Telegram only. To re-enable, uncomment the line below
+  # (and change `notify: []` above back to `notify:`):
   # - "mailto://${GMAIL_USER}:${GMAIL_APP_PASSWORD}@gmail.com?to=${ALERT_EMAILS}"
 
 # Interactive Telegram bot (alerts/telegram_bot.py): inline buttons let each

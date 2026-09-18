@@ -220,9 +220,9 @@ def main() -> int:
 
     with open(args.config) as f:
         config = yaml.safe_load(f)
-    timeframe = config.get("timeframe", "5m")
-    rule_params = {r["name"]: dict(r.get("params", {}))
-                   for r in config.get("rules", [])}
+    timeframe = config.get("timeframe") or "5m"
+    rule_params = {r["name"]: dict(r.get("params") or {})
+                   for r in config.get("rules") or []}
     pairs_doc = tuned_doc.setdefault("pairs", {})
     announcements = []
 
