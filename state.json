@@ -24,8 +24,9 @@
     "side": "WEAK SELL"
   },
   "binance|BNB/USDT|ema_cross_soon": {
-    "at": "2026-09-20 20:25 UTC",
-    "last_candle": 1789935900000
+    "at": "2026-09-20 22:05 UTC",
+    "last_candle": 1789941900000,
+    "side": "NEAR-BUY"
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -38,23 +39,23 @@
     "side": "WEAK SELL"
   },
   "binance|BTC/USDT|ema_cross_soon": {
-    "at": "2026-09-20 20:00 UTC",
-    "last_candle": 1789934400000
+    "at": "2026-09-20 22:05 UTC",
+    "last_candle": 1789941900000,
+    "side": "NEAR-BUY"
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1789932600000,
+    "last_candle": 1789941900000,
     "side": "INTRABAR BUY"
   },
   "binance|ETH/USDT|ema_cross_rsi": {
-    "at": "2026-09-20 21:00 UTC",
-    "last_candle": 1789938000000,
-    "side": "WEAK SELL"
+    "at": "2026-09-20 22:05 UTC",
+    "last_candle": 1789941900000,
+    "side": "BUY"
   },
   "binance|ETH/USDT|ema_cross_soon": {
     "at": "2026-09-20 21:55 UTC",
-    "last_candle": 1789941300000,
-    "side": "NEAR-BUY"
+    "last_candle": 1789941300000
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -67,22 +68,27 @@
     "side": "WEAK SELL"
   },
   "binance|SOL/USDT|ema_cross_soon": {
-    "at": "2026-09-20 20:55 UTC",
-    "last_candle": 1789937700000
+    "at": "2026-09-20 22:05 UTC",
+    "last_candle": 1789941900000,
+    "side": "NEAR-BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1789867500000,
+    "pending": {
+      "candle": 1789941900000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR SELL"
   },
   "kucoin|HYPE/USDT|ema_cross_rsi": {
-    "at": "2026-09-20 20:15 UTC",
-    "last_candle": 1789935300000,
-    "side": "WEAK SELL"
+    "at": "2026-09-20 22:05 UTC",
+    "last_candle": 1789941900000,
+    "side": "WEAK BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
     "at": "2026-09-20 22:00 UTC",
-    "last_candle": 1789941600000,
-    "side": "NEAR-BUY"
+    "last_candle": 1789941600000
   }
 }
