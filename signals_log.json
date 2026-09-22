@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-09-19 20:25 UTC",
-  "candle_ts": 1789849200000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1789849200000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 2638.73,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-19 20:40 UTC",
-  "candle_ts": 1789850100000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1789850100000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "ETH/USDT",
-  "price": 2639.25,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-19 20:40 UTC",
-  "candle_ts": 1789850100000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1789850100000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "SOL/USDT",
-  "price": 111.22,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-19 20:50 UTC",
   "candle_ts": 1789850700000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 86090.12,
   "rule": "ema_cross_rsi",
   "side": "WEAK SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-22 16:38 UTC",
+  "candle_ts": 1790094900000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1790094900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 95.218,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-22 16:40 UTC",
+  "candle_ts": 1790094900000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1790094900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 117.13,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-22 16:40 UTC",
+  "candle_ts": 1790094900000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1790094900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 95.384,
+  "rule": "ema_cross_rsi",
+  "side": "BUY",
   "timeframe": "5m"
  }
 ]
