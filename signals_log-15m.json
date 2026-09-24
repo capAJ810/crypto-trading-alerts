@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-09-05 05:00 UTC",
-  "candle_ts": 1788583500000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1788583500000",
-  "move_pct": 0.147,
-  "outcome": "miss",
-  "pair": "SOL/USDT",
-  "price": 101.75,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-09-05 05:00 UTC",
-  "candle_ts": 1788583500000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1788583500000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "BNB/USDT",
-  "price": 721.43,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "15m"
- },
- {
-  "at": "2026-09-05 05:30 UTC",
-  "candle_ts": 1788585300000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1788585300000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 79586.04,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "15m"
- },
- {
   "at": "2026-09-05 05:45 UTC",
   "candle_ts": 1788586200000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 93.218,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-24 22:00 UTC",
+  "candle_ts": 1790286300000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1790286300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 84350.0,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-24 22:00 UTC",
+  "candle_ts": 1790286300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1790286300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 778.65,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "15m"
+ },
+ {
+  "at": "2026-09-24 22:00 UTC",
+  "candle_ts": 1790286300000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1790286300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 92.472,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
   "timeframe": "15m"
  }
 ]
