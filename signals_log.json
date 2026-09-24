@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-09-21 19:20 UTC",
-  "candle_ts": 1790018100000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1790018100000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.741,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-21 19:20 UTC",
-  "candle_ts": 1790018100000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1790018100000",
-  "move_pct": 0.305,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 93.156,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-21 19:35 UTC",
   "candle_ts": 1790019000000,
   "exchange": "binance",
@@ -7797,6 +7771,32 @@
   "price": 2653.97,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-24 15:00 UTC",
+  "candle_ts": 1790261700000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1790261700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 83673.77,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-24 15:00 UTC",
+  "candle_ts": 1790261700000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_soon|1790261700000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 91.736,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
