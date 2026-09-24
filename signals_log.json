@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-09-21 08:11 UTC",
-  "candle_ts": 1789978200000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_intrabar|1789978200000",
-  "move_pct": 1.685,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2668.17,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-21 08:11 UTC",
-  "candle_ts": 1789978200000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_intrabar|1789978200000",
-  "move_pct": 0.135,
-  "outcome": "miss",
-  "pair": "ASTER/USDT",
-  "price": 0.739,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-21 08:15 UTC",
   "candle_ts": 1789978200000,
   "exchange": "binance",
@@ -7740,7 +7714,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1790226000000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 84240.0,
   "rule": "ema_cross_soon",
@@ -7752,8 +7726,8 @@
   "candle_ts": 1790226000000,
   "exchange": "kucoin",
   "id": "kucoin|HYPE/USDT|ema_cross_rsi|1790226000000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.543,
+  "outcome": "hit",
   "pair": "HYPE/USDT",
   "price": 92.465,
   "rule": "ema_cross_rsi",
@@ -7797,6 +7771,32 @@
   "price": 114.87,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-24 06:01 UTC",
+  "candle_ts": 1790229600000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_intrabar|1790229600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 114.9,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-24 06:05 UTC",
+  "candle_ts": 1790229600000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_rsi|1790229600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 115.04,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
