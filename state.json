@@ -15,18 +15,17 @@
   },
   "binance|BNB/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1790294700000,
-    "side": "INTRABAR BUY"
+    "last_candle": 1790303700000,
+    "side": "INTRABAR SELL"
   },
   "binance|BNB/USDT|ema_cross_rsi": {
-    "at": "2026-09-25 01:55 UTC",
-    "last_candle": 1790301300000,
-    "side": "WEAK BUY"
+    "at": "2026-09-25 02:35 UTC",
+    "last_candle": 1790303700000,
+    "side": "SELL"
   },
   "binance|BNB/USDT|ema_cross_soon": {
     "at": "2026-09-25 02:25 UTC",
-    "last_candle": 1790303100000,
-    "side": "NEAR-SELL"
+    "last_candle": 1790303100000
   },
   "binance|BTC/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -39,23 +38,28 @@
     "side": "WEAK BUY"
   },
   "binance|BTC/USDT|ema_cross_soon": {
-    "at": "2026-09-25 01:50 UTC",
-    "last_candle": 1790301000000
+    "at": "2026-09-25 02:35 UTC",
+    "last_candle": 1790303700000,
+    "side": "NEAR-SELL"
   },
   "binance|ETH/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1790238000000,
+    "pending": {
+      "candle": 1790303700000,
+      "seen": 1,
+      "side": "INTRABAR SELL"
+    },
     "side": "INTRABAR SELL"
   },
   "binance|ETH/USDT|ema_cross_rsi": {
-    "at": "2026-09-25 02:00 UTC",
-    "last_candle": 1790301600000,
-    "side": "BUY"
+    "at": "2026-09-25 02:35 UTC",
+    "last_candle": 1790303700000,
+    "side": "SELL"
   },
   "binance|ETH/USDT|ema_cross_soon": {
     "at": "2026-09-25 02:25 UTC",
-    "last_candle": 1790303100000,
-    "side": "NEAR-SELL"
+    "last_candle": 1790303100000
   },
   "binance|SOL/USDT|ema_cross_intrabar": {
     "at": "intrabar",
@@ -73,17 +77,16 @@
   },
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
-    "last_candle": 1790273400000,
-    "side": "INTRABAR BUY"
+    "last_candle": 1790303700000,
+    "side": "INTRABAR SELL"
   },
   "kucoin|HYPE/USDT|ema_cross_rsi": {
-    "at": "2026-09-25 02:15 UTC",
-    "last_candle": 1790302500000,
-    "side": "WEAK BUY"
+    "at": "2026-09-25 02:35 UTC",
+    "last_candle": 1790303700000,
+    "side": "SELL"
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
     "at": "2026-09-25 02:30 UTC",
-    "last_candle": 1790303400000,
-    "side": "NEAR-SELL"
+    "last_candle": 1790303400000
   }
 }
