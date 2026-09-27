@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-09-24 12:15 UTC",
-  "candle_ts": 1790251800000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1790251800000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2648.04,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-24 12:15 UTC",
-  "candle_ts": 1790251800000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1790251800000",
-  "move_pct": 0.74,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 113.53,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-09-24 12:25 UTC",
-  "candle_ts": 1790252400000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_rsi|1790252400000",
-  "move_pct": 0.498,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2653.94,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-24 12:25 UTC",
   "candle_ts": 1790252400000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 91.612,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-27 23:25 UTC",
+  "candle_ts": 1790551200000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1790551200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2683.73,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-27 23:25 UTC",
+  "candle_ts": 1790551200000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1790551200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 777.18,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-09-27 23:25 UTC",
+  "candle_ts": 1790551200000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1790551200000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 91.734,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
   "timeframe": "5m"
  }
 ]
