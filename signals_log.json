@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-09-28 16:20 UTC",
-  "candle_ts": 1790612100000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_rsi|1790612100000",
-  "move_pct": 1.165,
-  "outcome": "hit",
-  "pair": "SOL/USDT",
-  "price": 119.34,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-09-28 17:10 UTC",
   "candle_ts": 1790615100000,
   "exchange": "binance",
@@ -7701,7 +7688,7 @@
   "exchange": "binance",
   "id": "binance|BTC/USDT|ema_cross_soon|1791465300000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "BTC/USDT",
   "price": 82593.97,
   "rule": "ema_cross_soon",
@@ -7797,6 +7784,19 @@
   "price": 82538.39,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-10-08 14:20 UTC",
+  "candle_ts": 1791468900000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_rsi|1791468900000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 82554.01,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
   "timeframe": "5m"
  }
 ]
