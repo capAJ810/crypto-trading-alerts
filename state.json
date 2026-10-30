@@ -77,12 +77,17 @@
   "kucoin|HYPE/USDT|ema_cross_intrabar": {
     "at": "intrabar",
     "last_candle": 1793327100000,
+    "pending": {
+      "candle": 1793355600000,
+      "seen": 1,
+      "side": "INTRABAR BUY"
+    },
     "side": "INTRABAR BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_rsi": {
-    "at": "2026-10-30 07:30 UTC",
-    "last_candle": 1793345400000,
-    "side": "SELL"
+    "at": "2026-10-30 10:20 UTC",
+    "last_candle": 1793355600000,
+    "side": "WEAK BUY"
   },
   "kucoin|HYPE/USDT|ema_cross_soon": {
     "at": "2026-10-30 07:25 UTC",
