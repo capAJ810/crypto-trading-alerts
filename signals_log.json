@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-10-24 11:40 UTC",
-  "candle_ts": 1792841700000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_soon|1792841700000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.6924,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-10-24 11:42 UTC",
-  "candle_ts": 1792842000000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_intrabar|1792842000000",
-  "move_pct": 0.101,
-  "outcome": "miss",
-  "pair": "ASTER/USDT",
-  "price": 0.6914,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-10-24 11:45 UTC",
-  "candle_ts": 1792842000000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_soon|1792842000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 80622.09,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-10-24 11:45 UTC",
   "candle_ts": 1792842000000,
   "exchange": "binance",
@@ -7797,6 +7758,45 @@
   "price": 0.6949,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-04 04:10 UTC",
+  "candle_ts": 1793765100000,
+  "exchange": "binance",
+  "id": "binance|BTC/USDT|ema_cross_soon|1793765100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BTC/USDT",
+  "price": 76758.58,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-04 04:10 UTC",
+  "candle_ts": 1793765100000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1793765100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 2260.32,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-04 04:10 UTC",
+  "candle_ts": 1793765100000,
+  "exchange": "binance",
+  "id": "binance|SOL/USDT|ema_cross_soon|1793765100000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "SOL/USDT",
+  "price": 91.62,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-BUY",
   "timeframe": "5m"
  }
 ]
