@@ -1,44 +1,5 @@
 [
  {
-  "at": "2026-10-25 10:15 UTC",
-  "candle_ts": 1792923000000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1792923000000",
-  "move_pct": 0.086,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 75.857,
-  "rule": "ema_cross_rsi",
-  "side": "WEAK BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-10-25 10:30 UTC",
-  "candle_ts": 1792923900000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_soon|1792923900000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "HYPE/USDT",
-  "price": 75.705,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-10-25 10:31 UTC",
-  "candle_ts": 1792924200000,
-  "exchange": "kucoin",
-  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1792924200000",
-  "move_pct": 0.196,
-  "outcome": "miss",
-  "pair": "HYPE/USDT",
-  "price": 75.677,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-10-25 10:35 UTC",
   "candle_ts": 1792924200000,
   "exchange": "kucoin",
@@ -7797,6 +7758,45 @@
   "price": 78.247,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-05 20:02 UTC",
+  "candle_ts": 1793908800000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1793908800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 77.917,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-05 20:05 UTC",
+  "candle_ts": 1793908800000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_soon|1793908800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.6941,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-05 20:05 UTC",
+  "candle_ts": 1793908800000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1793908800000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 78.056,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK SELL",
   "timeframe": "5m"
  }
 ]
