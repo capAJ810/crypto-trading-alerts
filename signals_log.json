@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-10-31 07:25 UTC",
-  "candle_ts": 1793431200000,
-  "exchange": "binance",
-  "id": "binance|SOL/USDT|ema_cross_soon|1793431200000",
-  "move_pct": null,
-  "outcome": "miss",
-  "pair": "SOL/USDT",
-  "price": 96.0,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-10-31 07:30 UTC",
   "candle_ts": 1793431500000,
   "exchange": "binance",
@@ -7797,6 +7784,19 @@
   "price": 71.943,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-12 00:20 UTC",
+  "candle_ts": 1794442500000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1794442500000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 72.376,
+  "rule": "ema_cross_rsi",
+  "side": "WEAK BUY",
   "timeframe": "5m"
  }
 ]
