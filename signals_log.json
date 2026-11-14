@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-11-05 23:45 UTC",
-  "candle_ts": 1793922000000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1793922000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 2239.35,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-11-05 23:45 UTC",
-  "candle_ts": 1793922000000,
-  "exchange": "binance",
-  "id": "binance|BNB/USDT|ema_cross_soon|1793922000000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "BNB/USDT",
-  "price": 689.72,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-11-05 23:55 UTC",
   "candle_ts": 1793922600000,
   "exchange": "binance",
@@ -7797,6 +7771,32 @@
   "price": 67.139,
   "rule": "ema_cross_soon",
   "side": "NEAR-SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-14 16:11 UTC",
+  "candle_ts": 1794672600000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_intrabar|1794672600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 67.0,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR SELL",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-14 16:15 UTC",
+  "candle_ts": 1794672600000,
+  "exchange": "kucoin",
+  "id": "kucoin|HYPE/USDT|ema_cross_rsi|1794672600000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "HYPE/USDT",
+  "price": 66.638,
+  "rule": "ema_cross_rsi",
+  "side": "SELL",
   "timeframe": "5m"
  }
 ]
