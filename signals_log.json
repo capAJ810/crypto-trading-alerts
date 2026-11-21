@@ -1,31 +1,5 @@
 [
  {
-  "at": "2026-11-15 00:30 UTC",
-  "candle_ts": 1794702300000,
-  "exchange": "binance",
-  "id": "binance|ETH/USDT|ema_cross_soon|1794702300000",
-  "move_pct": null,
-  "outcome": "hit",
-  "pair": "ETH/USDT",
-  "price": 1752.44,
-  "rule": "ema_cross_soon",
-  "side": "NEAR-SELL",
-  "timeframe": "5m"
- },
- {
-  "at": "2026-11-15 00:32 UTC",
-  "candle_ts": 1794702600000,
-  "exchange": "binance",
-  "id": "binance|BTC/USDT|ema_cross_intrabar|1794702600000",
-  "move_pct": 2.147,
-  "outcome": "hit",
-  "pair": "BTC/USDT",
-  "price": 63666.93,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR SELL",
-  "timeframe": "5m"
- },
- {
   "at": "2026-11-15 00:32 UTC",
   "candle_ts": 1794702600000,
   "exchange": "binance",
@@ -7700,8 +7674,8 @@
   "candle_ts": 1795289400000,
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_rsi|1795289400000",
-  "move_pct": null,
-  "outcome": null,
+  "move_pct": 0.113,
+  "outcome": "miss",
   "pair": "SOL/USDT",
   "price": 70.81,
   "rule": "ema_cross_rsi",
@@ -7714,7 +7688,7 @@
   "exchange": "binance",
   "id": "binance|SOL/USDT|ema_cross_soon|1795289400000",
   "move_pct": null,
-  "outcome": null,
+  "outcome": "hit",
   "pair": "SOL/USDT",
   "price": 70.81,
   "rule": "ema_cross_soon",
@@ -7797,6 +7771,32 @@
   "price": 0.4905,
   "rule": "ema_cross_soon",
   "side": "NEAR-BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-21 20:32 UTC",
+  "candle_ts": 1795293000000,
+  "exchange": "binance",
+  "id": "binance|ASTER/USDT|ema_cross_intrabar|1795293000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ASTER/USDT",
+  "price": 0.4907,
+  "rule": "ema_cross_intrabar",
+  "side": "INTRABAR BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-21 20:35 UTC",
+  "candle_ts": 1795293000000,
+  "exchange": "binance",
+  "id": "binance|ETH/USDT|ema_cross_soon|1795293000000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "ETH/USDT",
+  "price": 1686.89,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
