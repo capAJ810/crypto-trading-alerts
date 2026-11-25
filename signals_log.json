@@ -1,18 +1,5 @@
 [
  {
-  "at": "2026-11-16 23:11 UTC",
-  "candle_ts": 1794870600000,
-  "exchange": "binance",
-  "id": "binance|ASTER/USDT|ema_cross_intrabar|1794870600000",
-  "move_pct": 1.012,
-  "outcome": "hit",
-  "pair": "ASTER/USDT",
-  "price": 0.573,
-  "rule": "ema_cross_intrabar",
-  "side": "INTRABAR BUY",
-  "timeframe": "5m"
- },
- {
   "at": "2026-11-16 23:15 UTC",
   "candle_ts": 1794870600000,
   "exchange": "binance",
@@ -7797,6 +7784,19 @@
   "price": 543.52,
   "rule": "ema_cross_rsi",
   "side": "WEAK BUY",
+  "timeframe": "5m"
+ },
+ {
+  "at": "2026-11-25 03:50 UTC",
+  "candle_ts": 1795578300000,
+  "exchange": "binance",
+  "id": "binance|BNB/USDT|ema_cross_soon|1795578300000",
+  "move_pct": null,
+  "outcome": null,
+  "pair": "BNB/USDT",
+  "price": 542.83,
+  "rule": "ema_cross_soon",
+  "side": "NEAR-SELL",
   "timeframe": "5m"
  }
 ]
